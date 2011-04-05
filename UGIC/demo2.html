@@ -1,0 +1,128 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+    <head>
+        <title>UGIC 2011 Demo</title>
+        
+		<!-- META TAGS -->
+        <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		
+		<!-- force IE9 compatibility mode -->
+        <meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8">
+		
+        <!-- dojo css -->
+        <link rel='stylesheet' type='text/css' href='http://serverapi.arcgisonline.com/jsapi/arcgis/2.2/js/dojo/dijit/themes/claro/claro.css'>
+        <!-- agrc css -->
+        <link rel='stylesheet' type='text/css' href='http://mapserv.utah.gov/cdn/dojo/agrc/1.0RC1/agrc/themes/standard/agrc.css' />
+        
+        <style type='text/css'>
+            html, body, #main {
+                width: 100%;
+                height: 100%;
+                border: 0;
+                padding: 0;
+                margin: 0;
+            }
+            
+            body {
+                background-color: white;
+                overflow: hidden;
+                font-family: "Trebuchet MS";
+            }
+            
+            #header {
+                margin: 2px;
+                color: black;
+                font-size: 18pt;
+                text-align: left;
+                font-weight: bold;
+                height: 70px;
+            }
+            
+            #subheader {
+                font-size: small;
+                color: black;
+                padding-left: 20px;
+            }
+            
+            #leftPane {
+                width: 275px;
+                border: 1px solid gray;
+            }
+            
+            #map {
+                margin: 5px;
+            }
+        </style>
+		
+		<!-- JAVASCRIPT -->
+        <script type='text/javascript'>
+            djConfig = {
+                isDebug: true,
+                debugAtAllCosts: true,
+                parseOnLoad: true,
+                modulePaths: {
+                    'agrc': 'http://mapserv.utah.gov/cdn/dojo/agrc/1.0RC1/agrc'
+                }
+            };
+        </script>
+		
+		<!-- esri javascript api (includes dojo) -->
+        <script type='text/javascript' src='http://serverapi.arcgisonline.com/jsapi/arcgis/?v=2.2'></script>
+        
+		<script type='text/javascript'>
+			 //make my website look nice
+	        dojo.require("dijit.layout.BorderContainer");
+	        dojo.require("dijit.layout.ContentPane");
+			
+			dojo.require('agrc.widgets.map.BaseMap');
+			dojo.require('agrc.widgets.map.BaseMapSelector');
+			dojo.require('agrc.widgets.layer.OpacitySlider');
+			dojo.require('agrc.widgets.locate.FindAddress');
+			dojo.require('agrc.widgets.locate.TRSsearch');
+			dojo.require('agrc.widgets.locate.MagicZoom');
+			
+	        function init(){
+				var map = new agrc.widgets.map.BaseMap('mapPane', { useDefaultBaseMap: false });
+				
+				new agrc.widgets.map.BaseMapSelector({map: map, id: 'claro', position: 'BL'});
+				
+				var layer = new esri.layers.ArcGISDynamicMapServiceLayer('http://dagrc.utah.gov/ArcGIS/rest/services/WidgetsDemo/MapServer');
+				map.addLayer(layer);
+				
+				new agrc.widgets.layer.OpacitySlider({ mapServiceLayer: layer}, 'opacity-slider');
+				
+				new agrc.widgets.locate.FindAddress({map: map}, 'find-address');
+				
+				new agrc.widgets.locate.TRSsearch({map: map, AGRCwebServiceUserName: 'demo'}, 'trssearch-div');
+				
+				new agrc.widgets.locate.MagicZoom({
+					promptMessage: 'Please begin typing a UGIC year...',
+					mapServiceURL: 'http://dagrc.utah.gov/ArcGIS/rest/services/WidgetsDemo/MapServer',
+					searchLayerIndex: 0,
+					searchField: 'YEAR',
+					map: map
+				}, 'magic-zoom');
+			}
+            
+            dojo.ready(init);
+        </script>
+    </head>
+    <body class='claro'>
+        <div id="main" dojotype="dijit.layout.BorderContainer" design="headline" gutters="false">
+            <div id="header" dojotype="dijit.layout.ContentPane" region="top">
+                UGIC
+                <div id="subheader">
+                    Locations
+                </div>
+            </div>
+            <div dojotype="dijit.layout.ContentPane" id="leftPane" region="leading">
+            	<div id='opacity-slider'></div>
+				<div id='find-address'></div>
+				<div id='trssearch-div'></div>
+            </div>
+            <div id="mapPane" dojotype="dijit.layout.ContentPane" region="center">
+            	<div id='magic-zoom'></div>
+            </div>
+        </div>
+    </body>
+</html>
