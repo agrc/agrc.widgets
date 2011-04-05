@@ -1,4 +1,4 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <!--
   Copyright 2010 Google Inc.
  
@@ -18,522 +18,726 @@
   Modifications: Chrome Developer Relations <chrome-devrel@googlegroups.com>
 -->
 <html>
-  <head>
+<head>
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=Edge;chrome=1" />
-    <title>HTML5 presentation</title>
-    <link href="http://fonts.googleapis.com/css?family=Droid+Sans|Droid+Sans+Mono" rel="stylesheet" type="text/css" />
+    <title>AGRC Widgets : UGIC</title>
+    <link href="http://fonts.googleapis.com/css?family=Droid+Sans|Droid+Sans+Mono" rel="stylesheet"
+        type="text/css" />
     <style>
-      body {
-        font: 20px "Lucida Grande", "Trebuchet MS", Verdana, sans-serif;
-        padding: 0;
-        margin: 0;
-        width: 100%;
-        height: 100%;
-        position: absolute;
-        left: 0px; top: 0px;
-      }
-      
-      .presentation {
-        position: absolute;
-        height: 100%;
-        width: 100%;
-        left: 0px;
-        top: 0px;
-        display: block;
-        overflow: hidden;
-        background: #778;
-      }
-      
-      .slides {
-        width: 100%;
-        height: 100%;
-        left: 0;
-        top: 0;
-        position: absolute;
-        display: block;
-        -webkit-transition: -webkit-transform 1s ease-in-out;
-        -moz-transition: -moz-transform 1s ease-in-out;
-        -o-transition: -o-transform 1s ease-in-out;
-        transition: transform 1s ease-in-out;
+        body {
+            font: 35px "Lucida Grande" , "Trebuchet MS" , Verdana, sans-serif;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            left: 0px;
+            top: 0px;
+        }
         
-        /* so it's visible in the iframe. */
-        -webkit-transform: scale(1);
-        -moz-transform: scale(1);
-        -o-transform: scale(1);
-        transform: scale(1);
+        .presentation {
+            position: absolute;
+            height: 100%;
+            width: 100%;
+            left: 0px;
+            top: 0px;
+            display: block;
+            overflow: hidden;
+            background: #3C5B6E;
+        }
         
-      }
-      
-      .slide {
-        display: none;
-        position: absolute;
-        overflow: hidden;
-        width: 900px;
-        height: 700px;
-        left: 50%;
-        top: 50%;
-        margin-top: -350px;
-        background-color: #eee;
-        background: -webkit-gradient(linear, left bottom, left top, from(#bbd), to(#fff));
-        background: -moz-linear-gradient(bottom, #bbd, #fff);
-        background: linear-gradient(bottom, #bbd, #fff);
-        -webkit-transition: all 0.25s ease-in-out;
-        -moz-transition: all 0.25s ease-in-out;
-        -o-transition: all 0.25s ease-in-out;
-        transition: all 0.25s ease-in-out;
-        -webkit-transform: scale(1);
-        -moz-transform: scale(1);
-        -o-transform: scale(1);
-        transform: scale(1);
-      }
-      
-      .slide:nth-child(even) {
-        -moz-border-radius: 20px 0;
-        -khtml-border-radius: 20px 0;
-        border-radius: 20px 0; /* includes Opera 10.5+ */
-        -webkit-border-top-left-radius: 20px;
-        -webkit-border-bottom-right-radius: 20px;
-      }
-      
-      .slide:nth-child(odd) {
-        -moz-border-radius: 0 20px;
-        -khtml-border-radius: 0 20px;
-        border-radius: 0 20px;
-        -webkit-border-top-right-radius: 20px;
-        -webkit-border-bottom-left-radius: 20px;
-      }
- 
-      .slide p, .slide textarea {
-        font-size: 120%;
-      }
- 
-      .slide .counter {
-        color: #999999;
-        position: absolute;
-        left: 20px;
-        bottom: 20px;
-        display: block;
-        font-size: 70%;
-      }
- 
-      .slide.title > .counter,
-      .slide.segue > .counter,
-      .slide.mainTitle > .counter {
-        display: none;
-      }
- 
-      .force-render {
-        display: block;
-        visibility: hidden;
-      }
-      
-      .slide.far-past {
-        display: block;
-        margin-left: -2400px;
-      }
-      
-      .slide.past {
-        visibility: visible;
-        display: block;
-        margin-left: -1400px;
-      }
-      
-      .slide.current {
-        visibility: visible;
-        display: block;
-        margin-left: -450px;
-      }
-      
-      .slide.future {
-        visibility: visible;
-        display: block;
-        margin-left: 500px;
-      }
-      
-      .slide.far-future {
-        display: block;
-        margin-left: 1500px;
-      }
-      
-      body.three-d div.slides {
-        -webkit-transform: translateX(50px) scale(0.8) rotateY(10deg);
-        -moz-transform: translateX(50px) scale(0.8) rotateY(10deg);
-        -o-transform: translateX(50px) scale(0.8) rotateY(10deg);
-        transform: translateX(50px) scale(0.8) rotateY(10deg);
-      }
-      
-      /* Content */
-      
-      @font-face { font-family: 'Junction'; src: url(src/Junction02.otf); }
-      @font-face { font-family: 'LeagueGothic'; src: url(src/LeagueGothic.otf); }
-      
-      header {
-        font-family: 'Droid Sans';
-        font-weight: normal;
-        letter-spacing: -.05em;
-        text-shadow: rgba(0, 0, 0, 0.2) 0 2px 5px;
-        left: 30px;
-        top: 25px;
-        margin: 0;
-        padding: 0;
-        font-size: 140%;
-      }
-      
-      h1 {
-        font-size: 140%;
-        display: inline;
-        font-weight: normal;
-        padding: 0;
-        margin: 0;
-      }
-      
-      h2 {
-        font-family: 'Droid Sans';
-        color: black;
-        font-size: 120%;
-        padding: 0;
-        margin: 20px 0;
-      }
-            
-      h2:first-child {
-        margin-top: 0;
-      }
- 
-      section, footer {
-        font-family: 'Droid Sans';
-        color: #3f3f3f;
-        text-shadow: rgba(0, 0, 0, 0.2) 0 2px 5px;
-        margin: 100px 30px 0;
-        display: block;
-        overflow: hidden;
-      }
-      
-      footer {
-        font-size: 100%;
-        margin: 20px 0 0 30px;
-      }
- 
-      a {
-        color: inherit;
-        display: inline-block;
-        text-decoration: none;
-        line-height: 110%;
-        border-bottom: 2px solid #3f3f3f;
-      }
- 
-      ul {
-        margin: 0;
-        padding: 0;
-      }
- 
-      button {
-        font-size: 100%;
-      }
-      
-      pre button {
-        margin: 2px;
-      }
-      
-      section.left {
-        float: left;
-        width: 390px;
-      }
-      
-      section.small {
-        font-size: 24px;
-      }
-      
-      section.small ul {
-        margin: 0 0 0 15px;
-        padding: 0;
-      }
-      
-      section.small li {
-        padding-bottom: 0;
-      }
-            
-      section.middle {
-        line-height: 2em;
-        text-align: center;
-        display: table-cell;
-        vertical-align: middle;
-        height: 700px;
-        width: 900px;
-      }
-      
-      pre {
-        text-align: left;
-        font-family: 'Droid Sans Mono', Courier;
-        font-size: 80%;
-        padding: 10px 20px;
-        background: rgba(255, 0, 0, 0.05);
-        -webkit-border-radius: 8px;
-        -khtml-border-radius: 8px;
-        -moz-border-radius: 8px;
-        border-radius: 8px;
-        border: 1px solid rgba(255, 0, 0, 0.2);
-      }
-      
-      pre select {
-        font-family: Monaco, Courier;
-        border: 1px solid #c61800;
-      }
+        .slides {
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            position: absolute;
+            display: block;
+            -webkit-transition: -webkit-transform 1s ease-in-out;
+            -moz-transition: -moz-transform 1s ease-in-out;
+            -o-transition: -o-transform 1s ease-in-out;
+            transition: transform 1s ease-in-out; /* so it's visible in the iframe. */
+            -webkit-transform: scale(1);
+            -moz-transform: scale(1);
+            -o-transform: scale(1);
+            transform: scale(1);
+        }
         
-      input {
-        font-size: 100%;
-        margin-right: 10px;
-        font-family: Helvetica;
-        padding: 3px;
-      }
-      input[type="range"] {
-        width: 100%;
-      }
-      
-      button {
-        margin: 20px 10px 0 0;
-        font-family: Verdana;
-      }
-      
-      button.large {
-        font-size: 32px;
-      }
+        .slide {
+            display: none;
+            position: absolute;
+            overflow: hidden;
+            width: 900px;
+            height: 700px;
+            left: 50%;
+            top: 50%;
+            margin-top: -350px;
+            background-color: #eee;
+            background: -webkit-gradient(linear, left bottom, left top, from(#E39A6F), to(#fff));
+            background: -moz-linear-gradient(bottom, #E39A6F, #fff);
+            background: linear-gradient(bottom, #E39A6F, #fff);
+            -webkit-transition: all 0.25s ease-in-out;
+            -moz-transition: all 0.25s ease-in-out;
+            -o-transition: all 0.25s ease-in-out;
+            transition: all 0.25s ease-in-out;
+            -webkit-transform: scale(1);
+            -moz-transform: scale(1);
+            -o-transform: scale(1);
+            transform: scale(1);
+        }
         
-      pre b {
-        font-weight: normal;
-        color: #c61800;
-        text-shadow: #c61800 0 0 1px;
-        /*letter-spacing: -1px;*/
-      }
-      pre em {
-        font-weight: normal;
-        font-style: normal;
-        color: #18a600;
-        text-shadow: #18a600 0 0 1px;
-      }
-      pre input[type="range"] {
-        height: 6px;
-        cursor: pointer;
-        width: auto;
-      }
-      
-      div.example {
-        display: block;
-        padding: 10px 20px;
-        color: black;
-        background: rgba(255, 255, 255, 0.4);
-        -webkit-border-radius: 8px;
-        -khtml-border-radius: 8px;
-        -moz-border-radius: 8px;
-        border-radius: 8px;
-        margin-bottom: 10px;
-        border: 1px solid rgba(0, 0, 0, 0.2);
-      }
-      
-      video {
-        -moz-border-radius: 8px;
-        -khtml-border-radius: 8px;
-        -webkit-border-radius: 8px;
-        border-radius: 8px;
-        border: 1px solid rgba(0, 0, 0, 0.2);
-      }
-      
-      .key {
-        font-family: 'Droid Sans';
-        color: black;
-        display: inline-block;
-        padding: 6px 10px 3px 10px;
-        font-size: 100%;
-        line-height: 30px;
-        text-shadow: none;
-        letter-spacing: 0;
-        bottom: 10px;
-        position: relative;
-        -moz-border-radius: 10px;
-        -khtml-border-radius: 10px;
-        -webkit-border-radius: 10px;
-        border-radius: 10px;
-        background: white;
-        box-shadow: rgba(0, 0, 0, 0.1) 0 2px 5px;
-        -webkit-box-shadow: rgba(0, 0, 0, 0.1) 0 2px 5px;
-        -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 2px 5px;
-        -o-box-shadow: rgba(0, 0, 0, 0.1) 0 2px 5px;
-      }
-      
-      .key { font-family: Arial; }
-      
-      :not(header) > .key {
-        margin: 0 5px;
-        bottom: 4px;
-      }
- 
-      .two-column {
-        -webkit-column-count: 2;
-        -moz-column-count: 2;
-        column-count: 2;
-      }
- 
-      .stroke {
-        -webkit-text-stroke-color: red;
-        -webkit-text-stroke-width: 1px;
-      } /* currently webkit-only */
-      
-      .center {
-        text-align: center;
-      }
-      
-      #presentation-counter {
-        color: #ccc;
-        font-size: 70%;
-        letter-spacing: 1px;
-        position: absolute;
-        top: 40%;
-        left: 0;
-        width: 100%;
-        text-align: center;
-      }
-      
-      div:not(.current).reduced {
-        -webkit-transform: scale(0.8);
-        -moz-transform: scale(0.8);
-        -o-transform: scale(0.8);
-        transform: scale(0.8);
-      } 
-      
-      .no-transitions {
-        -webkit-transition: none;
-        -moz-transition: none;
-        -o-transition: none;
-        transition: none;
-      }
- 
-      .no-gradients {
-        background: none;
-        background-color: #fff;
-      }
-      
-      ul.bulleted {
-        padding-left: 30px;
-      }
-      
-    </style> 
-    
-  </head> 
-  <body> 
-    <div class="presentation"> 
-      <div id="presentation-counter"></div> 
-      <div class="slides"> 
-        <div class="slide"> 
-          <section class="middle"> 
-            <header><h2>A Brief Tour of the AGRC Web Mapping Toolbox</h2></header> 
-            <p>Matt Peters, Steve Gourley, Barry Biediger, Scott Davis</p> 
-          </section> 
-        </div> 
+        .slide:nth-child(even) {
+            -moz-border-radius: 20px 0;
+            -khtml-border-radius: 20px 0;
+            border-radius: 20px 0; /* includes Opera 10.5+ */
+            -webkit-border-top-left-radius: 20px;
+            -webkit-border-bottom-right-radius: 20px;
+        }
         
-        <!--
-<div class="slide"> 
-          <section class="middle"> 
-            <h2> 
-              Attached Events
-            </h2> 
-            <ul> 
-              <li>[arrow keys] to go next and previous</p></li> 
-              <li>[mouse scroll wheel] to go next and previous</p></li> 
-              <li>[Ctrl or Command] + [+/-] to zoom in and out</p></li> 
-              <li>[touch gestures] for mobile devices</p></li> 
-            </ul> 
-          </section> 
-        </div> 
--->
- 
-        <div class="slide"> 
-          <section> 
-            <header> 
-              <h1>AGRC Web Mapping Toolbox</h1> 
-            </header> 
-            <p>Dojo Widgets</p> 
-            <p>Cached Base Map Services</p> 
-            <p>ArcGIS Desktop Add-Ins</p> 
-          </section> 
+        .slide:nth-child(odd) {
+            -moz-border-radius: 0 20px;
+            -khtml-border-radius: 0 20px;
+            border-radius: 0 20px;
+            -webkit-border-top-right-radius: 20px;
+            -webkit-border-bottom-left-radius: 20px;
+        }
+        
+        .slide p, .slide textarea {
+            font-size: 120%;
+        }
+        
+        .slide .counter {
+            color: #999999;
+            position: absolute;
+            left: 20px;
+            bottom: 20px;
+            display: block;
+            font-size: 70%;
+        }
+        
+        .slide.title > .counter, .slide.segue > .counter, .slide.mainTitle > .counter {
+            display: none;
+        }
+        
+        .force-render {
+            display: block;
+            visibility: hidden;
+        }
+        
+        .slide.far-past {
+            display: block;
+            margin-left: -2400px;
+        }
+        
+        .slide.past {
+            visibility: visible;
+            display: block;
+            margin-left: -1400px;
+        }
+        
+        .slide.current {
+            visibility: visible;
+            display: block;
+            margin-left: -450px;
+        }
+        
+        .slide.future {
+            visibility: visible;
+            display: block;
+            margin-left: 500px;
+        }
+        
+        .slide.far-future {
+            display: block;
+            margin-left: 1500px;
+        }
+        
+        body.three-d div.slides {
+            -webkit-transform: translateX(50px) scale(0.8) rotateY(10deg);
+            -moz-transform: translateX(50px) scale(0.8) rotateY(10deg);
+            -o-transform: translateX(50px) scale(0.8) rotateY(10deg);
+            transform: translateX(50px) scale(0.8) rotateY(10deg);
+        }
+        
+        /* Content */
+        
+        @font-face {
+            font-family: 'Junction';
+            src: url(src/Junction02.otf);
+        }
+        @font-face {
+            font-family: 'LeagueGothic';
+            src: url(src/LeagueGothic.otf);
+        }
+        
+        header {
+            font-family: 'Droid Sans';
+            font-weight: normal;
+            letter-spacing: -.05em;
+            text-shadow: rgba(0, 0, 0, 0.2) 0 2px 5px;
+            left: 30px;
+            top: 25px;
+            margin: 0;
+            padding: 0;
+            font-size: 140%;
+        }
+        
+        h1 {
+            font-size: 140%;
+            display: inline;
+            font-weight: normal;
+            padding: 0;
+            margin: 0;
+        }
+        
+        h2 {
+            font-size: 110%;
+            padding: 0;
+            margin: 20px 0;
+        }
+        
+        h2:first-child {
+            margin-top: 0;
+        }
+        
+        section, footer {
+            font-family: 'Droid Sans';
+            color: #3f3f3f;
+            text-shadow: rgba(0, 0, 0, 0.2) 0 2px 5px;
+            margin: 100px 30px 0;
+            display: block;
+            overflow: hidden;
+        }
+        
+        footer {
+            font-size: 100%;
+            margin: 20px 0 0 30px;
+        }
+        
+        ul {
+            margin: 0;
+            padding: 0;
+        }
+        
+        button {
+            font-size: 100%;
+        }
+        
+        pre button {
+            margin: 2px;
+        }
+        
+        section.left {
+            float: left;
+            width: 390px;
+        }
+        
+        section.small {
+            font-size: 24px;
+        }
+        
+        section.small ul {
+            margin: 0 0 0 15px;
+            padding: 0;
+        }
+        
+        section.small li {
+            padding-bottom: 0;
+        }
+        
+        section.middle {
+            line-height: 2em;
+            text-align: center;
+            display: table-cell;
+            vertical-align: middle;
+            height: 700px;
+            width: 900px;
+        }
+        
+        pre {
+            text-align: left;
+            font-family: 'Droid Sans Mono' , Courier;
+            font-size: 80%;
+            padding: 10px 20px;
+            background: rgba(255, 0, 0, 0.05);
+            -webkit-border-radius: 8px;
+            -khtml-border-radius: 8px;
+            -moz-border-radius: 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(255, 0, 0, 0.2);
+        }
+        
+        pre select {
+            font-family: Monaco, Courier;
+            border: 1px solid #c61800;
+        }
+        
+        input {
+            font-size: 100%;
+            margin-right: 10px;
+            font-family: Helvetica;
+            padding: 3px;
+        }
+        input[type="range"] {
+            width: 100%;
+        }
+        
+        button {
+            margin: 20px 10px 0 0;
+            font-family: Verdana;
+        }
+        
+        button.large {
+            font-size: 32px;
+        }
+        
+        pre b {
+            font-weight: normal;
+            color: #c61800;
+            text-shadow: #c61800 0 0 1px; /*letter-spacing: -1px;*/
+        }
+        pre em {
+            font-weight: normal;
+            font-style: normal;
+            color: #18a600;
+            text-shadow: #18a600 0 0 1px;
+        }
+        pre input[type="range"] {
+            height: 6px;
+            cursor: pointer;
+            width: auto;
+        }
+        
+        div.example {
+            display: block;
+            padding: 10px 20px;
+            color: black;
+            background: rgba(255, 255, 255, 0.4);
+            -webkit-border-radius: 8px;
+            -khtml-border-radius: 8px;
+            -moz-border-radius: 8px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+        
+        video {
+            -moz-border-radius: 8px;
+            -khtml-border-radius: 8px;
+            -webkit-border-radius: 8px;
+            border-radius: 8px;
+            border: 1px solid rgba(0, 0, 0, 0.2);
+        }
+        
+        .key {
+            font-family: 'Droid Sans';
+            color: black;
+            display: inline-block;
+            padding: 6px 10px 3px 10px;
+            font-size: 100%;
+            line-height: 30px;
+            text-shadow: none;
+            letter-spacing: 0;
+            bottom: 10px;
+            position: relative;
+            -moz-border-radius: 10px;
+            -khtml-border-radius: 10px;
+            -webkit-border-radius: 10px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: rgba(0, 0, 0, 0.1) 0 2px 5px;
+            -webkit-box-shadow: rgba(0, 0, 0, 0.1) 0 2px 5px;
+            -moz-box-shadow: rgba(0, 0, 0, 0.1) 0 2px 5px;
+            -o-box-shadow: rgba(0, 0, 0, 0.1) 0 2px 5px;
+        }
+        
+        .key {
+            font-family: Arial;
+        }
+        
+        :not(header) > .key {
+            margin: 0 5px;
+            bottom: 4px;
+        }
+        
+        .two-column {
+            -webkit-column-count: 2;
+            -moz-column-count: 2;
+            column-count: 2;
+        }
+        
+        .stroke {
+            -webkit-text-stroke-color: red;
+            -webkit-text-stroke-width: 1px;
+        }
+        /* currently webkit-only */
+        
+        .center {
+            text-align: center;
+        }
+        
+        #presentation-counter {
+            color: #ccc;
+            font-size: 70%;
+            letter-spacing: 1px;
+            position: absolute;
+            top: 40%;
+            left: 0;
+            width: 100%;
+            text-align: center;
+        }
+        
+        div:not(.current).reduced {
+            -webkit-transform: scale(0.8);
+            -moz-transform: scale(0.8);
+            -o-transform: scale(0.8);
+            transform: scale(0.8);
+        }
+        
+        .no-transitions {
+            -webkit-transition: none;
+            -moz-transition: none;
+            -o-transition: none;
+            transition: none;
+        }
+        
+        .no-gradients {
+            background: none;
+            background-color: #fff;
+        }
+        
+        ul.bulleted {
+            padding-left: 30px;
+        }
+        
+        p.resource-link a {
+            font-size: 50%;
+            border: medium none;
+            color: blue;
+            text-decoration: underline;
+            display: block;
+        }
+        
+        a {
+            border-bottom: 2px solid #3F3F3F;
+            color: inherit;
+            display: inline-block;
+            line-height: 110%;
+            text-decoration: none;
+        }
+        a.flickr {
+            font-size: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="presentation">
+        <div id="presentation-counter">
         </div>
-		
-		<div class='slide'>
-			<section>
-				<header><h1>Dojo Widgets</h1></header>
-				<ul class='bulleted'>
-					<li>Pre-packaged JavaScript, HTML, & CSS</li>
-					<li>Easy to re-use and maintain</li>
-				</ul>
-			</section>
-		</div>
-		
-		<div class='slide'>
-			<section>
-				<header>BaseMap Widget</header>
-				<img src='images/basemap.jpg'/>
-			</section>
-		</div>
-		
-		<div class='slide'>
-			<section>
-				<header>BaseMapSelector Widget</header>
-				<img src='images/basemapselector.jpg'/>
-			</section>
-		</div>
-		
-		<div class='slide'>
-			<section>
-				<header>Add UGIC Layer</header>
-				<img src='images/ugiclayer.jpg'/>
-			</section>
-		</div>
-		
-		<div class='slide'>
-			<section>
-				<header>Opacity Slider/Locate Widgets</header>
-				<img src='images/locatewidgets.jpg'/>
-			</section>
-		</div>
-		
-		<div class='slide'>
-			<section>
-				<header>MagicZoom Widget</header>
-				<img src='images/magiczoom.jpg'/>
-			</section>
-		</div>
-		
-		<div class='slide'>
-			<section class='middle'>
-				<header><h1>Resources</h1></header>
-				<p>
-					<a href='http://mapserv.utah.gov' target='_blank'>mapserv.utah.gov</a>
-				</p>
-				<p>
-					<a href='https://github.com/agrc/agrc.widgets' target='_blank'>GitHub - Demo Code<br>
-					https://github.com/agrc/agrc.widgets</a>
-			</section>
-		</div>
-		
-		<div class="slide" style='display: none;'> 
-          <section class="middle"> 
-            <h2> 
-              Options
-            </h2> 
-            <ul> 
-              <li><input type="checkbox" id="toggle-size" /><label for="toggle-size"><span>Grow</span></label></li> 
-              <li><input type="checkbox" id="toggle-transitions" checked /><label for="toggle-transitions"><span>Transitions</span></label></li> 
-              <li><input type="checkbox" id="toggle-gradients" checked /><label for="toggle-gradients"><span>Gradients</span></label></li> 
-              <li><input type="checkbox" id="toggle-counter" checked /><label for="toggle-counter"><span>Slide numbers</span></label></li> 
-            </ul> 
-          </section> 
-        </div> 
- 
-      </div> <!-- slides --> 
- 
-    </div> <!-- presentation --> 
- 
+        <div class="slides">
+            <div class="slide" id="title-slide">
+                <style>
+                    #title-slide h1 {
+                        letter-spacing: -2px;
+                        font-size: 66px;
+                    }
+                    #title-slide p {
+                        font-size: 30px;
+                    }
+                    #title-slide p.email {
+                        font-size: 20px;
+                    }
+                </style>
+                <section class="middle">
+                    <header>
+                        <h1>
+                            A Brief Tour of the AGRC Web Mapping Toolbox</h1>
+                    </header>
+                    <p>
+                        Matt Peters, Steve Gourley, Barry Biediger, Scott Davis</p>
+                    <p class="email">
+                        mpeters@utah.gov, sgourley@utah.gov, bbiediger@utah.gov, stdavis@utah.gov</p>
+                </section>
+            </div>
+            <div class="slide" id="toolbox-slide">
+                <style>
+                    #toolbox-slide ul {
+                        padding-top: 50px;
+                    }
+                </style>
+                <header>
+                    <h1>
+                        AGRC Web Mapping Toolbox</h1>
+                </header>
+                <section>
+                    <ul>
+                        <li>Dojo Widgets</li>
+                        <li>Cached Base Map Services</li>
+                        <li>ArcGIS Desktop Add-Ins</li>
+                    </ul>
+                </section>
+            </div>
+            <div class='slide'>
+                <header>
+                    <h1>
+                        Dojo Widgets</h1>
+                </header>
+                <section>
+                    <h2>
+                        Pre-packaged JavaScript, HTML, & CSS</h2>
+                    <img src="images/covers.jpg" style="float: right" />
+                    <ul>
+                        <li>Easy to re-use</li>
+                        <li>Easy to maintain</li>
+                        <li>East to share</li>
+                    </ul>
+                    <a href="http://www.flickr.com/photos/ameotoko/2616806517/" class="flickr">http://www.flickr.com/photos/ameotoko/2616806517/</a>
+                </section>
+            </div>
+            <div class='slide'>
+                <header>Scenario
+                </header>
+                <section class="middle">
+                    <h2>
+                        i want to show my data on a map on the web!</h2>
+                    <img src='images/glasses.jpg' height="300" />
+                    <h2>
+                        and i don't want to work hard to do it</h2>
+                    <a href="http://www.flickr.com/photos/elcapitanbsc/3544845524/" class="flickr">http://www.flickr.com/photos/elcapitanbsc/3544845524/</a>
+                </section>
+            </div>
+            <div class='slide'>
+                <header>
+                    <h1>
+                        You're in luck</h1>
+                </header>
+                <section style="height: 600px">
+                    <h2>
+                        we made what you want already.</h2>
+                    <div style="float: right">
+                        <img src='images/lightbulb.jpg' width="500" height="333" />
+                    </div>
+                    <p style="font-size: 75%">
+                        Find it all here</p>
+                    <a href="http://mapserv.utah.gov/docs/dojo" target="_blank">AGRC Widget Catalog</a>
+                    <p style="font-size: 75%">
+                        and if we didn't, let scott know.</p>
+                    <p>
+                        stdavis@utah.gov</p>
+                    <a href="http://www.flickr.com/photos/aaronth/3542878078/" class="flickr">http://www.flickr.com/photos/aaronth/3542878078/</a>
+                    <footer style="float: right">
+                        <a href="javascript:slideshow.go(6);">
+                            <img src="images/internet.jpg" height="50" /></a><a href="javascript:slideshow.go(7);"><img
+                                src="images/nointernet.jpg" height="50" /></a>
+                    </footer>
+                </section>
+            </div>
+            <div class="slide">
+                <header>Demo</header>
+                <section class="middle">
+                    <img src="images/demo.jpg" />
+                    <footer>
+                        <a href="http://www.flickr.com/photos/taniaedu/1555264228/" class="flickr">http://www.flickr.com/photos/taniaedu/1555264228/</a>
+                    </footer>
+                </section></div>
+            <div class='slide'>
+                <header>BaseMap Widget</header>
+                <section class="middle">
+                    <img src='images/basemap.jpg' />
+                </section>
+            </div>
+            <div class='slide'>
+                <header>Easy Enough</header>
+                <section class="middle">
+                    <img src='images/easy.jpg' />
+                    <a href="http://www.flickr.com/photos/ramdac/373881476/" class="flickr">http://www.flickr.com/photos/ramdac/373881476/</a>
+                </section>
+            </div>
+            <div class='slide'>
+                <header>
+                    <h1>
+                        I want my data</h1>
+                </header>
+                <section class="middle">
+                    <h2>
+                        show me my data!</h2>
+                    <img src="images/angry.jpg" height="350" />
+                    <a href="http://www.flickr.com/photos/maurymccown/2193880984/" class="flickr">http://www.flickr.com/photos/maurymccown/2193880984/</a>
+                    <footer style="float: right">
+                        <a href="javascript:slideshow.go(10);">
+                            <img src="images/internet.jpg" height="50" /></a><a href="javascript:slideshow.go(11);"><img
+                                src="images/nointernet.jpg" height="50" /></a>
+                    </footer>
+                </section>
+            </div>
+            <div class="slide">
+                <header>Demo</header>
+                <section class="middle">
+                    <img src="images/demo.jpg" />
+                    <footer>
+                        <a href="http://www.flickr.com/photos/taniaedu/1555264228/" class="flickr">http://www.flickr.com/photos/taniaedu/1555264228/</a>
+                    </footer>
+                </section></div>
+            <div class='slide'>
+                <header>Add UGIC Layer</header>
+                <section class="middle">
+                    <img src='images/ugiclayer.jpg' />
+                </section>
+            </div>
+            <div class='slide'>
+                <header>
+                    <h1>
+                        I want more</h1>
+                </header>
+                <section class="middle" style="height: 550px !important">
+                    <h2>
+                        i want different base maps like all the other websites have!</h2>
+                    <img src="images/more.jpg" height="200" />
+                    <p style="font-size: 75%; margin: 0; padding: 0;">
+                        See all of our current tiled base map caches</p>
+                    <a href="http://mapserv.utah.gov/CacheViewer" target="_blank">AGRC's Cache Viewer</a><br />
+                </section>
+                <footer style="float: right">
+                    <a href="javascript:slideshow.go(13);">
+                        <img src="images/internet.jpg" height="50" /></a><a href="javascript:slideshow.go(14);"><img
+                            src="images/nointernet.jpg" height="50" /></a>
+                </footer>
+                <a href="http://www.flickr.com/photos/thezhukeeper/5123344639/" target="_blank" class="flickr">
+                    http://www.flickr.com/photos/thezhukeeper/5123344639/</a>
+            </div>
+            <div class="slide">
+                <header>Demo</header>
+                <section class="middle">
+                    <img src="images/demo.jpg" />
+                    <footer>
+                        <a href="http://www.flickr.com/photos/taniaedu/1555264228/" class="flickr">http://www.flickr.com/photos/taniaedu/1555264228/</a>
+                    </footer>
+                </section></div>
+            <div class='slide'>
+                <header>BaseMapSelector Widget</header>
+                <section class="middle">
+                    <img src='images/basemapselector.jpg' />
+                </section>
+            </div>
+            <div class='slide'>
+                <header>
+                    <h1>
+                        I want to see my house</h1>
+                </header>
+                <section class="center">
+                    <h2>
+                        Everyone wants to see their house</h2>
+                    <img src="images/computer.jpg" />
+                    
+                    <a href="http://www.flickr.com/photos/argen/5460020427/" class="flickr">http://www.flickr.com/photos/argen/5460020427/</a><footer
+                        style="float: right">
+                        <a href="javascript:slideshow.go(16);">
+                            <img src="images/internet.jpg" height="50" /></a><a href="javascript:slideshow.go(17);"><img
+                                src="images/nointernet.jpg" height="50" /></a>
+                    </footer>
+                </section>
+            </div>
+            <div class="slide">
+                <header>Demo</header>
+                <section class="middle">
+                    <img src="images/demo.jpg" />
+                    <footer>
+                        <a href="http://www.flickr.com/photos/taniaedu/1555264228/" class="flickr">http://www.flickr.com/photos/taniaedu/1555264228/</a>
+                    </footer>
+                </section></div>
+            <div class='slide'>
+                <header>Opacity Slider/Locate Widgets</header>
+                <section class="middle">
+                    <img src='images/locatewidgets.jpg' />
+                </section>
+            </div>
+            <div class='slide'>
+                <header>
+                    <h1>
+                        Is this all magic?</h1>
+                </header>
+                <section class="middle">
+                    <img src="images/magic.jpg" height="450" />
+                    <h2 style="float: right; padding-right: 25px">
+                        Not really.</h2>
+                    <footer>
+                        <a href="javascript:slideshow.go(19);">
+                            <img src="images/internet.jpg" height="50" /></a><a href="javascript:slideshow.go(20);"><img
+                                src="images/nointernet.jpg" height="50" /></a>
+                    </footer>
+                </section>
+            </div>
+            <div class="slide">
+                <header>Demo</header>
+                <section class="middle">
+                    <img src="images/demo.jpg" />
+                    <footer>
+                        <a href="http://www.flickr.com/photos/taniaedu/1555264228/" class="flickr">http://www.flickr.com/photos/taniaedu/1555264228/</a>
+                    </footer>
+                </section></div>
+            <div class='slide'>
+                <header>MagicZoom Widget</header>
+                <section class="middle">
+                    <img src='images/magiczoom.jpg' />
+                </section>
+            </div>
+            <div class='slide'>
+                <header>
+                    <h1>
+                        I want even more</h1>
+                </header>
+                <section class="middle">
+                    <img src='images/candy.jpg' />
+                    <h2>
+                        I want this functionality in ArcMap!</h2>
+                    <footer>
+                        <a href="http://www.flickr.com/photos/kodamakitty/2883123883" class="flickr">http://www.flickr.com/photos/kodamakitty/2883123883</a>
+                    </footer>
+                </section>
+            </div>
+            <div class='slide'>
+                <header>
+                    <h1>
+                        Yeah, we've got that.</h1>
+                    <section class="center">
+                        <img src='images/agrcstaples.png' />
+                    </section>
+                </header>
+                <section class="middle">
+                    <img src='images/barry.jpg' height="300" />
+                </section>
+            </div>
+            <div class="slide">
+                <header>Demo</header>
+                <section class="middle">
+                    <img src="images/demo.jpg" />
+                    <footer>
+                        <a href="http://www.flickr.com/photos/taniaedu/1555264228/" class="flickr">http://www.flickr.com/photos/taniaedu/1555264228/</a>
+                    </footer>
+                </section></div>
+            <div class='slide'>
+                <section>
+                    <header>
+                        <h1>
+                            Resources</h1>
+                    </header>
+                    <p class="resource-link">
+                        <a href='http://mapserv.utah.gov' target='_blank'>mapserv.utah.gov</a> <a href='https://github.com/agrc/agrc.widgets'
+                            target='_blank'>GitHub - Demo Code and slides</a> <a href='https://twitter.com/#!/steveagrc'
+                                target='_blank'>Twitter: steveAGRC</a> <a href='https://twitter.com/#!/scottagrc'
+                                    target='_blank'>Twitter: scottAGRC</a> <a href='https://twitter.com/#!/barryagrc'
+                                        target='_blank'>Twitter: barryAGRC</a> <a href='https://twitter.com/#!/mattagrc'
+                                            target='_blank'>Twitter: mattAGRC</a>
+                    </p>
+                </section>
+            </div>
+        </div>
+        <!-- slides -->
+    </div>
+    <!-- presentation -->
     <script> 
-      (function() {
+      var slideshow =(function() {
         var doc = document;
         var disableBuilds = true;
  
@@ -869,19 +1073,15 @@
         };
  
         // Initialize
-        var slideshow = new SlideShow(query('.slide'));
 
-        document.querySelector('#toggle-counter').addEventListener('click', toggleCounter, false);
-        document.querySelector('#toggle-size').addEventListener('click', toggleSize, false);
-        document.querySelector('#toggle-transitions').addEventListener('click', toggleTransitions, false);
-        document.querySelector('#toggle-gradients').addEventListener('click', toggleGradients, false);
+        var slideshow = new SlideShow(query('.slide'));
  
         var counters = document.querySelectorAll('.counter');
         var slides = document.querySelectorAll('.slide');
- 
+
         function toggleCounter() {
           toArray(counters).forEach(function(el) {
-            el.style.display = (el.offsetHeight) ? 'none' : 'block';
+            el.style.display = 'none';
           });
         }
         
@@ -917,15 +1117,15 @@
             }
           });
         }
+
+        return slideshow;
       })();
-    </script> 
- 
+    </script>
     <!--[if lt IE 9]>
     <script 
       src="http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js">
     </script>
     <script>CFInstall.check({ mode: "overlay" });</script>
-    <![endif]--> 
-    
-  </body> 
+    <![endif]-->
+</body>
 </html>
