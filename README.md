@@ -35,25 +35,6 @@ property on djConfig so that Dojo knows where to look. Since most of our widgets
 	href='http://help.arcgis.com/en/webapi/javascript/arcgis/index.html'>ESRI's
 ArcGIS API for JavaScript</a>. We support the same browsers that they
 do. You can check them out <a
-	href='http://resources.arcgis.com/content/webapis/2.0/system-requirements'>here</a>.
+	href='http://resources.arcgis.com/content/webapis/3.0/system-requirements'>here</a>.
 If you have problems with IE 9 you can force it into compatibility mode
 with this meta tag: 
-
-<pre>&lt;meta http-equiv="X-UA-Compatible" content="IE=8"/&gt;</pre>
-
-<h3>Version Correlation</h3>
-<table>
-	<tr>
-		<th>AGRC</th>
-		<th>ESRI</th>
-		<th>Dojo</th>
-
-	</tr>
-	<tr>
-		<td>1.0</td>
-		<td>2.2</td>
-		<td>1.5</td>
-	</tr>
-</table>				</div>
-
-			</div>
