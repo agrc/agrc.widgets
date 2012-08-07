@@ -1,0 +1,53 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+        <title>Title Widget Tests</title>
+
+        <!-- META TAGS -->
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8">
+		<meta name="description" content="We should do some SEO" />
+        <meta name="keywords" content="Comma, Separated List"/>
+		
+		<!-- CSS -->
+		<link rel='stylesheet' type='text/css' href='http://serverapi.arcgisonline.com/jsapi/arcgis/2.4/js/dojo/dijit/themes/claro/claro.css'>
+    	<link rel='stylesheet' type='text/css' href='../../themes/standard/agrc.css' />
+		<link rel="stylesheet" type="text/css" href="jasmine-1.0.1/jasmine.css">
+		
+		<!-- JAVASCRIPT -->
+		<script type='text/javascript'>
+			dojoConfig={
+				isDebug: true,
+				debugAtAllCosts: true,
+				parseOnLoad: true,
+				baseUrl: './',
+				modulePaths: {
+					"agrc": "../../"
+				}
+			};
+		</script>
+		<script type='text/javascript' src='http://serverapi.arcgisonline.com/jsapi/arcgis/?v=2.4'></script>
+		<script type="text/javascript" src="jasmine-1.0.1/jasmine.js"></script>
+        <script type="text/javascript" src="jasmine-1.0.1/jasmine-html.js"></script>
+		<script type='text/javascript' src='spec/SpecWidgetName.js'></script>
+		<script type='text/javascript'>
+			dojo.require('agrc.widgets.blah.blah');
+			
+			function init(){
+				console.info("init", arguments);
+				
+				// init widget
+				
+				
+				// run tests
+				jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+	            jasmine.getEnv().execute();
+			}
+			
+			dojo.ready(init);
+		</script>
+	</head>
+	<body class='claro' style='overflow: auto;'>
+		<div id='test-div'></div>
+	</body>
+</html>

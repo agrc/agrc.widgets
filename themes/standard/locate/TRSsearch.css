@@ -1,0 +1,23 @@
+.trssearch {
+	padding: 4px;
+	width: 100px;
+}
+.trssearch table {
+	border-collapse: collapse;
+}
+.trssearch td {
+	padding-top: 0;
+	padding-bottom: 2px;
+}
+.trssearch .optional-msg {
+	font-size: small;
+	color: #646464;
+	float: right;
+	margin: -4px 5px 0 0;
+}
+.trssearch .dijitRadio {
+	margin-bottom: 3px;
+}
+.trssearch .zoom-button-sizer {
+	width: 72px;
+}

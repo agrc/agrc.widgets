@@ -1,0 +1,194 @@
+<div class='zoomtocoords'>
+    <fieldset>
+        <legend>Zoom To Coordinates</legend>Coordinate Type:
+        <br>
+        <select dojoattachpoint='typeSelect' dojotype='dijit.form.Select'>
+            <option value='dd'>Decimal Degrees</option>
+            <option value="dm">Degrees, Minutes</option>
+            <option value="dms">Degrees, Minutes, Seconds</option>
+            <option value="utm">Univeral Transverse Mercator</option>
+        </select>
+        <div dojoattachpoint='stackContainer' dojotype='dijit.layout.StackContainer'>
+            <div dojotype='dijit.layout.ContentPane' dojoattachpoint='dd'>
+                <table>
+                    <tr>
+                        <td class='label-cell'>
+                            Longitude (W)
+                        </td>
+                        <td class='text-box-cell'>
+                            <input dojoattachpoint='w_deg_dd' type="text" dojotype="dijit.form.NumberTextBox"
+                                constraints="{min:-180,max:180,pattern:'#.########'}" invalidMessage='Invalid Longitude'
+                                class='text-box full-width' placeHolder='000.000000'>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class='label-cell'>
+                            Latitude (N)
+                        </td>
+                        <td class='text-box-cell'>
+                            <input dojoattachpoint='n_deg_dd' type='text' dojotype='dijit.form.NumberTextBox'
+                                constraints="{min:-90,max:90,pattern:'#.########'}" invalidMessage='Invalid Latitude'
+                                class='text-box full-width' placeHolder='00.000000'>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div dojotype="dijit.layout.ContentPane" dojoattachpoint='dm'>
+                <table>
+                    <tr>
+                        <td class="label-cell">
+                            Longitude (W)
+                        </td>
+                        <td class='text-box-cell'>
+                            <table class="inner-table">
+                                <tr>
+                                    <td>
+                                        <input dojoattachpoint="w_deg_dm" type="text" dojotype="dijit.form.NumberTextBox"
+                                            constraints="{min: -180, max: 180}" invalidMessage='Invalid Degree' class='text-box small-box'
+                                            placeHolder='00'>
+                                    </td>
+                                    <td>
+                                        &#176;&nbsp;&nbsp;
+                                    </td>
+                                    <td>
+                                        <input dojoattachpoint="w_min_dm" type="text" dojotype="dijit.form.NumberTextBox"
+                                            constraints="{min: 0, max: 60}" invalidMessage='Invalid Decimal Minute' class='text-box small-box'
+                                            placeHolder='00.000'>
+                                    </td>
+                                    <td>
+                                        &#39;
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">
+                            Latitude (N)
+                        </td>
+                        <td class='text-box-cell'>
+                            <table class="inner-table">
+                                <tr>
+                                    <td>
+                                        <input dojoattachpoint="n_deg_dm" type="text" dojotype="dijit.form.NumberTextBox"
+                                            constraints="{min: -90, max: 90}" invalidMessage='Invalid Degree' class='text-box small-box'
+                                            placeHolder='00'>
+                                    </td>
+                                    <td>
+                                        &#176;&nbsp;&nbsp;
+                                    </td>
+                                    <td>
+                                        <input dojoattachpoint="n_min_dm" type="text" dojotype="dijit.form.NumberTextBox"
+                                            constraints="{min: 0, max: 60}" invalidMessage='Invalid Decimal Minute' class='text-box small-box'
+                                            placeHolder='00.000'>
+                                    </td>
+                                    <td>
+                                        &#39;
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div dojotype="dijit.layout.ContentPane" dojoattachpoint='dms'>
+                <table>
+                    <tr>
+                        <td class="label-cell">
+                            Longitude (W)
+                        </td>
+                        <td class='text-box-cell'>
+                            <table class="inner-table">
+                                <tr>
+                                    <td>
+                                        <input dojoattachpoint="w_deg_dms" type="text" dojotype="dijit.form.NumberTextBox"
+                                            constraints="{min: -180, max: 180}" invalidMessage='Invalid Degree' class='text-box smaller-box'
+                                            placeHolder='00'>
+                                    </td>
+                                    <td>
+                                        &#176;&nbsp;&nbsp;
+                                    </td>
+                                    <td>
+                                        <input dojoattachpoint="w_min_dms" type="text" dojotype="dijit.form.NumberTextBox"
+                                            constraints="{min: 0, max: 60}" invalidMessage='Invalid Minute' class='text-box smaller-box'
+                                            placeHolder='00'>
+                                    </td>
+                                    <td>
+                                        &#39;&nbsp;&nbsp;
+                                    </td>
+                                    <td>
+                                        <input dojoattachpoint="w_sec_dms" type="text" dojotype="dijit.form.NumberTextBox"
+                                            constraints="{min: 0, max: 60}" invalidMessage='Invalid Second' class='text-box smaller-box'
+                                            placeHolder='00'>
+                                    </td>
+                                    <td>
+                                        &#34;
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="label-cell">
+                            Latitude (N)
+                        </td>
+                        <td class='text-box-cell'>
+                            <table class="inner-table">
+                                <tr>
+                                    <td>
+                                        <input dojoattachpoint="n_deg_dms" type="text" dojotype="dijit.form.NumberTextBox"
+                                            constraints="{min: -90, max: 90}" invalidMessage='Invalid Degree' class='text-box smaller-box'
+                                            placeHolder='00'>
+                                    </td>
+                                    <td>
+                                        &#176;&nbsp;&nbsp;
+                                    </td>
+                                    <td>
+                                        <input dojoattachpoint="n_min_dms" type="text" dojotype="dijit.form.NumberTextBox"
+                                            constraints="{min: 0, max: 60}" invalidMessage='Invalid Minute' class='text-box smaller-box'
+                                            placeHolder='00'>
+                                    </td>
+                                    <td>
+                                        &#39;&nbsp;&nbsp;
+                                    </td>
+                                    <td>
+                                        <input dojoattachpoint="n_sec_dms" type="text" dojotype="dijit.form.NumberTextBox"
+                                            constraints="{min: 0, max: 60}" invalidMessage='Invalid Second' class='text-box smaller-box'
+                                            placeHolder='00'>
+                                    </td>
+                                    <td>
+                                        &#34;
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+            <div dojotype='dijit.layout.ContentPane' dojoattachpoint='utm'>
+                <table>
+                    <tr>
+                        <td class='label-cell'>
+                            X
+                        </td>
+                        <td class='text-box-cell'>
+                            <input dojoattachpoint='x_utm' type="text" dojotype="dijit.form.NumberTextBox" class='text-box full-width'>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class='label-cell'>
+                            Y
+                        </td>
+                        <td class='text-box-cell'>
+                            <input dojoattachpoint='y_utm' type='text' dojotype='dijit.form.NumberTextBox' class='text-box full-width'>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <button dojoattachpoint='zoomButton' dojotype='dijit.form.Button' type="submit" class='zoom-button'>
+            <div class="zoom-button-inner">
+                Zoom</div>
+        </button>
+    </fieldset>
+</div>

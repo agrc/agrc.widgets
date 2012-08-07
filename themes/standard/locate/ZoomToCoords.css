@@ -1,0 +1,42 @@
+.zoomtocoords .label-cell {
+    text-align: right;
+}
+.zoomtocoords .text-box-cell {
+    width: 100%;
+}
+.zoomtocoords .text-box {
+	height: 100%;
+	padding: 4px 2px;
+}
+.zoomtocoords .full-width {
+	width: 97%;
+}
+.zoomtocoords .zoom-button {
+	margin: 1px 4px 5px;
+	float: right;
+}
+.zoomtocoords .zoom-button-inner {
+	width: 90px;
+}
+.zoomtocoords fieldset {
+	padding-top: 0px;
+	padding-bottom: 0px;
+}
+.zoomtocoords .dijitContentPane {
+	padding: 0px;
+}
+.zoomtocoords .small-box {
+	width: 55px;
+}
+.zoomtocoords .inner-table {
+	margin: -3px;
+}
+.zoomtocoords .smaller-box {
+	width: 30px;
+}
+
+/* dojo hack for IE */
+.zoomtocoords .dijitTextBox INPUT {
+	font-size: 11px;
+	font-family: Verdana, Arial, Helvetica, sans-serif !important;
+}

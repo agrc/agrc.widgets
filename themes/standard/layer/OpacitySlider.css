@@ -1,0 +1,33 @@
+.opacity-slider {
+	
+}
+.opacity-slider .slider-container {
+	height: 30px;
+	float: none;
+}
+.opacity-slider .legend {
+	height: 19px;
+    width: 70px;
+	float: left;
+	margin-top: 6px;
+	margin-left: 2px;
+	background-color: black;
+	display: none;
+}
+.opacity-slider .left-label {
+	float: left;
+}
+.opacity-slider .right-label {
+	float: right;
+}
+.opacity-slider .slider-label {
+	margin: 3px 5px;
+	font-size: 9px;
+	color: gray;
+}
+.opacity-slider .slider {
+	margin-top: 6px;
+}
+.tundra .opacity-slider .slider-label {
+	font-size: 11px !important;
+}

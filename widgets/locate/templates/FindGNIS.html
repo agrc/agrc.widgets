@@ -1,0 +1,29 @@
+<div class="find-gnis">
+    <fieldset>
+        <legend>Find Place Name<span dojoAttachPoint='labelNode'></span></legend>
+        <table>
+            <tr>
+                <td class="label-cell">
+                    <span dojoAttachPoint='fieldLabelNode'>Name</span>
+                </td>
+                <td class="text-box-cell">
+                    <input dojoAttachPoint="txt_box" class="text-box" dojoType="dijit.form.ValidationTextBox"
+                        tooltipPosition='before' />
+                </td>
+            </tr>
+            <tr>
+                <td>
+                </td>
+                <td class='btn-cell'>
+                    <button dojoAttachPoint="findbtn" dojoType="dijit.form.Button" class="find-btn">
+                        <!-- this extra div is required to adjust the width of the button -->
+                        <div class="find-btn-inner">
+                            Zoom</div>
+                    </button>
+                </td>
+            </tr>
+        </table>
+        <table dojoAttachPoint='matchesTable' class='matches-table' cellpadding="0" cellspacing="0">
+        </table>
+    </fieldset>
+</div>

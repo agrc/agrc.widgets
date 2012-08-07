@@ -1,0 +1,131 @@
+/*background utah canvas layer in psd*/
+.claro .agrc .selectorCanvas, .claro.agrc .selectorCanvas, .agrc .claro .selectorCanvas {
+    background: url("../images/BaseMapSelectorSprite.png") no-repeat scroll 0 -429px transparent;
+    height: 95px;
+    position: absolute;
+    width: 78px;
+    cursor: pointer;
+}
+/*glass like stuff and outlines on top of canvas*/
+.claro .agrc .selectorLens, .claro.agrc .selectorLens, .agrc .claro .selectorLens {
+    background: url("../images/BaseMapSelectorSprite.png") no-repeat scroll 0 -332px transparent;
+    height: 86px;
+    position: absolute;
+    width: 75px;
+    z-index: 1;
+}
+.tundra .agrc .selectorCanvas, .tundra.agrc .selectorCanvas, .agrc .tundra .selectorCanvas{
+    background: url("../images/BaseMapSelectorSprite.png") no-repeat scroll -76px -429px transparent;
+    height: 95px;
+    position: absolute;
+    width: 78px;
+    cursor: pointer;
+}
+/*glass like stuff and outlines on top of canvas*/
+.tundra .agrc .selectorLens, .tundra.agrc .selectorLens, .agrc .tundra .selectorLens {
+    background: url("../images/BaseMapSelectorSprite.png") no-repeat scroll -76px -332px transparent;
+    height: 86px;
+    position: absolute;
+    width: 75px;
+    z-index: 1;
+}
+.agrc .selectorView, .selectorXRay {
+    background-color: transparent;
+    height: 49px;
+    overflow: hidden;
+    position: absolute;
+    top: 8px;
+    width: 65px;
+}
+.agrc .selectorTheme-Label {
+    background-color: transparent;
+    border-top: 1px dashed #CCCCCC;
+    height: 16px;
+    left: 5px;
+    margin-left: 5px;
+    position: absolute;
+    text-align: center;
+    top: 61px;
+    width: 59px;
+    z-index: 32;
+    overflow: hidden;
+}
+.agrc .selectorLabel-Text {
+    position: relative;
+    top: 2px;
+    color: #131313;
+    font-family: Verdana,Arial,Helvetica,sans-serif;
+    font-size: 8pt;
+}
+.agrc.BL .selectorMain {
+    -moz-user-select: none;
+    position: absolute;
+    z-index: 30;
+    bottom: 0;
+    margin: 0;
+    padding: 0;
+    height: 95px;
+    width: 78px;
+}
+.agrc.TR .selectorMain {
+    -moz-user-select: none;
+    position: absolute;
+    z-index: 30;
+    right: 0;
+    top: 5px;
+    margin: 0;
+    padding: 0;
+    height: 95px;
+    width: 78px;
+}
+.agrc.TL .selectorMain {
+    -moz-user-select: none;
+    position: absolute;
+    z-index: 30;
+    top: 5px;
+    margin: 0;
+    padding: 0;
+    height: 95px;
+    width: 78px;
+}
+.agrc.BR .selectorMain {
+    -moz-user-select: none;
+    position: absolute;
+    z-index: 30;
+    right: 0;
+    bottom: 0;
+    margin: 0;
+    padding: 0;
+    height: 95px;
+    width: 78px;
+}
+.agrc .selectorContainer {
+    height: 95px;
+    overflow: hidden;
+    width: 78px;
+    cursor: pointer;
+}
+.agrc .Streets {
+    background: url("../images/BaseMapSelectorSprite.png") no-repeat scroll 0 -84px transparent !important;
+}
+.agrc .Topo {
+    background: url("../images/BaseMapSelectorSprite.png") no-repeat scroll 0 -18px transparent !important;
+}
+.agrc .Hillshade {
+    background: url("../images/BaseMapSelectorSprite.png") no-repeat scroll 0 -213px transparent !important;
+}
+.agrc .Imagery {
+    background: url("../images/BaseMapSelectorSprite.png") no-repeat scroll 0 -149px transparent !important;
+}
+.agrc .Hybrid {
+    background: url("../images/BaseMapSelectorSprite.png") no-repeat scroll 0 -276px transparent !important;
+}
+.agrc .custom {
+    background: url("../images/BaseMapSelectorSprite.png") no-repeat scroll -76px -276px transparent;
+}
+.agrc .Terrain {
+    background: url("../images/BaseMapSelectorSprite.png") no-repeat scroll -76px -18px transparent !important;
+}
+.agrc .Lite{
+    background: url("../images/BaseMapSelectorSprite.png") no-repeat scroll -76px -84px transparent !important;
+}

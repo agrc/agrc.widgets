@@ -1,0 +1,116 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>TEST: BaseMapSelector</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <meta name="description" content="agrc.widgets.map.BaseMapSelector Test" />
+    <meta name="keywords" content="agrc.widgets.map.BaseMapSelector, basemapselector, tests, test, javascript" />
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="jasmine-1.0.1/jasmine.css">
+    <link rel='stylesheet' type='text/css' href='http://serverapi.arcgisonline.com/jsapi/arcgis/2.4/js/dojo/dijit/themes/claro/claro.css' />
+    <link rel='stylesheet' type='text/css' href='http://serverapi.arcgisonline.com/jsapi/arcgis/2.4/js/dojo/dijit/themes/tundra/tundra.css' />
+    <style type='text/css'>
+        @import '../../themes/standard/agrc.css';
+        html, body, #masterBc {
+            width: 100%;
+            height: 95%;
+            border: 0;
+            padding: 0;
+            margin: 0;
+        }
+        
+        #right, #left {
+            width: 49%;
+        }
+    </style>
+    <!-- JASMINE REFERENCES -->
+    <script type="text/javascript" src="jasmine-1.0.1/jasmine.js"></script>
+    <script type="text/javascript" src="jasmine-1.0.1/jasmine-html.js"></script>
+    <!-- SPEC FILES -->
+    <script type="text/javascript" src="spec/SpecBaseMapSelector.js"></script>
+    <!-- DOJO REFERENCES -->
+    <script type='text/javascript'>
+        djConfig = {
+            isDebug: true,
+            debugAtAllCosts: true,
+            parseOnLoad: true,
+            baseUrl: "./",
+            dojoBlankHtmlUrl: './blank.htm',
+            modulePaths: { "agrc": "../.." }
+        };
+    </script>
+    <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=2.4"></script>
+    <script type='text/javascript'>
+        dojo.require('agrc.widgets.map.BaseMap');
+        dojo.require('agrc.widgets.map.BaseMapSelector');
+        dojo.require('dijit.layout.ContentPane');
+        dojo.require('dijit.layout.BorderContainer');
+
+        var selector = {}, map = {}, map2 = {}, selector2 = {};
+
+        function init() {
+            var options = {
+                'useDefaultExtent': true,
+                'useDefaultBaseMap': false,
+				'nav': true
+            };
+
+            map = new agrc.widgets.map.BaseMap('basemap-div', options);
+
+            var bbLayer = new esri.layers.ArcGISDynamicMapServiceLayer("//mapserv.utah.gov/ArcGIS/rest/services/PoliticalDistricts/MapServer", {
+                opacity: 0.50
+            });
+            var hLayer = new esri.layers.ArcGISTiledMapServiceLayer("//mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Hillshade/MapServer");
+
+            //TR, BR, TL, BL
+            selector = new agrc.widgets.map.BaseMapSelector({ map: map, id: "tundra", position: "BL" });
+
+            var themeInfo = new agrc.widgets.map.ThemeInfo({
+                label: 'testCustomTheme',
+                layers: [bbLayer, hLayer]
+            });
+
+            selector.addTheme(themeInfo);
+
+            dojo.subscribe("agrc.widgets.map.BaseMapSelector.onChangeTheme_" + selector.id, function (themeInfo) { dojo.byId("onChangeTheme_tundra").innerHTML = themeInfo.label; });
+
+            map2 = new agrc.widgets.map.BaseMap('basemap-div2', options);
+            selector2 = new agrc.widgets.map.BaseMapSelector({ map: map2, id: "claro" });
+            dojo.subscribe("agrc.widgets.map.BaseMapSelector.onChangeTheme_" + selector2.id, function (themeInfo) { dojo.byId("onChangeTheme_claro").innerHTML = themeInfo.label; });
+
+            jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+            jasmine.getEnv().execute();
+        }
+
+        dojo.ready(init);
+    </script>
+</head>
+<body>
+    <div dojotype="dijit.layout.BorderContainer" id="masterBc" class="agrc">
+        <div dojotype="dijit.layout.ContentPane" region="top">
+            <p>
+                Test for the agrc.widgets.map.BaseMapSelector. Below are both themes available -
+                tundra and claro.
+            </p>
+        </div>
+        <div dojotype="dijit.layout.ContentPane" region="leading" id="left" class="tundra">
+            <div id='basemap-div' style="height: 500px">
+            </div>
+            <div dojotype="dijit.layout.ContentPane" region="bottom">
+                Subscription to this selectors onChangeTheme event
+                <div id="onChangeTheme_tundra">
+                </div>
+            </div>
+        </div>
+        <div dojotype="dijit.layout.ContentPane" region="trailing" id="right" class="claro">
+            <div id='basemap-div2' style="height:500px">
+            </div>
+            <div dojotype="dijit.layout.ContentPane" region="bottom">
+                Subscription to this selectors onChangeTheme event
+                <div id="onChangeTheme_claro">
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

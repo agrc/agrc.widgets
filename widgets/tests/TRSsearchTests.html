@@ -1,0 +1,109 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+	<head>
+        <title>TRSsearch Widget Tests</title>
+
+        <!-- META TAGS -->
+		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+		<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8">
+		<meta name="description" content="We should do some SEO" />
+        <meta name="keywords" content="Comma, Separated List"/>
+		
+		<!-- CSS -->
+		<link rel="stylesheet" type="text/css" href="http://serverapi.arcgisonline.com/jsapi/arcgis/2.4/js/dojo/dijit/themes/claro/claro.css">
+		<link rel="stylesheet" type="text/css" href="jasmine-1.0.1/jasmine.css">
+		<style type="text/css">
+			@import '../../themes/standard/agrc.css';
+
+	        html, body, #masterBc {
+	            width: 100%;
+	            height: 95%;
+	            border: 0;
+	            padding: 0;
+	            margin: 0;
+	        }
+	        #right {
+	            width: 150px;
+	        }
+	        .demo-widget {
+	        	border: 1px gray solid;
+	        }
+	        #map {
+	        	width: 100%;
+	        	height: 100%;
+	        }
+		</style>
+		
+		<!-- JAVASCRIPT -->
+		<script type="text/javascript">
+			dojoConfig={
+				isDebug: true,
+				debugAtAllCosts: true,
+				parseOnLoad: true,
+				baseUrl: "./",
+				modulePaths: {
+					"agrc": "../../"
+				}
+			};
+		</script>
+		<script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/?v=2.4"></script>
+		<script type="text/javascript" src="jasmine-1.0.1/jasmine.js"></script>
+        <script type="text/javascript" src="jasmine-1.0.1/jasmine-html.js"></script>
+		<script type="text/javascript" src="spec/SpecTRSsearch.js"></script>
+		<script type="text/javascript">
+			dojo.require('agrc.widgets.locate.TRSsearch');
+			dojo.require('agrc.widgets.map.BaseMap');
+			dojo.require('dijit.layout.BorderContainer');
+			dojo.require('dijit.layout.ContentPane');
+			
+			var map, demoWidget;
+			dojo.ready(function(){
+				map = new agrc.widgets.map.BaseMap("map");
+				var lyr = new esri.layers.ArcGISDynamicMapServiceLayer("//mapserv.utah.gov/ArcGIS/rest/services/UtahPLSS/MapServer");
+				map.addLayer(lyr);
+				
+				demoWidget = new agrc.widgets.locate.TRSsearch({
+					map: map,
+					'class': 'demo-widget'
+				}, "demo-widget");
+				
+				demoWidget2 = new agrc.widgets.locate.TRSsearch({'class': 'demo-widget'}, "demo-widget2");
+				
+				demoWidget3 = new agrc.widgets.locate.TRSsearch({
+					'class': 'demo-widget',
+					sectionRequired: true
+				}, "demo-widget3");
+				
+				// run tests
+				jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
+	            jasmine.getEnv().execute();
+			});
+		</script>
+	</head>
+	<body>
+		<div dojotype="dijit.layout.BorderContainer" id="masterBc" class="agrc claro">
+	        <div dojotype="dijit.layout.ContentPane" region="top">
+	            <p>
+	                Tests for the agrc.widgets.locate.TRSsearch widget.
+	            </p>
+	        </div>
+	        <div dojotype="dijit.layout.ContentPane" region="center" id="left">
+	        	<div id="map"></div>
+	        </div>
+	        <div dojotype="dijit.layout.ContentPane" region="trailing" id="right" style="overflow:auto!important">
+	            <div>
+	            	defaults
+	                <div id="demo-widget"></div>
+	                <br>
+	                
+	                no map
+	                <div id="demo-widget2"></div>
+	                <br>
+	                
+	                section required
+	                <div id="demo-widget3"></div>
+	            </div>
+	        </div>
+    	</div>
+	</body>
+</html>

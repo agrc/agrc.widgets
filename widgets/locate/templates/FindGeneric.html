@@ -1,0 +1,29 @@
+<div class="find-generic">
+	<fieldset>
+		<legend>Find <span dojoAttachPoint='labelNode'></span></legend>
+			<table>
+				<tr>
+					<td class="label-cell">
+						<span dojoAttachPoint='fieldLabelNode'></span>
+					</td>
+					<td class="text-box-cell">
+						<div dojoAttachPoint="txt_box"
+							class="text-box" hasDownArrow="${displayDropDownArrow}"
+							dojoType="dijit.form.FilteringSelect"
+							searchattr="Value" required='false'></div>
+					</td>
+				</tr>
+				<tr>
+					<td></td>
+					<td class="btn-cell">
+                        <button type="submit" dojoattachpoint="btn_find" dojotype="dojox.form.BusyButton"
+                            class="find-btn" dojoattachevent="onClick:find" busyLabel="locating...">
+                            <!-- this extra div is required to adjust the width of the button -->
+							<div class="find-btn-inner">Zoom</div>
+						</button>
+                        <span dojoattachpoint='errorMsg' class="error-msg">There was a problem with the last request.</span>
+                    </td>
+				</tr>
+			</table>
+	</fieldset>
+</div>
