@@ -3,7 +3,7 @@
 You can use our widgets just like any other 
 <a href='http://dojotoolkit.org/reference-guide/dijit/info.html#dijit-info' target='_blank'>Dojo widget</a>. 
 Just be sure to set your 
-<a href='http://dojotoolkit.org/reference-guide/djConfig.html#finding-resources-in-non-standard-locations' target='_blank'>modulePaths</a> 
+<a href='http://dojotoolkit.org/reference-guide/1.6/djConfig.html/#finding-resources-in-non-standard-locations' target='_blank'>modulePaths</a> 
 property on djConfig so that Dojo knows where to look. Since most of our widgets are built on 
 <a href='http://help.arcgis.com/en/webapi/javascript/arcgis/index.html'>ESRI's ArcGIS API for JavaScript</a>, you'll have to load their api as well. See below for an example:
 <pre>
