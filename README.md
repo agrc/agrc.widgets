@@ -36,5 +36,3 @@ property on djConfig so that Dojo knows where to look. Since most of our widgets
 ArcGIS API for JavaScript</a>. We support the same browsers that they
 do. You can check them out <a
 	href='http://resources.arcgis.com/content/webapis/2.0/system-requirements'>here</a>.
-If you have problems with IE 9 you can force it into compatibility mode
-with this meta tag: 
