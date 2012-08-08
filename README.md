@@ -35,4 +35,4 @@ property on djConfig so that Dojo knows where to look. Since most of our widgets
 	href='http://help.arcgis.com/en/webapi/javascript/arcgis/index.html'>ESRI's
 ArcGIS API for JavaScript</a>. We  <a
 	href='http://resources.arcgis.com/content/webapis/2.0/system-requirements'>support the same browsers that they
-do.here</a>.
+do</a>.
