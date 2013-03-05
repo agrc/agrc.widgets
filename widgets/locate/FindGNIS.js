@@ -52,11 +52,11 @@ dojo.declare("agrc.widgets.locate.FindGNIS", [dijit._Widget, dijit._Templated], 
 
 	// _searchUrl: [private] String
 	//		the url to the agrc map service that the validation text box points at;
-	_searchUrl: '//mapserv.utah.gov/WSUT/Dojo.svc/GNIS?Value=',
+	_searchUrl: 'http://mapserv.utah.gov/WSUT/Dojo.svc/GNIS?Value=',
 
 	// _envelopeUrl: [private] String
 	//		The url to the agrc map service that returns the feature envelope.
-	_envelopeUrl: '//mapserv.utah.gov/WSUT/FeatureGeometry.svc/GetEnvelope/find-gnis-widget/layer(SGID93.LOCATION.PlaceNamesGNIS2000)where(NAME)(=)(searchValue)quotes=true',
+	_envelopeUrl: 'http://mapserv.utah.gov/WSUT/FeatureGeometry.svc/GetEnvelope/find-gnis-widget/layer(SGID93.LOCATION.PlaceNamesGNIS2000)where(NAME)(=)(searchValue)quotes=true',
 
 	// _isOverTable: Boolean
 	//		switch to help with onBlur callback on search box

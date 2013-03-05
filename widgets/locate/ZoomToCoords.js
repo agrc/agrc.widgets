@@ -46,7 +46,7 @@ dojo.declare('agrc.widgets.locate.ZoomToCoords', [dijit._Widget, dijit._Template
 
 	// geoServiceURL: String
 	//		The url to the geometry service
-	geoServiceURL: '//mapserv.utah.gov/ArcGIS/rest/services/Geometry/GeometryServer',
+	geoServiceURL: 'http://mapserv.utah.gov/ArcGIS/rest/services/Geometry/GeometryServer',
 
 	// _geoService: [private] esri.tasks.GeometryService
 	//		A pointer to the geometry service object

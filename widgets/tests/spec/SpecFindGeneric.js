@@ -33,8 +33,8 @@ describe('FindGeneric Tests', function () {
 			_getStoreForTextBox: function () { }
 		}).placeAt(dojo.body());
 
-		expect(widget._searchUrl).toBe('//mapserv.utah.gov/WSUT/GetFeatureAttributes.svc/find-generic-widget/layer(SGID93.BOUNDARIES.Municipalities)returnAttributes(Name)where(Name)(=)( )?dojo');
-		expect(widget._envelopeUrl).toBe('//mapserv.utah.gov/WSUT/FeatureGeometry.svc/GetEnvelope/find-generic-widget/layer(SGID93.BOUNDARIES.Municipalities)where(Name)(=)([searchValue])quotes=true');
+		expect(widget._searchUrl).toBe('http://mapserv.utah.gov/WSUT/GetFeatureAttributes.svc/find-generic-widget/layer(SGID93.BOUNDARIES.Municipalities)returnAttributes(Name)where(Name)(=)( )?dojo');
+		expect(widget._envelopeUrl).toBe('http://mapserv.utah.gov/WSUT/FeatureGeometry.svc/GetEnvelope/find-generic-widget/layer(SGID93.BOUNDARIES.Municipalities)where(Name)(=)([searchValue])quotes=true');
 	});
 
 	it('should set default values for label and fieldLabel if nothing is supplied', function () {
@@ -91,7 +91,7 @@ describe('FindGeneric Tests', function () {
 
 		// assert
 		expect(widget.find).toHaveBeenCalled();
-		expect(widget._invokeWebService).toHaveBeenCalledWith({ url: '//mapserv.utah.gov/WSUT/FeatureGeometry.svc/GetEnvelope/find-generic-widget/layer(SGID93.BOUNDARIES.Counties)where(Name)(=)(DAGGET)quotes=true' });
+		expect(widget._invokeWebService).toHaveBeenCalledWith({ url: 'http://mapserv.utah.gov/WSUT/FeatureGeometry.svc/GetEnvelope/find-generic-widget/layer(SGID93.BOUNDARIES.Counties)where(Name)(=)(DAGGET)quotes=true' });
 
 		expect(widget._onFind).toHaveBeenCalled();
 		expect(widget._onFind).toHaveBeenCalledWith(result);
@@ -118,7 +118,7 @@ describe('FindGeneric Tests', function () {
 		expect(widget.fieldLabelNode.innerHTML).toEqual(args.fieldLabel);
 		expect(widget.labelNode.innerHTML).toEqual(args.label);
 
-		expect(widget._searchUrl).toBe('//mapserv.utah.gov/WSUT/GetFeatureAttributes.svc/find-generic-widget/layer(SGID93.BOUNDARIES.Counties)returnAttributes(CountyNmbr)where(CountyNmbr)(=)( )?dojo');
-		expect(widget._envelopeUrl).toBe('//mapserv.utah.gov/WSUT/FeatureGeometry.svc/GetEnvelope/find-generic-widget/layer(SGID93.BOUNDARIES.Counties)where(CountyNmbr)(=)([searchValue])quotes=true');
+		expect(widget._searchUrl).toBe('http://mapserv.utah.gov/WSUT/GetFeatureAttributes.svc/find-generic-widget/layer(SGID93.BOUNDARIES.Counties)returnAttributes(CountyNmbr)where(CountyNmbr)(=)( )?dojo');
+		expect(widget._envelopeUrl).toBe('http://mapserv.utah.gov/WSUT/FeatureGeometry.svc/GetEnvelope/find-generic-widget/layer(SGID93.BOUNDARIES.Counties)where(CountyNmbr)(=)([searchValue])quotes=true');
 	});
 });

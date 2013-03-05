@@ -249,7 +249,7 @@ dojo.declare("agrc.widgets.map.BaseMap", esri.Map, {
 		console.info(this.declaredClass + "::" + arguments.callee.nom);
 
 		// build basemap url
-		var url = '//mapserv.utah.gov/ArcGIS/rest/services/' + cacheName + '/MapServer';
+		var url = 'http://mapserv.utah.gov/ArcGIS/rest/services/' + cacheName + '/MapServer';
 		var lyr = new esri.layers.ArcGISTiledMapServiceLayer(url);
 		this.addLayer(lyr);
 	},

@@ -78,7 +78,7 @@ dojo.declare("agrc.widgets.locate.FindGeneric", [dijit._Widget, dijit._Templated
 
 	// _searchUrlTemplate: [private] String
 	//		the template url to the agrc map service that the validation text box points at;
-	_searchUrlTemplate: '//mapserv.utah.gov/WSUT/GetFeatureAttributes.svc/find-generic-widget/layer({layerName})returnAttributes({searchFieldName})where({searchFieldName})(=)( )?dojo',
+	_searchUrlTemplate: 'http://mapserv.utah.gov/WSUT/GetFeatureAttributes.svc/find-generic-widget/layer({layerName})returnAttributes({searchFieldName})where({searchFieldName})(=)( )?dojo',
 
 	// _envelopeUrl: [private] String
 	//		The url to the agrc map service that returns the feature envelope.
@@ -86,7 +86,7 @@ dojo.declare("agrc.widgets.locate.FindGeneric", [dijit._Widget, dijit._Templated
 
 	// _envelopeUrlTemplate: [private] String
 	//		The template url to the agrc map service that returns the feature envelope.
-	_envelopeUrlTemplate: '//mapserv.utah.gov/WSUT/FeatureGeometry.svc/GetEnvelope/find-generic-widget/layer({layerName})where({searchFieldName})(=)([searchValue])quotes=true',
+	_envelopeUrlTemplate: 'http://mapserv.utah.gov/WSUT/FeatureGeometry.svc/GetEnvelope/find-generic-widget/layer({layerName})where({searchFieldName})(=)([searchValue])quotes=true',
 
 	// _store: dojo.data.Store
 	//      the autocomeplete store

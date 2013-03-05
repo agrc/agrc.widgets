@@ -39,7 +39,7 @@
 				var bMap = new agrc.widgets.map.BaseMap('map-div');
 				
 				// add layer
-				var l = new esri.layers.ArcGISDynamicMapServiceLayer('//mapserv.utah.gov/ArcGIS/rest/services/Broadband/ProviderCoverage/MapServer', {opacity: 0.5});
+				var l = new esri.layers.ArcGISDynamicMapServiceLayer('http://mapserv.utah.gov/ArcGIS/rest/services/Broadband/ProviderCoverage/MapServer', {opacity: 0.5});
 				bMap.addLayer(l);
 				
 				// init widget

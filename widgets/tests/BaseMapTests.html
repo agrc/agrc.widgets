@@ -58,7 +58,7 @@
 
             // add overlay layer
             var overlayBaseMap = new agrc.widgets.map.BaseMap('basemap-div-overlay');
-            var lyr = new esri.layers.ArcGISDynamicMapServiceLayer('//mapserv.utah.gov/ArcGIS/rest/services/Broadband/ProviderCoverage/MapServer', {
+            var lyr = new esri.layers.ArcGISDynamicMapServiceLayer('http://mapserv.utah.gov/ArcGIS/rest/services/Broadband/ProviderCoverage/MapServer', {
                 opacity: 0.75
             });
             overlayBaseMap.addLayer(lyr);

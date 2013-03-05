@@ -46,7 +46,7 @@ dojo.declare('agrc.widgets.map.EmbeddedMap', [dijit._Widget, dijit._Templated], 
 	// |	<div id='agrcEmbeddedMap' dojoType='agrc.widgets.map.EmbeddedMap' style='width: 300px; height 400px;' mapId='utahdfofuelsites'></div>
 	// |	
 	// |	<!-- This is the JavaScript file that loads the required external JavaScript and CSS files.-->
-	// |	<script type='text/javascript' src='//mapserv.utah.gov/cdn/dojo/agrc/1.0/agrc/widgets/map/EmbeddedMapLoader.js'></script>
+	// |	<script type='text/javascript' src='http://mapserv.utah.gov/cdn/dojo/agrc/1.0/agrc/widgets/map/EmbeddedMapLoader.js'></script>
     
     // widgetsInTemplate: [private] Boolean
 	//		Specific to dijit._Templated.
