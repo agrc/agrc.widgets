@@ -8,7 +8,8 @@
     <meta name="keywords" content="agrc.widgets.locate.FindAddress, find address, geocode, utah, tests, test, javascript" />
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="jasmine-1.0.1/jasmine.css">
-    <link rel='stylesheet' href='http://serverapi.arcgisonline.com/jsapi/arcgis/2.4/js/dojo/dijit/themes/claro/claro.css'>
+    <link rel='stylesheet' href='http://serverapi.arcgisonline.com/jsapi/arcgis/3.3/js/dojo/dijit/themes/claro/claro.css'>
+    <link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.3/js/esri/css/esri.css">
     <style type='text/css'>
         @import '../../themes/standard/agrc.css';
         html, body, #masterBc {
@@ -30,24 +31,24 @@
     <script type="text/javascript" src="spec/SpecFindAddress.js"></script>
     <!-- DOJO REFERENCES -->
     <script type='text/javascript'>
-        djConfig = {
+        var projectUrl = location.pathname.replace(/\/[^\/]+$/, "");
+        dojoConfig = {
             isDebug: true,
-            debugAtAllCosts: true,
             parseOnLoad: true,
-            baseUrl: './',
-            modulePaths: {
-                'agrc': '../../'
-            }
+            paths: {
+                'agrc': projectUrl.replace('/widgets/tests', '')
+            },
+            async: false
         };
     </script>
-    <script type='text/javascript' src='http://serverapi.arcgisonline.com/jsapi/arcgis/?v=2.4'></script>
+    <script type='text/javascript' src='http://serverapi.arcgisonline.com/jsapi/arcgis/3.3/'></script>
     <script type='text/javascript'>
         dojo.require('dijit.layout.ContentPane');
         dojo.require('dijit.layout.BorderContainer');
         dojo.require('agrc.widgets.locate.FindAddress');
 
         function init() {
-            dojo.global.base = new esri.layers.ArcGISTiledMapServiceLayer("//mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Vector/MapServer", { id: "vector", visible: true });
+            dojo.global.base = new esri.layers.ArcGISTiledMapServiceLayer("http://mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Vector/MapServer", { id: "vector", visible: true });
 
             map = new esri.Map("left");
             map.addLayer(base);
