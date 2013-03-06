@@ -1,54 +1,38 @@
 /*global module:false*/
 module.exports = function(grunt) {
-
-  // Project configuration.
-  grunt.initConfig({
-    // Task configuration.
-    jshint: {
-      options: {
-        curly: true,
-        eqeqeq: true,
-        immed: true,
-        latedef: true,
-        newcap: true,
-        noarg: true,
-        sub: true,
-        undef: true,
-        unused: true,
-        boss: true,
-        eqnull: true,
-        globals: {
-          jQuery: true
+    // Project configuration.
+    grunt.initConfig({
+        pkg: grunt.file.readJSON('package.json'),
+        jasmine: {
+            app: {
+                src: ['src/app/tests/jasmineTestBootstrap.js',
+                    'src/app/run.js'],
+                options: {
+                    specs: ['src/app/tests/spec/*.js']
+                }
+            }
+        },
+        jshint: {
+            files: ['src/app/**/*.js'],
+            options: {
+                jshintrc: '.jshintrc'
+            }
+        },
+        watch: {
+            files: ['src/app/**/*.js'],
+            tasks: ['jasmine:app:build', 'jshint']
+        },
+        connect: {
+            uses_defaults: {}
         }
-      },
-      gruntfile: {
-        src: 'Gruntfile.js'
-      },
-      lib_test: {
-        src: ['lib/**/*.js', 'test/**/*.js']
-      }
-    },
-    nodeunit: {
-      files: ['test/**/*_test.js']
-    },
-    watch: {
-      gruntfile: {
-        files: '<%= jshint.gruntfile.src %>',
-        tasks: ['jshint:gruntfile']
-      },
-      lib_test: {
-        files: '<%= jshint.lib_test.src %>',
-        tasks: ['jshint:lib_test', 'nodeunit']
-      }
-    }
-  });
+    });
 
-  // These plugins provide necessary tasks.
-  grunt.loadNpmTasks('grunt-contrib-nodeunit');
-  grunt.loadNpmTasks('grunt-contrib-jshint');
-  grunt.loadNpmTasks('grunt-contrib-watch');
+    // Register tasks.
+    grunt.loadNpmTasks('grunt-contrib-jasmine');
+    grunt.loadNpmTasks('grunt-contrib-jshint');
+    grunt.loadNpmTasks('grunt-contrib-watch');
+    grunt.loadNpmTasks('grunt-contrib-connect');
 
-  // Default task.
-  grunt.registerTask('default', ['jshint', 'nodeunit']);
-
+    // Default task.
+    grunt.registerTask('default', ['connect', 'watch']);
 };
