@@ -1,4 +1,4 @@
-/*global dojo, agrc, esri, console, dijit, window, clearTimeout, setTimeout*/
+/*global dojo, esri, console, dijit, window*/
 /*jshint sub:true*/
 
 // provide namespace
@@ -46,7 +46,7 @@ dojo.declare("agrc.widgets.map.BaseMap", esri.Map, {
 	// |	var options = {
 	// |		useDefaultExtent: false,
 	// |		useDefaultBaseMap: false,
-	// |		defaultBaseMap: 'UtahBaseMap-Terrain'
+	// |		defaultBaseMap: 'Terrain'
 	// |	};
 	// |	var map = new agrc.widgets.map.BaseMap('basemap-div', options);
 
@@ -92,12 +92,12 @@ dojo.declare("agrc.widgets.map.BaseMap", esri.Map, {
 	// Parameters to constructor
 
 	// useDefaultBaseMap: Boolean
-	//		If true, the map will automatically load the UtahBaseMap-Vector map service
+	//		If true, the map will automatically load the Vector map service
 	useDefaultBaseMap: true,
 
 	// defaultBaseMap: String
-	//		The name of the AGRC base map cache that you want to add. (ie. UtahBaseMap-Vector)
-	defaultBaseMap: 'UtahBaseMap-Vector',
+	//		The name of the AGRC base map cache that you want to add. (ie. Vector)
+	defaultBaseMap: 'Vector',
 
 	// useDefaultExtent: Boolean
 	//		If true, the map will automatically zoom to the state of Utah extent.
@@ -156,8 +156,6 @@ dojo.declare("agrc.widgets.map.BaseMap", esri.Map, {
 			this.showDefaultBaseMap();
 		}
 
-		this._addResizeHandler();
-
 		// replace default link on logo
 		esri.config.defaults.map.logoLink = "http://gis.utah.gov/";
 
@@ -180,25 +178,6 @@ dojo.declare("agrc.widgets.map.BaseMap", esri.Map, {
 
 		this.addAGRCBaseMap(this.defaultBaseMap);
 	},
-	_addResizeHandler: function () {
-		// summary:
-		//		Adds an event listener to resize and reposition the map
-		//		when the window is resized.
-		// tags:
-		//		private
-		console.info(this.declaredClass + "::" + arguments.callee.nom);
-
-		var resizeTimer;
-		this._connects.push(dojo.connect(this, 'onLoad', this, function () {
-			this._connects.push(dojo.connect(window, 'resize', this, function () {
-				clearTimeout(resizeTimer);
-				resizeTimer = setTimeout(dojo.hitch(this, function () {
-					this.resize();
-					this.reposition();
-				}), 1500);
-			}));
-		}));
-	},
 	addLoaderToLayer: function (lyr) {
 		// summary:
 		//		Wires up the loader image to display when the passed layer is drawing.
@@ -213,7 +192,7 @@ dojo.declare("agrc.widgets.map.BaseMap", esri.Map, {
 			this.showLoader();
 		}
 
-		function hideLoading(error) {
+		function hideLoading() {
 			// decrement layersDrawing
 			this._layersDrawing--;
 
@@ -245,11 +224,11 @@ dojo.declare("agrc.widgets.map.BaseMap", esri.Map, {
 		// summary:
 		//		Add one of the AGRC basemaps to the map.
 		// cacheName: String
-		//		The name of the base map that you want to add. (ie. UtahBaseMap-Vector)
+		//		The name of the base map that you want to add. (ie. Vector)
 		console.info(this.declaredClass + "::" + arguments.callee.nom);
 
 		// build basemap url
-		var url = 'http://mapserv.utah.gov/ArcGIS/rest/services/' + cacheName + '/MapServer';
+		var url = 'http://mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/' + cacheName + '/MapServer';
 		var lyr = new esri.layers.ArcGISTiledMapServiceLayer(url);
 		this.addLayer(lyr);
 	},
@@ -277,8 +256,6 @@ dojo.declare("agrc.widgets.map.BaseMap", esri.Map, {
 			}
 		}, this.container);
 
-		// button
-		var map = this;
 		// to hold reference for onClick function
 		// I guess that I could have used dojo.hitch, but I just don't
 		// feel like typing that again. OK! Give it a rest!
