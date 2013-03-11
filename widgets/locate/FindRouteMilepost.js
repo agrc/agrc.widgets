@@ -129,7 +129,7 @@ function (
         
             var that = this;
             var params = {
-                url: "//mapserv.utah.gov/wsut/Geocode.svc/hello/street(" + this.milepostTxt.value + 
+                url: "http://mapserv.utah.gov/wsut/Geocode.svc/hello/street(" + this.milepostTxt.value + 
                     ")zone(" + this.routeTxt.value + ")",
                 handleAs: 'json',
                 timeout: this.xhrTimeout,
