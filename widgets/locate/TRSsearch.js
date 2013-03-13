@@ -125,7 +125,7 @@ dojo.declare("agrc.widgets.locate.TRSsearch", [dijit._Widget, dijit._Templated],
 		console.info(this.declaredClass + "::" + arguments.callee.nom);
 
 		var store = new dojo.data.ItemFileReadStore({
-			data: dojo.fromJson(dojo.cache("agrc.widgets.locate.data", "townships.js"))
+			data: dojo.fromJson(dojo.cache("agrc.widgets.locate.data", "townships.json"))
 		});
 
 		this._townshipDD.set("store", store);

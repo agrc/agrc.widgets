@@ -2,11 +2,7 @@ dojo.provide("agrc.widgets.map._TocTree");
 dojo.require("dijit.Tree");
 
 
-dojo.declare("agrc.widgets.map.
-
-
-_CheckBoxTreeNode
-", dijit._TreeNode, {
+dojo.declare("agrc.widgets.map._CheckBoxTreeNode", dijit._TreeNode, {
 
 
     _checkbox: null,
