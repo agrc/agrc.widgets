@@ -1,0 +1,34 @@
+{
+    "predef": [
+        "esri",
+        "alert",
+        "dojo",
+        "$",
+        "jQuery",
+        "define",
+        "require",
+        "console",
+        "module",
+        "AGRC",
+        "it", 
+        "xit",
+        "expect", 
+        "beforeEach", 
+        "afterEach", 
+        "spyOn", 
+        "jasmine", 
+        "runs", 
+        "waitsFor",
+        "describe",
+        "xdescribe",
+        "stubModule"
+    ],
+
+    "evil": true,
+    "regexdash": true,
+    "browser": true,
+    "wsh": true,
+    "sub": true,
+    "undef": true,
+    "unused": true
+}
