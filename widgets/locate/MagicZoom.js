@@ -698,8 +698,10 @@ dojo.declare('agrc.widgets.locate.MagicZoom', [dijit._Widget, dijit._Templated],
 		//     Overridden from dijit._Widget. Removes graphics layer from map.
 		console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
 		
-		this.map.removeLayer(this._graphicsLayer);
-		
+		if (this._graphicsLayer) {
+			this.map.removeLayer(this._graphicsLayer);
+		}
+				
 		this.inherited(arguments);
 	}
 });
