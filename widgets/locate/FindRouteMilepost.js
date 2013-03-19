@@ -5,7 +5,8 @@ define([
     'dijit/_WidgetsInTemplateMixin',
     'dojo/text!agrc/widgets/locate/templates/FindRouteMilepost.html',
     'dojo/dom-style',
-    'dojo/io/script'
+    'dojo/io/script',
+    'dojo/string'
 
 ],
 
@@ -16,7 +17,8 @@ function (
     _WidgetsInTemplateMixin, 
     template,
     domStyle,
-    dojoScript
+    dojoScript,
+    string
     ) {
     "use strict";
     return declare('agrc.widgets.locate.FindRouteMilepost', [_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
@@ -95,7 +97,7 @@ function (
             }
 
             if (this._validate()) {
-                this._invokeWebService();
+                return this._invokeWebService();
             }
         },
         _validate: function () {
@@ -125,23 +127,34 @@ function (
         _invokeWebService: function () {
             // summary:
             //      description
+            // returned: Deferred
             console.log(this.declaredClass + "::_invokeWebService", arguments);
-        
             var that = this;
+
+            var url = 'http://api.mapserv.utah.gov/api/v1/geocode/milepost/${route}/${milepost}?apiKey=${key}';
             var params = {
-                url: "http://mapserv.utah.gov/wsut/Geocode.svc/hello/street(" + this.milepostTxt.value + 
-                    ")zone(" + this.routeTxt.value + ")",
+                url: string.substitute(url, {
+                    milepost: this.milepostTxt.value,
+                    route: this.routeTxt.value,
+                    key: AGRCGLOBAL.apiKey
+                }),
                 handleAs: 'json',
                 timeout: this.xhrTimeout,
                 preventCache: true,
                 callbackParamName: 'callback'
             };
+            var def = dojoScript.get(params);
 
-            dojo.when(dojoScript.get(params), function (response) {
+            dojo.when(def, function (response) {
+                if (response.status !== 200) {
+                    def.reject();
+                }
                 that._onXHRSuccess(response);
             }, function (er) {
                 that._onXHRFailure(er);
-            });    
+            });
+
+            return def;
         },
         _onXHRSuccess: function (result, noZoom) {
             // summary:
@@ -155,7 +168,7 @@ function (
             this.onFind(result);
 
             if (this.map) {
-                var pnt = new esri.geometry.Point(result.UTM_X, result.UTM_Y, this.map.spatialReference);
+                var pnt = new esri.geometry.Point(result.result.location.x, result.result.location.y, this.map.spatialReference);
 
                 if (!noZoom) {
                     if (this.map.getLevel() > -1) {
@@ -166,7 +179,7 @@ function (
                     }
                 }
 
-                graphic = new esri.Graphic(pnt, this.symbol, result);
+                graphic = new esri.Graphic(pnt, this.symbol);
                 this.graphicsLayer.add(graphic);
             }
         },
