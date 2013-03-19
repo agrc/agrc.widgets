@@ -165,7 +165,10 @@ function (
             var graphic;
         
             // TODO: check for server error after upgrading to new web api
-            this.onFind(result);
+            var location = result.result.location;
+            location.UTM_X = location.x;
+            location.UTM_Y = location.y;
+            this.onFind(location);
 
             if (this.map) {
                 var pnt = new esri.geometry.Point(result.result.location.x, result.result.location.y, this.map.spatialReference);
