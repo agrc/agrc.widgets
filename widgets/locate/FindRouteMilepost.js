@@ -6,7 +6,8 @@ define([
     'dojo/text!agrc/widgets/locate/templates/FindRouteMilepost.html',
     'dojo/dom-style',
     'dojo/io/script',
-    'dojo/string'
+    'dojo/string',
+    'dojo/_base/lang'
 
 ],
 
@@ -18,7 +19,8 @@ function (
     template,
     domStyle,
     dojoScript,
-    string
+    string,
+    lang
     ) {
     "use strict";
     return declare('agrc.widgets.locate.FindRouteMilepost', [_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
@@ -107,7 +109,7 @@ function (
             console.log(this.declaredClass + "::_validate", arguments);
 
             function validate (textBox, invalidSpan) {
-                if (textBox.value.trim() === '') {
+                if (lang.trim(textBox.value) === '') {
                     domStyle.set(invalidSpan, 'display', 'inline');
                     return false;
                 } else {
