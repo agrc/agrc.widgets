@@ -118,6 +118,9 @@ function (
                 }
             }
 
+            // hide error message
+            dojo.style(this.errorMsg, 'display', 'none');
+
             if (!validate(this.routeTxt, this.routeInvalid)) {
                 return false;
             } else if (!validate(this.milepostTxt, this.milepostInvalid)) {
@@ -149,11 +152,12 @@ function (
 
             dojo.when(def, function (response) {
                 if (response.status !== 200) {
+                    that._onXHRFailure();
                     def.reject();
                 }
                 that._onXHRSuccess(response);
             }, function (er) {
-                that._onXHRFailure(er);
+                that._onXHRFailure();
             });
 
             return def;
@@ -193,7 +197,7 @@ function (
             //      description
             console.log(this.declaredClass + "::_onXHRFailure", arguments);
         
-            alert('No match found!');
+            dojo.style(this.errorMsg, 'display', 'inline');
         },
         onFind: function (result) {
             // summary:
