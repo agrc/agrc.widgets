@@ -52,7 +52,7 @@
                 'dijit/layout/BorderContainer',
                 'dijit/layout/ContentPane'], function(ready, find, kernal) {
                     ready(function() {
-                        kernal.global.base = new esri.layers.ArcGISTiledMapServiceLayer("//mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Vector/MapServer",
+                        kernal.global.base = new esri.layers.ArcGISTiledMapServiceLayer("http://mapserv.utah.gov/arcgis/rest/services/BaseMaps/Vector/MapServer",
                             {
                                 id: "vector",
                                 visible: true
@@ -61,7 +61,7 @@
                         var map = new esri.Map("left");
                         map.addLayer(base);
 
-                        var geocode = new find({ map: map, apiKey: 'API-Explorer' }, 'test1');
+                        var geocode = new find({ map: map, apiKey: 'API-Explorer' }, 'widget');
 
                     })
                 });
