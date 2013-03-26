@@ -1,4 +1,4 @@
-<form class="form-horizontal">
+<form class="form-horizontal" data-dojo-attach-point='form_geocode'>
   <div class="control-group">
     <label class="control-label" for="inputEmail">Address</label>
     <div class="controls">
@@ -13,7 +13,7 @@
   </div>
   <div class="control-group">
     <div class="controls">
-      <button type="submit" class="btn">Find</button>
-    </div>
+      <button type="submit" class="btn" data-dojo-attach-point='btn_geocode'>Find</button>
+    <span data-dojo-attach-point='errorMsg' class="error-msg">No Match Found!</span></div>
   </div>
 </form>

@@ -1,6 +1,6 @@
 /*global dojo, console, agrc, esri*/
 define([
-    'dojo/_base/declare',
+        'dojo/_base/declare',
         'dijit/_WidgetBase',
         'dijit/_TemplatedMixin',
         'dojo/text!agrc/widgets/locate/templates/FindAddress.html',
@@ -9,7 +9,8 @@ define([
         'dojo/dom-style',
         'dojo/_base/Color',
         'dojo/when',
-        'dojo/_base/lang'
+        'dojo/_base/lang',
+        'dojo/on'
     ],
     function(declare,
         widgetBase,
@@ -20,7 +21,8 @@ define([
         style,
         color,
         when,
-        lang) {
+        lang,
+        on) {
         // description:
         //		**Summary**: A simple form tied to the map allowing a user to quickly zoom to an address.
         //		<p>
@@ -95,6 +97,15 @@ define([
                     }
                 },
 
+                postCreate: function() {
+                    this.form_geocode.onsubmit = function(e) {
+//                        e.preventDefault();
+                        return false;
+                    };
+
+                    on(this.btn_geocode, 'click', lang.hitch(this, 'geocodeAddress'));
+                },
+
                 geocodeAddress: function() {
                     // summary:
                     //		Geocodes the address if the text boxes validate.
@@ -103,23 +114,25 @@ define([
                     if (this._validate()) {
                         topic.publish('agrc.widgets.locate.FindAddress.OnFindStart');
 
-                        this.geocoding();
+                        this._geocoding();
 
                         if (this.map && this._graphic) {
                             this.graphicsLayer.remove(this._graphic);
                         }
 
-                        var address = this.txt_address.value;
-                        var zone = this.txt_zone.value;
+                        var address = "326 east south temple";
+                        var zone = '84111';
 
-                        when(this._invokeWebService({ address: address, zone: zone }),
+                        when(this._invokeWebService({ street: address, zone: zone }),
                             lang.hitch(this, '_onFind'), lang.hitch(this, '_onError'));
                     } else {
-                        this.done();
+                        this._done();
                     }
+
+                    return false;
                 },
 
-                _invokeWebService: function() {
+                _invokeWebService: function(geocode) {
                     // summary:
                     //      calls the web service
                     // description:
@@ -132,10 +145,18 @@ define([
 
                     var params = {
                         callbackParamName: "callback",
-                        url: "//api.mapserv.utah.gov/api/v1/Geocode/:street/:zone?apiKey=:apiKey",
+                        url: "http://api.mapserv.utah.gov/api/v1/Geocode/{geocode.street}/{geocode.zone}?apiKey={apiKey}",
                         handleAs: "json",
                         preventCache: true
                     };
+
+                    params.url = lang.replace(params.url,
+                        {
+                            geocode: geocode,
+                            apiKey: this.apiKey
+                        });
+
+                    console.log(params);
 
                     return io.get(params);
                 },
@@ -157,20 +178,32 @@ define([
                     style.set(this.errorMsg, 'display', 'none');
 
                     // check for valid address and zone
-                    if (!this.txt_address.isValid() || !this.txt_address.get('value').length) {
+                    if (!this._isValid(this.txt_address)) {
                         this.txt_address._message = '';
                         this.txt_address.displayMessage('Please enter an address.');
 
                         ok = false;
                     }
 
-                    if (!this.isValid(this.txt_zone) || !this.txt_zone.get('value').length) {
+                    if (!this._isValid(this.txt_zone)) {
                         this.txt_zone.displayMessage('Please enter a zip or city.');
 
                         ok = false;
                     }
 
                     return ok;
+                },
+
+                _isValid: function(txt) {
+                    return true;
+                },
+
+                _geocoding: function() {
+
+                },
+
+                _done: function() {
+
                 },
 
                 _onFind: function(result) {
@@ -216,7 +249,7 @@ define([
                     style.set(this.errorMsg, 'display', 'inline');
 
                     // re-enable find button
-                    this.done();
+                    this._done();
 
                     topic.publish('agrc.widgets.locate.FindAddress.OnFindError', [err]);
                 }
