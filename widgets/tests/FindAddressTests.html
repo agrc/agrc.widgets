@@ -8,8 +8,8 @@
     <meta name="keywords" content="agrc.widgets.locate.FindAddress, find address, geocode, utah, tests, test, javascript" />
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="jasmine-1.0.1/jasmine.css">
-    <link rel='stylesheet' href='http://serverapi.arcgisonline.com/jsapi/arcgis/3.3/js/dojo/dijit/themes/claro/claro.css'>
-    <link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.3/js/esri/css/esri.css">
+    <link rel='stylesheet' href='http://serverapi.arcgisonline.com/jsapi/arcgis/3.4/js/dojo/dijit/themes/claro/claro.css'>
+    <link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.4/js/esri/css/esri.css">
     <style type='text/css'>
         @import '../../themes/standard/agrc.css';
         html, body, #masterBc {
@@ -32,6 +32,7 @@
     <!-- DOJO REFERENCES -->
     <script type='text/javascript'>
         var projectUrl = location.pathname.replace(/\/[^\/]+$/, "");
+        
         dojoConfig = {
             isDebug: true,
             parseOnLoad: true,
@@ -40,27 +41,30 @@
             },
             async: false
         };
-    </script>
-    <script type='text/javascript' src='http://serverapi.arcgisonline.com/jsapi/arcgis/3.3/'></script>
+       </script>
+
+
+    <script type='text/javascript' src='http://serverapi.arcgisonline.com/jsapi/arcgis/3.4/'></script>
     <script type='text/javascript'>
-        dojo.require('dijit.layout.ContentPane');
-        dojo.require('dijit.layout.BorderContainer');
-        dojo.require('agrc.widgets.locate.FindAddress');
+        require(['dojo/ready',
+                'agrc/widgets/locate/FindAddress',
+                'dojo/_base/kernel',
+                'dijit/layout/BorderContainer',
+                'dijit/layout/ContentPane'], function(ready, find, kernal) {
+                    ready(function() {
+                        kernal.global.base = new esri.layers.ArcGISTiledMapServiceLayer("//mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Vector/MapServer",
+                            {
+                                id: "vector",
+                                visible: true
+                            });
+                        
+                        var map = new esri.Map("left");
+                        map.addLayer(base);
 
-        function init() {
-            dojo.global.base = new esri.layers.ArcGISTiledMapServiceLayer("http://mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Vector/MapServer", { id: "vector", visible: true });
+                        var geocode = new find({ map: map, apiKey: 'API-Explorer' }, 'test1');
 
-            map = new esri.Map("left");
-            map.addLayer(base);
-
-            // create FindAddress widgets
-            findAdd = new agrc.widgets.locate.FindAddress({ map: map }, 'widget');
-
-            jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
-            jasmine.getEnv().execute();
-        }
-
-        dojo.ready(init);
+                    })
+                });
     </script>
 </head>
 <body>
