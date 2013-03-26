@@ -1,4 +1,4 @@
-/*global dojo, console, agrc, dijit, esri*/
+/*global dojo, console, agrc, esri*/
 define([
     'dojo/_base/declare',
         'dijit/_WidgetBase',
@@ -12,8 +12,8 @@ define([
         'dojo/_base/lang'
     ],
     function(declare,
-        _WidgetBase,
-        _TemplatedMixin,
+        widgetBase,
+        templatedMixin,
         template,
         io,
         topic,
@@ -54,7 +54,7 @@ define([
         // |	new agrc.widgets.locate.FindAddress({map: map}, 'test1');
 
         return declare('agrc.widgets.locate.FindAddress',
-            [_WidgetBase, _TemplatedMixin], {
+            [widgetBase, templatedMixin], {
                 templateString: template,
                 baseClass: 'AGRC',
                 map: null,
