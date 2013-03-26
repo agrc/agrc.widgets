@@ -1,38 +1,19 @@
-<div class="find-address">
-        <table>
-            <tr>
-                <td class="label-cell">
-                    <!-- the inner div is to control the width of the column -->
-                    <div class="label-cell-inner">
-                        Address</div>
-                </td>
-                <td class="text-box-cell">
-                    <div data-dojo-attach-point="txt_address" value="" data-dojo-type="dijit.form.ValidationTextBox"
-                        class="text-box" trim="true" propercase="false">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td class="label-cell">
-                    Zip or City
-                </td>
-                <td class="text-box-cell">
-                    <div data-dojo-attach-point="txt_zone" class="text-box" value="" data-dojo-type="dijit.form.ValidationTextBox">
-                    </div>
-                </td>
-            </tr>
-            <tr>
-                <td>
-                </td>
-                <td class="btn-cell">
-                    <button type="submit" data-dojo-attach-point="btn_geocode" data-dojo-type="dojox.form.BusyButton"
-                        class="find-btn" data-dojo-attach-event="onClick:geocodeAddress" busyLabel="locating...">
-                        <!-- this extra div is required to adjust the width of the button -->
-                        <div class="find-btn-inner">
-                            Find</div>
-                    </button>
-                    <span data-dojo-attach-point='errorMsg' class="error-msg">No Match Found!</span>
-                </td>
-            </tr>
-        </table>
-</div>
+<form class="form-horizontal">
+  <div class="control-group">
+    <label class="control-label" for="inputEmail">Address</label>
+    <div class="controls">
+      <input type="text"  data-dojo-attach-point="txt_address" id="inputAddress" >
+    </div>
+  </div>
+  <div class="control-group">
+    <label class="control-label" for="input_zone">Zip or City</label>
+    <div class="controls">
+      <input type="password" id="input_zone" >
+    </div>
+  </div>
+  <div class="control-group">
+    <div class="controls">
+      <button type="submit" class="btn">Find</button>
+    </div>
+  </div>
+</form>
