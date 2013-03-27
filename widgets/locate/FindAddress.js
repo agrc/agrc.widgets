@@ -4,7 +4,7 @@ define([
         'dijit/_WidgetBase',
         'dijit/_TemplatedMixin',
         'dojo/text!agrc/widgets/locate/templates/FindAddress.html',
-        'dojo/io/script',
+        'dojo/request',
         'dojo/topic',
         'dojo/dom-style',
         'dojo/_base/Color',
@@ -16,7 +16,7 @@ define([
         widgetBase,
         templatedMixin,
         template,
-        io,
+        script,
         topic,
         style,
         color,
@@ -111,23 +111,30 @@ define([
                     //		Geocodes the address if the text boxes validate.
                     console.info(this.declaredClass + '::' + arguments.callee.nom);
 
-                    if (this._validate()) {
-                        topic.publish('agrc.widgets.locate.FindAddress.OnFindStart');
-
-                        this._geocoding();
-
-                        if (this.map && this._graphic) {
-                            this.graphicsLayer.remove(this._graphic);
-                        }
-
-                        var address = "326 east south temple";
-                        var zone = '84111';
-
-                        when(this._invokeWebService({ street: address, zone: zone }),
-                            lang.hitch(this, '_onFind'), lang.hitch(this, '_onError'));
-                    } else {
+                    if (!this._validate()) {
                         this._done();
+                        return false;
                     }
+
+                    topic.publish('agrc.widgets.locate.FindAddress.OnFindStart');
+
+                    this._geocoding();
+
+                    if (this.map && this._graphic) {
+                        this.graphicsLayer.remove(this._graphic);
+                    }
+
+                    var address = this.txt_address.value;
+                    var zone = this.txt_zone.value;
+
+                    if (this.request && !this.request.isFulfilled()) {
+                        this.request.cancel('duplicate in flight');
+                        this.request = null;
+                    }
+                    
+                    this.request = this._invokeWebService({ street: address, zone: zone });
+                    
+                    when(this.request, lang.hitch(this, '_onFind'), lang.hitch(this, '_onError'));
 
                     return false;
                 },
@@ -143,22 +150,23 @@ define([
                     //     Deferred 
                     console.info(this.declaredClass + "::" + arguments.callee.nom);
 
-                    var params = {
-                        callbackParamName: "callback",
-                        url: "http://api.mapserv.utah.gov/api/v1/Geocode/{geocode.street}/{geocode.zone}?apiKey={apiKey}",
-                        handleAs: "json",
-                        preventCache: true
+                    var url = "http://api.mapserv.utah.gov/api/v1/Geocode/{geocode.street}/{geocode.zone}";
+                    
+                    var options = {
+                        apiKey: this.apiKey
                     };
-
-                    params.url = lang.replace(params.url,
+                    
+                    url = lang.replace(url,
                         {
-                            geocode: geocode,
-                            apiKey: this.apiKey
+                            geocode: geocode
                         });
 
-                    console.log(params);
-
-                    return io.get(params);
+                    return script.get(url, {
+//                        jsonp: "callback",
+                        preventCache: true,
+                        handleAs: 'json',
+                        query: options
+                    });
                 },
 
                 _validate: function() {
@@ -205,8 +213,12 @@ define([
                 _done: function() {
 
                 },
+                
+                onFind: function() {
+                    
+                },
 
-                _onFind: function(result) {
+                _onFind: function(response) {
                     // summary:
                     //      handles a successful geocode
                     // description:
@@ -215,10 +227,10 @@ define([
                     //      private
                     console.info(this.declaredClass + "::" + arguments.callee.nom);
 
-                    this.onFind(result);
+                    this.onFind(response.result);
 
                     if (this.map) {
-                        var point = new esri.geometry.Point(result.UTM_X, result.UTM_Y, this.map.spatialReference);
+                        var point = new esri.geometry.Point(response.result.location.x, response.result.location.y, this.map.spatialReference);
 
                         if (this.map.getLevel() > -1) {
                             this.map.centerAndZoom(point, this.zoomLevel);
@@ -226,7 +238,7 @@ define([
                             this.map.centerAndZoom(point, esri.geometry.getScale(this.map.extent, this.map.width, this.map.spatialReference.wkid) / this.zoomLevel);
                         }
 
-                        this._graphic = new esri.Graphic(point, this.symbol, result);
+                        this._graphic = new esri.Graphic(point, this.symbol, response.result);
                         this.graphicsLayer.add(this._graphic);
                     }
 
