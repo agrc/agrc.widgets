@@ -8,18 +8,27 @@ module.exports = function(grunt) {
                 src: ['src/app/tests/jasmineTestBootstrap.js',
                     'src/app/run.js'],
                 options: {
-                    specs: ['src/app/tests/spec/*.js']
+                    specs: [
+                        'widgets/tests/spec/*.js',
+                        'modules/tests/spec/*.js'
+                    ]
                 }
             }
         },
         jshint: {
-            files: ['src/app/**/*.js'],
+            files: [
+                'widgets/**/*.js',
+                'modules/**/*.js'
+            ],
             options: {
                 jshintrc: '.jshintrc'
             }
         },
         watch: {
-            files: ['src/app/**/*.js'],
+            files: [
+                'widgets/**/*.js',
+                'modules/**/*.js'
+            ],
             tasks: ['jasmine:app:build', 'jshint']
         },
         connect: {
@@ -34,5 +43,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-connect');
 
     // Default task.
-    grunt.registerTask('default', ['connect', 'watch']);
+    grunt.registerTask('default', ['jasmine:app:build', 'jshint', 'connect', 'watch']);
 };
