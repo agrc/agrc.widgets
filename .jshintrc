@@ -1,15 +1,8 @@
 {
     "predef": [
-        "esri",
-        "alert",
-        "dojo",
-        "$",
-        "jQuery",
         "define",
         "require",
         "console",
-        "module",
-        "AGRC",
         "it", 
         "xit",
         "expect", 
