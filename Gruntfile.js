@@ -5,21 +5,37 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
         jasmine: {
             app: {
-                src: ['src/app/tests/jasmineTestBootstrap.js',
-                    'src/app/run.js'],
+                src: [
+                    'widgets/tests/SetUpTests.js'
+                ],
                 options: {
-                    specs: ['src/app/tests/spec/*.js']
+                    vendor: [
+                        'http://serverapi.arcgisonline.com/jsapi/arcgis/3.4/'
+                    ],
+                    specs: [
+                        // 'widgets/tests/spec/*.js',
+                        // 'modules/tests/spec/*.js'
+                        'widgets/tests/spec/SpecBaseMap.js'
+                    ]
                 }
             }
         },
         jshint: {
-            files: ['src/app/**/*.js'],
+            files: [
+                // 'widgets/**/*.js',
+                // 'modules/**/*.js'
+                'widgets/tests/spec/SpecBaseMap.js',
+                'widgets/map/BaseMap.js'
+            ],
             options: {
                 jshintrc: '.jshintrc'
             }
         },
         watch: {
-            files: ['src/app/**/*.js'],
+            files: [
+                'widgets/**/*.js',
+                'modules/**/*.js'
+            ],
             tasks: ['jasmine:app:build', 'jshint']
         },
         connect: {
@@ -34,5 +50,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-connect');
 
     // Default task.
-    grunt.registerTask('default', ['connect', 'watch']);
+    grunt.registerTask('default', ['jasmine:app:build', 'jshint', 'connect', 'watch']);
 };

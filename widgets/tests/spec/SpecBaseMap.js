@@ -1,96 +1,121 @@
-/*global afterEach, agrc, beforeEach, describe, dijit, dojo, esri, expect, it, runs, waits, waitsFor*/
-var map, testDiv;
+require([
+    'agrc/widgets/map/BaseMap',
+    'dojo/dom-construct',
+    'dojo/_base/window',
+    'esri/geometry/Extent',
+    'dijit/registry',
+    'dojo/_base/lang'
+],
 
-beforeEach(function(){
-	testDiv = dojo.create("div", {
-		width: "300px",
-		height: "300px"
-	}, dojo.body());
-});
+function (
+    BaseMap,
+    domConstruct,
+    win,
+    Extent,
+    dijitRegistry,
+    lang
+    ) {
+    describe('agrc/widgets/map/BaseMap', function () {
+        var map;
+        var testDiv;
+        beforeEach(function(){
+            testDiv = domConstruct.create("div", {
+                width: "300px",
+                height: "300px"
+            }, win.body());
+        });
 
-afterEach( function() {
-	map.destroy();
-	map = null;
-	dojo.destroy(testDiv);
-});
+        afterEach( function() {
+            map.destroy();
+            domConstruct.destroy(testDiv);
+            map = null;
+        });
 
-describe("BaseMap - Default Options", function() {
-	beforeEach( function() {
-		map = new agrc.widgets.map.BaseMap(testDiv);
+        describe("BaseMap - Default Options", function() {
+            beforeEach( function() {
+                map = new BaseMap(testDiv);
 
-		waitsFor( function() {
-			return map.loaded;
-		}, "map to load", 5000);
-	});
+                waitsFor( function() {
+                    return map.loaded;
+                }, "map to load", 5000);
+            });
 
-	it("should set the initial extent and spatial reference", function() {
-		var expectedExtent = new esri.geometry.Extent({
-			xmin: 121350,
-			ymin: 4002431,
-			xmax: 770096,
-			ymax: 4745283,
-			spatialReference: {
-				wkid: 26912
-			}
-		});
+            it("should set the initial extent and spatial reference", function() {
+                var expectedExtent = new Extent({
+                    xmin: 121350,
+                    ymin: 4002431,
+                    xmax: 770096,
+                    ymax: 4745283,
+                    spatialReference: {
+                        wkid: 26912
+                    }
+                });
 
-		expect(map.spatialReference.wkid).toEqual(expectedExtent.spatialReference.wkid);
-		expect(map.extent.contains(expectedExtent)).toBeTruthy();
-	});
+                expect(map.spatialReference.wkid).toEqual(expectedExtent.spatialReference.wkid);
+                expect(map.extent.contains(expectedExtent)).toBeTruthy();
+            });
 
-	it("should add the Vector Cache map service", function() {
-		expect(map.layerIds.length).toEqual(1);
+            it("should add the Vector Cache map service", function() {
+                expect(map.layerIds.length).toEqual(1);
 
-		var lyrId = map.layerIds[0];
-		var lyr = map.getLayer(lyrId);
-		expect(lyr.url).toEqual("//mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Vector/MapServer");
-	});
-});
+                var lyrId = map.layerIds[0];
+                var lyr = map.getLayer(lyrId);
+                expect(lyr.url).toEqual("http://mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Vector/MapServer");
+            });
+        });
 
-describe("BaseMap - Non-default Options", function() {
-	it("should mixin options", function() {
-		var params = {
-			useDefaultExtent: false,
-			defaultBaseMap: 'UtahBaseMap-Terrain'
-		};
+        describe("BaseMap - Non-default Options", function() {
+            it("should mixin options", function() {
+                var params = {
+                    useDefaultExtent: false,
+                    defaultBaseMap: 'UtahBaseMap-Terrain'
+                };
 
-		map = new agrc.widgets.map.BaseMap(testDiv, params);
+                map = new BaseMap(testDiv, params);
 
-		expect(map.useDefaultExtent).toBeFalsy();
-		expect(map.defaultBaseMap).toEqual("UtahBaseMap-Terrain");
-	});
+                expect(map.useDefaultExtent).toBeFalsy();
+                expect(map.defaultBaseMap).toEqual("UtahBaseMap-Terrain");
+            });
 
-	describe('Full Extent Button', function() {
-		var testButton;
+            describe('Full Extent Button', function() {
+                var testButton;
 
-		beforeEach( function() {
-			map = new agrc.widgets.map.BaseMap(testDiv, {
-				includeFullExtentButton: true
-			});
+                beforeEach( function() {
+                    map = new BaseMap(testDiv, {
+                        includeFullExtentButton: true
+                    });
 
-			waitsFor( function() {
-				testButton = dijit.byId(map.id + '_full-extent-button');
-				return testButton;
-			}, "testButton to be created", 5000);
-		});
+                    waitsFor( function() {
+                        testButton = dijitRegistry.byId(map.id + '_full-extent-button');
+                        return testButton;
+                    }, "testButton to be created", 5000);
+                });
 
-		it('should add the full extent button when specified in the options', function() {
-			expect(testButton).toBeTruthy();
-		});
+                it('should add the full extent button when specified in the options', function() {
+                    expect(testButton).toBeDefined();
+                });
 
-		it('should zoom back out to the full extent when the button is pressed', function() {
-			var fullExtent = dojo.clone(map.extent);
-			map.panDown();
+                it('should zoom back out to the full extent when the button is pressed', function() {
+                    var fullExtent;
+                    var buttonClicked = false;
 
-			waits(1000); // give map time to catch up
-			runs( function() {
-				testButton.onClick();
+                    runs(function () {
+                        fullExtent = lang.clone(map.extent);
+                        map.panDown().then(function () {
+                            testButton.onClick();
+                            buttonClicked = true;
+                        });
+                    });
 
-				waits(1000); // give map time to catch up
-				runs( function() {
-					expect(map.extent.ymin).toEqual(fullExtent.ymin);
-				});
-			});
-		});
-	});
+                    waitsFor(function () {
+                        return buttonClicked;
+                    });
+
+                    waitsFor(function () {
+                        return Math.round(map.extent.ymin) === Math.round(fullExtent.ymin);
+                    }, 'map to be set to full extent', 2000);
+                });
+            });
+        });
+    });
 });
