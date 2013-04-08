@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TEST: BaseMap</title>
+    
+    <!-- META -->
+    <meta name="description" content="agrc/widgets/map/BaseMap Test" />
+    <meta name="keywords" content="agrc.widgets.map.BaseMap, esri.map, basemap, map, tests, test, javascript" />
+
+    <!-- CSS -->
+    <link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.4/js/dojo/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.4/js/esri/css/esri.css">
+    <style type='text/css'>
+        @import url('../../../resources/map/BaseMap.css');
+        .basemap {
+            border: solid 1px gray;
+            width: 400px;
+            height: 500px;
+        }
+    </style>
+
+    <!-- JAVASCRIPT -->
+    <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/3.4/"></script>
+    <script type="text/javascript">
+        var projectUrl = location.pathname.replace(/\/[^\/]+$/, "") + '/';
+        var baseMap;
+
+        require({
+            packages: [{
+                name: 'agrc',
+                location: projectUrl + '../../'
+            }]
+        },
+        [
+            'agrc/map/BaseMap',
+
+            'dojo/domReady!'
+        ],
+
+        function (
+            BaseMap
+            ) {
+            // take all defaults
+            baseMap = new BaseMap('basemap-div');
+
+            // add overlay layer
+            var overlayBaseMap = new BaseMap('basemap-div-overlay');
+            var lyr = new esri.layers.ArcGISDynamicMapServiceLayer('http://mapserv.utah.gov/ArcGIS/rest/services/Broadband/ProviderCoverage/MapServer', {
+                opacity: 0.75
+            });
+            overlayBaseMap.addLayer(lyr);
+            overlayBaseMap.addLoaderToLayer(lyr);
+
+            // custom start extent and base map
+            var startExtent = new esri.geometry.Extent(430481, 4495027, 432392, 4497415,
+                new esri.SpatialReference({
+                    wkid: 26912
+                }));
+            var options = {
+                'useDefaultExtent': false,
+                'defaultBaseMap': 'Terrain',
+                'extent': startExtent
+            };
+            var extentBaseMap = new BaseMap('basemap-div-extent', options);
+
+            var fullExtentBaseMap = new BaseMap('basemap-div-full-extent', {
+                includeFullExtentButton: true,
+                sliderStyle: 'large'
+            });
+
+            var backButtonBaseMap = new BaseMap('basemap-div-back', {
+                includeFullExtentButton: true,
+                includeBackButton: true,
+                sliderStyle: 'large'
+            });
+        });
+    </script>
+</head>
+<body>
+    <p>
+        Test for the agrc/widgets/map/BaseMap
+    </p>
+    Defaults
+    <div id='basemap-div' class='basemap'></div>
+    <br>
+    Add overlay map service with loader shown when drawing.
+    <div id='basemap-div-overlay' class='basemap'></div>
+    <br>
+    Don't use default base map and custom extent.
+    <div id='basemap-div-extent' class='basemap'></div>
+    <br>
+    Full Extent Button
+    <div id='basemap-div-full-extent' class='claro basemap'></div>
+    Back Button
+    <div id='basemap-div-back' class='claro basemap'></div>
+</body>
+</html>
