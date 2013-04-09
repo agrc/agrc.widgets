@@ -1,232 +1,252 @@
-/*global afterEach, agrc, beforeEach, describe, dijit, dojo, esri, expect, it, runs, waits, waitsFor, spyOn*/
-var widget;
+require([
+    'agrc/widgets/locate/FindAddress',
+    'dojo/dom-construct',
+    'dojo/_base/window',
+    'dojo/Deferred',
+    'dojo/dom-style',
+    'esri/SpatialReference',
+    'esri/geometry/Extent',
+    'esri/geometry/Point',
+    'dojo/query',
+    'dojo/dom-class'
 
-afterEach(function () {
-	widget.destroyRecursive();
-	widget = null;
-});
+],
 
-describe('FindAddress Tests without map', function () {
-	it('1. should not create a default symbol if no map was provided', function () {
-		widget = new agrc.widgets.locate.FindAddress().placeAt(dojo.body());
+function (
+    FindAddress,
+    domConstruct,
+    win,
+    Deferred,
+    domStyle,
+    SpatialReference,
+    Extent,
+    Point,
+    query,
+    domClass
+    ) {
 
-		expect(widget.symbol).toBeNull();
-	});
+    var widget;
+    var address = '123 S Main St';
+    var zip = '84101';
+    var result = {
+        "result": {
+            "location": {
+                "x": 424808.49945603119,
+                "y": 4513232.5811240105
+            },
+            "score": 100.0,
+            "locator": "Centerlines.StatewideRoads",
+            "matchAddress": "123 S MAIN ST, 84101",
+            "inputAddress": "123 S Main St, 84101"
+        },
+        "status":200
+    };
 
-	it('2. should not assign a graphics layer if no map was provided', function () {
-		widget = new agrc.widgets.locate.FindAddress().placeAt(dojo.body());
+    afterEach(function () {
+        if (widget) {
+            widget.destroy();
+            widget = null;
+        }
+    });
 
-		expect(widget.graphicsLayer).toBeNull();
-	});
+    describe('agrc/widgets/locate/FindAddress', function () {
+        describe('Without Map', function () {
+            beforeEach(function () {
+                widget = new FindAddress(null, domConstruct.create('div', null, win.body()));
+            });
+            it('should not create a default symbol if no map was provided', function () {
+                expect(widget.symbol).toBeNull();
+            });
 
-	it('3. should validate when there is data in textboxes', function () {
-		// arrange
-		widget = new agrc.widgets.locate.FindAddress().placeAt(dojo.body());
+            it('should not assign a graphics layer if no map was provided', function () {
+                expect(widget.graphicsLayer).toBeNull();
+            });
 
-		widget.txt_address.set('value', 'x');
-		widget.txt_zone.set('value', 'x');
+            it('should validate when there is data in textboxes', function () {
+                widget.txt_address.value =  'x';
+                widget.txt_zone.value =  'x';
 
-		expect(widget._validate()).toBeTruthy();
-	});
+                expect(widget._validate()).toBeTruthy();
+            });
 
-	it('4. should not validate when there is data in textboxes', function () {
-		// arrange
-		widget = new agrc.widgets.locate.FindAddress().placeAt(dojo.body());
+            it('should not validate when there is not data in textboxes', function () {
+                widget.txt_address.value = 'x';
 
-		widget.txt_address.set('value', 'x');
+                expect(widget._validate()).toBeFalsy();
+            });
 
-		expect(widget._validate()).toBeFalsy();
-	});
+            it('should successfully find a valid address', function () {
+                widget.txt_address.value = address;
+                widget.txt_zone.value = zip;
 
-	it('5. should successfully find a valid address', function () {
-		// arrange
-		var result = {
-			MatchAddress: "2236 E Atkin Ave, 84109",
-			Geocoder: "TRANSPORTATION.GC93_StatewideRoads",
-			Score: 63,
-			UTM_X: 430183.9199999999,
-			UTM_Y: 4506834.02,
-			LONG_X: -111.8265174,
-			LAT_Y: 40.7094635
-		};
+                spyOn(widget, '_invokeWebService').andCallFake(function () {
+                    var d = new Deferred();
+                    d.resolve(result);
 
-		widget = new agrc.widgets.locate.FindAddress().placeAt(dojo.body());
-		widget.txt_address.set('value', '2236 E Atkin Ave');
-		widget.txt_zone.set('value', '84109');
+                    return d;
+                });
 
-		spyOn(widget, '_invokeWebService').andCallFake(function () {
-			var d = new dojo.Deferred();
-			d.callback(result);
+                spyOn(widget, '_onFind').andCallThrough();
+                spyOn(widget, 'onFind').andCallThrough();
+                spyOn(widget, '_onError').andCallThrough();
 
-			return d;
-		});
+                widget.geocodeAddress();
 
-		spyOn(widget, '_onFind').andCallThrough();
-		spyOn(widget, 'onFind').andCallThrough();
-		spyOn(widget, '_onError').andCallThrough();
+                expect(widget._invokeWebService).toHaveBeenCalledWith({ street: address, zone: zip });
 
-		// act
-		widget.geocodeAddress();
+                expect(widget._onFind).toHaveBeenCalled();
+                expect(widget._onFind).toHaveBeenCalledWith(result);
 
-		// assert
-		expect(widget._invokeWebService).toHaveBeenCalledWith({ address: '2236 E Atkin Ave', zone: '84109' });
+                expect(widget.onFind).toHaveBeenCalled();
 
-		expect(widget._onFind).toHaveBeenCalled();
-		expect(widget._onFind).toHaveBeenCalledWith(result);
+                expect(widget._onError).not.toHaveBeenCalled();
 
-		expect(widget.onFind).toHaveBeenCalled();
+                expect(domStyle.get(widget.errorMsg, 'display')).toEqual('none');
+            });
 
-		expect(widget._onError).not.toHaveBeenCalled();
+            it('should display a not found message for a nonvalid address', function () {
+                widget.txt_address.value = 'x';
+                widget.txt_zone.value = 'x';
 
-		expect(dojo.style(widget.errorMsg, 'display')).toEqual('none');
-		expect(widget.btn_geocode.isBusy).toBeFalsy();
-	});
+                spyOn(widget, '_invokeWebService').andCallFake(function () {
+                    var d = new Deferred();
+                    d.reject({});
 
-	it('6. should display a not found message for a nonvalid address', function () {
-		// arrange
-		widget = new agrc.widgets.locate.FindAddress().placeAt(dojo.body());
-		widget.txt_address.set('value', 'x');
-		widget.txt_zone.set('value', 'x');
+                    return d;
+                });
 
-		spyOn(widget, '_invokeWebService').andCallFake(function () {
-			var d = new dojo.Deferred();
-			d.errback({});
+                spyOn(widget, '_onFind').andCallThrough();
+                spyOn(widget, '_onError').andCallThrough();
 
-			return d;
-		});
+                widget.geocodeAddress();
 
-		spyOn(widget, '_onFind').andCallThrough();
-		spyOn(widget, '_onError').andCallThrough();
+                expect(widget._onError).toHaveBeenCalled();
+                expect(widget._onFind).not.toHaveBeenCalled();
 
-		// act
-		widget.geocodeAddress();
+                expect(domStyle.get(widget.errorMsg, 'display')).toEqual('inline');
+            });
+        });
 
-		// assert
-		expect(widget._invokeWebService).toHaveBeenCalledWith({ address: 'x', zone: 'x' });
+        describe('With Map', function () {
+            var map;
 
-		expect(widget._onError).toHaveBeenCalled();
-		expect(widget._onFind).not.toHaveBeenCalled();
+            beforeEach(function () {
+                map = {
+                    graphicsLayer: {
+                        id: "default",
+                        clear: function () { },
+                        add: function () { }
+                    },
+                    getLevel: function () { return 0; },
+                    spatialReference: new SpatialReference({ wkid: 26912 }),
+                    centerAndZoom: function () { },
+                    onLoad: function () { },
+                    width: 519,
+                    extent: new Extent(16816.054547375796, 4041342.5115216, 888225.5612901922, 4704553.9858249)
+                };
+            });
 
-		expect(dojo.style(widget.errorMsg, 'display')).toEqual('block');
-		expect(widget.btn_geocode.isBusy).toBeFalsy();
-	});
-});
+            afterEach(function () {
+                map = null;
+            });
 
-describe('FindAddress Tests with map', function () {
-	var map;
+            it('should create a default symbol if a map was provided', function () {
+                widget = new FindAddress({ map: map }).placeAt(win.body());
 
-	beforeEach(function () {
-		map = {
-			graphicsLayer: {
-				id: "default",
-				clear: function () { },
-				add: function () { }
-			},
-			getLevel: function () { return 0; },
-			spatialReference: new esri.SpatialReference({ wkid: 26912 }),
-			centerAndZoom: function () { },
-			onLoad: function () { },
-			width: 519,
-			extent: new esri.geometry.Extent(16816.054547375796, 4041342.5115216, 888225.5612901922, 4704553.9858249)
-		};
-	});
+                expect(widget.symbol).not.toBeNull();
+            });
 
-	afterEach(function () {
-		map = null;
-	});
+            it('should assign a graphics layer if a map was provided', function () {
+                widget = new FindAddress({ map: map }).placeAt(win.body());
+                widget.map.onLoad();
 
-	it('1. should create a default symbol if a map was provided', function () {
-		widget = new agrc.widgets.locate.FindAddress({ map: map }).placeAt(dojo.body());
+                expect(widget.graphicsLayer).not.toBeNull();
+                expect(widget.graphicsLayer).toNotBe("default");
+            });
 
-		expect(widget.symbol).not.toBeNull();
-	});
+            it('should use my graphics layer if provided', function () {
+                widget = new FindAddress({ map: map, graphicsLayer: map.graphicsLayer }).placeAt(win.body());
+                widget.map.onLoad();
 
-	it('2. should assign a graphics layer if a map was provided', function () {
-		widget = new agrc.widgets.locate.FindAddress({ map: map }).placeAt(dojo.body());
-		widget.map.onLoad();
+                expect(widget.graphicsLayer.id).toEqual("default");
+            });
 
-		expect(widget.graphicsLayer).not.toBeNull();
-		expect(widget.graphicsLayer).toNotBe("default");
-	});
+            it('should zoom to a point after finding a valid address on a cached map', function () {
+                var point = new Point(result.result.location.x, result.result.location.y, map.spatialReference);
 
-	it('3. should use my graphics layer if provided', function () {
-		widget = new agrc.widgets.locate.FindAddress({ map: map, graphicsLayer: map.graphicsLayer }).placeAt(dojo.body());
-		widget.map.onLoad();
+                widget = new FindAddress({ map: map, graphicsLayer: map.graphicsLayer }).placeAt(win.body());
+                widget.txt_address.value = address;
+                widget.txt_zone.value = zip;
 
-		expect(widget.graphicsLayer.id).toEqual("default");
-	});
+                spyOn(widget, '_invokeWebService').andCallFake(function () {
+                    var d = new Deferred();
+                    d.resolve(result);
 
-	it('4. should zoom to a point after finding a valid address on a cached map', function () {
-		// arrange
-		var result = {
-			MatchAddress: "2236 E Atkin Ave, 84109",
-			Geocoder: "TRANSPORTATION.GC93_StatewideRoads",
-			Score: 100,
-			UTM_X: 430183.9199999999,
-			UTM_Y: 4506834.02,
-			LONG_X: -111.8265174,
-			LAT_Y: 40.7094635
-		},
-		point = new esri.geometry.Point(result.UTM_X, result.UTM_Y, map.spatialReference);
+                    return d;
+                });
 
-		widget = new agrc.widgets.locate.FindAddress({ map: map, graphicsLayer: map.graphicsLayer }).placeAt(dojo.body());
-		widget.txt_address.set('value', '2236 E Atkin Ave');
-		widget.txt_zone.set('value', '84109');
+                spyOn(widget.map, 'centerAndZoom').andCallThrough();
 
-		spyOn(widget, '_invokeWebService').andCallFake(function () {
-			var d = new dojo.Deferred();
-			d.callback(result);
+                widget.geocodeAddress();
 
-			return d;
-		});
+                expect(widget.map.centerAndZoom).toHaveBeenCalledWith(point, 12);
+                expect(widget.map._graphic).not.toBeNull();
+            });
 
-		spyOn(widget.map, 'centerAndZoom').andCallThrough();
+            it('should zoom to a point after finding a valid address on a dynamic map', function () {
+                var point = new Point(result.result.location.x, result.result.location.y, map.spatialReference);
 
-		// act
-		widget.geocodeAddress();
+                map.getLevel = function () { return -1; };
 
-		// assert
-		expect(widget.map.centerAndZoom).toHaveBeenCalledWith(point, 12);
-		expect(widget.map._graphic).not.toBeNull();
-	});
+                widget = new FindAddress({
+                    map: map,
+                    graphicsLayer: map.graphicsLayer,
+                    zoomLevel: 1
+                }).placeAt(win.body());
+                widget.txt_address.value = address;
+                widget.txt_zone.value = zip;
 
-	it('5. should zoom to a point after finding a valid address on a dynamic map', function () {
-		// arrange
-		var result = {
-			MatchAddress: "2236 E Atkin Ave, 84109",
-			Geocoder: "TRANSPORTATION.GC93_StatewideRoads",
-			Score: 100,
-			UTM_X: 430183.9199999999,
-			UTM_Y: 4506834.02,
-			LONG_X: -111.8265174,
-			LAT_Y: 40.7094635
-		},
-		point = new esri.geometry.Point(result.UTM_X, result.UTM_Y, map.spatialReference);
+                spyOn(widget, '_invokeWebService').andCallFake(function () {
+                    var d = new Deferred();
+                    d.resolve(result);
 
-		map.getLevel = function () { return -1; };
+                    return d;
+                });
 
-		widget = new agrc.widgets.locate.FindAddress({
-			map: map,
-			graphicsLayer: map.graphicsLayer,
-			zoomLevel: 1
-		}).placeAt(dojo.body());
-		widget.txt_address.set('value', '2236 E Atkin Ave');
-		widget.txt_zone.set('value', '84109');
+                spyOn(widget.map, 'centerAndZoom').andCallThrough();
 
-		spyOn(widget, '_invokeWebService').andCallFake(function () {
-			var d = new dojo.Deferred();
-			d.callback(result);
+                widget.geocodeAddress();
 
-			return d;
-		});
+                expect(widget.map.centerAndZoom).toHaveBeenCalledWith(point, 6345876.028756473);
+                expect(widget.map._graphic).not.toBeNull();
+            });
+        });
+        describe('_validate', function () {
+            beforeEach(function () {
+                widget = new FindAddress(null, domConstruct.create('div', null, win.body()));
+            });
+            it("hides all error messages", function () {
+                query('.help-inline.error', widget.domNode).style('display', 'visible');
+                widget.txt_address.value = address;
+                widget.txt_zone.value = zip;
 
-		spyOn(widget.map, 'centerAndZoom').andCallThrough();
+                widget._validate();
 
-		// act
-		widget.geocodeAddress();
+                expect(query('.help-inline.error', widget.domNode).every(function (node) {
+                    return domStyle.get(node, 'display') === 'none';
+                })).toBe(true);
+            });
+            it("removes all error classes on control-groups", function () {
+                query('.control-group', widget.domNode).addClass('error');
+                widget.txt_address.value = address;
+                widget.txt_zone.value = zip;
 
-		// assert
-		expect(widget.map.centerAndZoom).toHaveBeenCalledWith(point, 6345876.028756473);
-		expect(widget.map._graphic).not.toBeNull();
-	});
+                widget._validate();
+
+                expect(query('.control-group', widget.domNode).every(function (node) {
+                    return !domClass.contains(node, 'error');
+                })).toBe(true);
+            });
+        });
+    });
 });

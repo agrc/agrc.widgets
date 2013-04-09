@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.4/js/dojo/dijit/themes/claro/claro.css">
     <link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.4/js/esri/css/esri.css">
     <style type='text/css'>
-        @import url('../../../resources/map/BaseMap.css');
+        @import '../../../resources/map/BaseMap.css';
         .basemap {
             border: solid 1px gray;
             width: 400px;
@@ -28,11 +28,11 @@
         require({
             packages: [{
                 name: 'agrc',
-                location: projectUrl + '../../'
+                location: projectUrl + '../../..'
             }]
         },
         [
-            'agrc/map/BaseMap',
+            'agrc/widgets/map/BaseMap',
 
             'dojo/domReady!'
         ],
@@ -78,7 +78,7 @@
 </head>
 <body>
     <p>
-        Test for the agrc/widgets/map/BaseMap
+        Test for agrc/widgets/map/BaseMap
     </p>
     Defaults
     <div id='basemap-div' class='basemap'></div>

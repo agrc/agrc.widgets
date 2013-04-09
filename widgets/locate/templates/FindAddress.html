@@ -1,19 +1,24 @@
-<form class="form-horizontal" data-dojo-attach-point='form_geocode'>
-  <div class="control-group">
-    <label class="control-label" for="inputEmail">Address</label>
-    <div class="controls">
-      <input type="text"  data-dojo-attach-point="txt_address" id="inputAddress" >
-    </div>
-  </div>
-  <div class="control-group">
-    <label class="control-label" for="input_zone">Zip or City</label>
-    <div class="controls">
-      <input type="text" data-dojo-attach-point="txt_zone" id="input_zone" >
-    </div>
-  </div>
-  <div class="control-group">
-    <div class="controls">
-      <button type="submit" class="btn" data-dojo-attach-point='btn_geocode'>Find</button>
-    <span data-dojo-attach-point='errorMsg' class="error-msg">No Match Found!</span></div>
-  </div>
-</form>
+<div>
+    <form class="form-horizontal" data-dojo-attach-point='form_geocode'>
+        <div class="control-group">
+            <label class="control-label" for="inputEmail">Address</label>
+            <div class="controls">
+                <input type="text" data-dojo-attach-point="txt_address" id="inputAddress"> 
+                <span class="help-inline error">Required!</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <label class="control-label" for="input_zone">Zip or City</label>
+            <div class="controls">
+                <input type="text" data-dojo-attach-point="txt_zone" id="input_zone"> 
+                <span class="help-inline error">Required!</span>
+            </div>
+        </div>
+        <div class="control-group">
+            <div class="controls">
+                <button type="submit" class="btn" data-dojo-attach-point='btn_geocode'>Find</button> 
+                <span data-dojo-attach-point='errorMsg' class="help-inline error">No Match Found!</span>
+            </div>
+        </div>
+    </form>
+</div>

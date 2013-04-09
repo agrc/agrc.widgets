@@ -1,0 +1,11 @@
+.find-address .loader {
+	background-image: url('../images/loader.gif');
+	display: none;
+	float: right;
+	height: 20px;
+	margin-top: 2px;
+	width: 20px;
+}
+.find-address .error-msg, .find-address .help-inline {
+	display: none;
+}

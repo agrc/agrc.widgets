@@ -1,269 +1,288 @@
-/*global dojo, console, agrc, esri*/
 define([
-        'dojo/_base/declare',
-        'dijit/_WidgetBase',
-        'dijit/_TemplatedMixin',
-        'dojo/text!agrc/widgets/locate/templates/FindAddress.html',
-        'dojo/request',
-        'dojo/topic',
-        'dojo/dom-style',
-        'dojo/_base/Color',
-        'dojo/when',
-        'dojo/_base/lang',
-        'dojo/on'
-    ],
-    function(declare,
-        widgetBase,
-        templatedMixin,
-        template,
-        script,
-        topic,
-        style,
-        color,
-        when,
-        lang,
-        on) {
-        // description:
-        //		**Summary**: A simple form tied to the map allowing a user to quickly zoom to an address.
-        //		<p>
-        //		**Owner(s)**: Scott Davis, Steve Gourley
-        //		</p>
-        //		<p>
-        //		**Test Page**: <a href='/tests/dojo/agrc/1.0/agrc/widgets/tests/FindAddressTests.html' target='_blank'>
-        //			agrc.widgets.map.FindAddress.Tests</a>
-        //		</p>
-        //		<p>
-        //		**Description**:
-        //		This widget hits the [agrc geocoding web service](http://gis.utah.gov/web-services/address-geolocator-2).
-        //		</p>
-        //		<p>
-        //		**Published Topics**: (See the [Dojo Topic System](http://dojotoolkit.org/reference-guide/quickstart/topics.html))
-        //		</p>
-        //		<ul>
-        //			<li>agrc.widgets.locate.FindAddress.OnFindStart[none]</li>
-        //			<li>agrc.widgets.locate.FindAddress.OnFind[result]</li>
-        //			<li>agrc.widgets.locate.FindAddress.OnFindError[err]</li>
-        //		</ul>
-        //		**Exceptions**:
-        //		</p>
-        //		<ul><li>agrc.widgets.locate.FindAddress NullReferenceException: map. Pass the map in the constructor.</li></ul>
-        //		<p>
-        //		**Required Files**:
-        //		</p>
-        //		<ul><li>agrc/themes/standard/locate/FindAddress.css</li></ul>
-        //
-        // example:
-        // |	new agrc.widgets.locate.FindAddress({map: map}, 'test1');
+    'dojo/_base/declare',
+    'dijit/_WidgetBase',
+    'dijit/_TemplatedMixin',
+    'dojo/text!agrc/widgets/locate/templates/FindAddress.html',
+    'dojo/request',
+    'dojo/topic',
+    'dojo/dom-style',
+    'dojo/_base/Color',
+    'dojo/when',
+    'dojo/_base/lang',
+    'dojo/on',
+    'dojo/string',
+    'esri/symbols/SimpleMarkerSymbol',
+    'esri/geometry/Point',
+    'esri/geometry/scaleUtils',
+    'esri/graphic',
+    'dojo/_base/array',
+    'dojo/query',
+    'dojo/dom-class'
 
-        return declare('agrc.widgets.locate.FindAddress',
-            [widgetBase, templatedMixin], {
-                templateString: template,
-                baseClass: 'AGRC',
-                map: null,
-                title: 'Find Street Address',
-                symbol: null,
-                graphicsLayer: null,
-                _graphic: null,
-                zoomLevel: 12,
-                apiKey: null,
+],
 
-                constructor: function() {
-                    // summary:
-                    //      first function to fire after page loads
-                    console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
-                },
+function(
+    declare,
+    widgetBase,
+    templatedMixin,
+    template,
+    script,
+    topic,
+    style,
+    color,
+    when,
+    lang,
+    on,
+    dojoString,
+    SimpleMarkerSymbol,
+    Point,
+    scaleUtils,
+    Graphic,
+    array,
+    query,
+    domClass
+    ) {
+    // description:
+    //      **Summary**: A simple form tied to the map allowing a user to quickly zoom to an address.
+    //      <p>
+    //      **Owner(s)**: Scott Davis, Steve Gourley
+    //      </p>
+    //      <p>
+    //      **Test Page**: <a href='/tests/dojo/agrc/1.0/agrc/widgets/tests/FindAddressTests.html' target='_blank'>
+    //          agrc.widgets.map.FindAddress.Tests</a>
+    //      </p>
+    //      <p>
+    //      **Description**:
+    //      This widget hits the [agrc geocoding web service](http://gis.utah.gov/web-services/address-geolocator-2).
+    //      </p>
+    //      <p>
+    //      **Published Topics**: (See the [Dojo Topic System](http://dojotoolkit.org/reference-guide/quickstart/topics.html))
+    //      </p>
+    //      <ul>
+    //          <li>agrc.widgets.locate.FindAddress.OnFindStart[none]</li>
+    //          <li>agrc.widgets.locate.FindAddress.OnFind[result]</li>
+    //          <li>agrc.widgets.locate.FindAddress.OnFindError[err]</li>
+    //      </ul>
+    //      **Exceptions**:
+    //      </p>
+    //      <ul><li>none</li></ul>
+    //      <p>
+    //      **Required Files**:
+    //      </p>
+    //      <ul><li>resources/locate/FindAddress.css</li></ul>
+    //
+    // example:
+    // |    new FindAddress({map: map}, 'test1');
 
-                postMixInProperties: function() {
-                    // summary:
-                    //      postMixin properties like symbol and graphics layer
-                    // description:
-                    //      decide whether to use default graphics layer and symbol
-                    // tags:
-                    //      public
-                    console.info(this.declaredClass + "::" + arguments.callee.nom);
+    return declare('agrc.widgets.locate.FindAddress', [widgetBase, templatedMixin], {
+        templateString: template,
+        baseClass: 'find-address',
+        map: null,
+        title: 'Find Street Address',
+        symbol: null,
+        graphicsLayer: null,
+        _graphic: null,
+        zoomLevel: 12,
+        apiKey: null,
 
-                    // default to use the map's graphics layer if none was passed in
-                    if (!this.graphicsLayer && !!this.map) {
-                        this.connect(this.map, 'onLoad', function() {
-                            this.graphicsLayer = this.map.graphics;
-                        });
-                    }
+        constructor: function() {
+            // summary:
+            //      first function to fire after page loads
+            console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
+        },
 
-                    // create symbol if none was provided in options
-                    if (!this.symbol && !!this.map) {
-                        this.symbol = new esri.symbol.SimpleMarkerSymbol();
-                        this.symbol.setStyle(esri.symbol.SimpleMarkerSymbol.STYLE_DIAMOND);
-                        this.symbol.setColor(new color([255, 0, 0, 0.5]));
-                    }
-                },
+        postMixInProperties: function() {
+            // summary:
+            //      postMixin properties like symbol and graphics layer
+            // description:
+            //      decide whether to use default graphics layer and symbol
+            // tags:
+            //      public
+            console.info(this.declaredClass + "::" + arguments.callee.nom);
 
-                postCreate: function() {
-                    this.form_geocode.onsubmit = function(e) {
-//                        e.preventDefault();
-                        return false;
-                    };
+            // default to use the map's graphics layer if none was passed in
+            if (!this.graphicsLayer && !!this.map) {
+                this.connect(this.map, 'onLoad', function() {
+                    this.graphicsLayer = this.map.graphics;
+                });
+            }
 
-                    on(this.btn_geocode, 'click', lang.hitch(this, 'geocodeAddress'));
-                },
+            // create symbol if none was provided in options
+            if (!this.symbol && !!this.map) {
+                this.symbol = new SimpleMarkerSymbol();
+                this.symbol.setStyle(SimpleMarkerSymbol.STYLE_DIAMOND);
+                this.symbol.setColor(new color([255, 0, 0, 0.5]));
+            }
+        },
 
-                geocodeAddress: function() {
-                    // summary:
-                    //		Geocodes the address if the text boxes validate.
-                    console.info(this.declaredClass + '::' + arguments.callee.nom);
+        postCreate: function() {
+            this.form_geocode.onsubmit = function() {
+                return false;
+            };
 
-                    if (!this._validate()) {
-                        this._done();
-                        return false;
-                    }
+            on(this.btn_geocode, 'click', lang.hitch(this, 'geocodeAddress'));
+        },
 
-                    topic.publish('agrc.widgets.locate.FindAddress.OnFindStart');
+        geocodeAddress: function() {
+            // summary:
+            //      Geocodes the address if the text boxes validate.
+            console.info(this.declaredClass + '::' + arguments.callee.nom);
 
-                    this._geocoding();
+            if (!this._validate()) {
+                this._done();
+                return false;
+            }
 
-                    if (this.map && this._graphic) {
-                        this.graphicsLayer.remove(this._graphic);
-                    }
+            topic.publish('agrc.widgets.locate.FindAddress.OnFindStart');
 
-                    var address = this.txt_address.value;
-                    var zone = this.txt_zone.value;
+            this._geocoding();
 
-                    if (this.request && !this.request.isFulfilled()) {
-                        this.request.cancel('duplicate in flight');
-                        this.request = null;
-                    }
-                    
-                    this.request = this._invokeWebService({ street: address, zone: zone });
-                    
-                    when(this.request, lang.hitch(this, '_onFind'), lang.hitch(this, '_onError'));
+            if (this.map && this._graphic) {
+                this.graphicsLayer.remove(this._graphic);
+            }
 
-                    return false;
-                },
+            var address = this.txt_address.value;
+            var zone = this.txt_zone.value;
 
-                _invokeWebService: function(geocode) {
-                    // summary:
-                    //      calls the web service
-                    // description:
-                    //      sends the request to the wsut webservice
-                    // tags:
-                    //      private
-                    // returns:
-                    //     Deferred 
-                    console.info(this.declaredClass + "::" + arguments.callee.nom);
+            if (this.request && !this.request.isFulfilled()) {
+                this.request.cancel('duplicate in flight');
+                this.request = null;
+            }
+            
+            this.request = this._invokeWebService({ street: address, zone: zone });
+            
+            when(this.request, lang.hitch(this, '_onFind'), lang.hitch(this, '_onError'));
 
-                    var url = "http://api.mapserv.utah.gov/api/v1/Geocode/{geocode.street}/{geocode.zone}";
-                    
-                    var options = {
-                        apiKey: this.apiKey
-                    };
-                    
-                    url = lang.replace(url,
-                        {
-                            geocode: geocode
-                        });
+            return false;
+        },
 
-                    return script.get(url, {
-//                        jsonp: "callback",
-                        preventCache: true,
-                        handleAs: 'json',
-                        query: options
-                    });
-                },
+        _invokeWebService: function(geocode) {
+            // summary:
+            //      calls the web service
+            // description:
+            //      sends the request to the wsut webservice
+            // tags:
+            //      private
+            // returns:
+            //     Deferred 
+            console.info(this.declaredClass + "::" + arguments.callee.nom);
 
-                _validate: function() {
-                    // summary:
-                    //      validates the widget
-                    // description:
-                    //      makes sure the street and zone have valid data
-                    // tags:
-                    //      private
-                    // returns:
-                    //      bool
-                    console.info(this.declaredClass + "::" + arguments.callee.nom);
+            var url = "http://api.mapserv.utah.gov/api/v1/Geocode/{geocode.street}/{geocode.zone}";
+            
+            var options = {
+                apiKey: this.apiKey
+            };
+            
+            url = lang.replace(url, {geocode: geocode});
 
-                    var ok = true;
-
-                    // hide error message
-                    style.set(this.errorMsg, 'display', 'none');
-
-                    // check for valid address and zone
-                    if (!this._isValid(this.txt_address)) {
-                        this.txt_address._message = '';
-                        this.txt_address.displayMessage('Please enter an address.');
-
-                        ok = false;
-                    }
-
-                    if (!this._isValid(this.txt_zone)) {
-                        this.txt_zone.displayMessage('Please enter a zip or city.');
-
-                        ok = false;
-                    }
-
-                    return ok;
-                },
-
-                _isValid: function(txt) {
-                    return true;
-                },
-
-                _geocoding: function() {
-
-                },
-
-                _done: function() {
-
-                },
-                
-                onFind: function() {
-                    
-                },
-
-                _onFind: function(response) {
-                    // summary:
-                    //      handles a successful geocode
-                    // description:
-                    //      zooms the map if there is one. publishes the result
-                    // tags:
-                    //      private
-                    console.info(this.declaredClass + "::" + arguments.callee.nom);
-
-                    this.onFind(response.result);
-
-                    if (this.map) {
-                        var point = new esri.geometry.Point(response.result.location.x, response.result.location.y, this.map.spatialReference);
-
-                        if (this.map.getLevel() > -1) {
-                            this.map.centerAndZoom(point, this.zoomLevel);
-                        } else {
-                            this.map.centerAndZoom(point, esri.geometry.getScale(this.map.extent, this.map.width, this.map.spatialReference.wkid) / this.zoomLevel);
-                        }
-
-                        this._graphic = new esri.Graphic(point, this.symbol, response.result);
-                        this.graphicsLayer.add(this._graphic);
-                    }
-
-                    this.done();
-
-                    topic.publish("agrc.widgets.locate.FindAddress.OnFind", [result]);
-                },
-
-                _onError: function(err) {
-                    // summary:
-                    //      handles script io geocoding error
-                    // description:
-                    //      publishes error
-                    // tags:
-                    //      private
-                    // returns:
-                    //       
-                    console.info(this.declaredClass + "::" + arguments.callee.nom);
-
-                    style.set(this.errorMsg, 'display', 'inline');
-
-                    // re-enable find button
-                    this._done();
-
-                    topic.publish('agrc.widgets.locate.FindAddress.OnFindError', [err]);
-                }
+            return script.get(url, {
+                preventCache: true,
+                handleAs: 'json',
+                query: options
             });
+        },
+
+        _validate: function() {
+            // summary:
+            //      validates the widget
+            // description:
+            //      makes sure the street and zone have valid data
+            // tags:
+            //      private
+            // returns:
+            //      bool
+            console.info(this.declaredClass + "::" + arguments.callee.nom);
+
+            var that = this;
+
+            // hide error messages
+            query('.help-inline.error', this.domNode).style('display', 'none');
+            query('.control-group', this.domNode).removeClass('error');
+
+            return array.every([
+                this.txt_address,
+                this.txt_zone
+                ], 
+                function (tb) {
+                    return that._isValid(tb);
+            });
+        },
+
+        _isValid: function(textBox) {
+            // summary:
+            //      validates that there are values in the textbox
+            // textBox: TextBox Element
+            console.log(this.declaredClass + "::_isValid", arguments);
+
+            var valid = dojoString.trim(textBox.value).length > 0;
+
+            if (!valid) {
+                query('span', textBox.parentElement).style('display', 'inline');
+                domClass.add(textBox.parentElement.parentElement, 'error');
+            }
+
+            return valid;
+        },
+
+        _geocoding: function() {
+
+        },
+
+        _done: function() {
+
+        },
+        
+        onFind: function() {
+            
+        },
+
+        _onFind: function(response) {
+            // summary:
+            //      handles a successful geocode
+            // description:
+            //      zooms the map if there is one. publishes the result
+            // tags:
+            //      private
+            console.info(this.declaredClass + "::" + arguments.callee.nom);
+
+            this.onFind(response.result);
+
+            if (this.map) {
+                var point = new Point(response.result.location.x, response.result.location.y, this.map.spatialReference);
+
+                if (this.map.getLevel() > -1) {
+                    this.map.centerAndZoom(point, this.zoomLevel);
+                } else {
+                    this.map.centerAndZoom(point, scaleUtils.getScale(this.map.extent, this.map.width, this.map.spatialReference.wkid) / this.zoomLevel);
+                }
+
+                this._graphic = new Graphic(point, this.symbol, response.result);
+                this.graphicsLayer.add(this._graphic);
+            }
+
+            this.done();
+
+            topic.publish("agrc.widgets.locate.FindAddress.OnFind", [response.result]);
+        },
+
+        _onError: function(err) {
+            // summary:
+            //      handles script io geocoding error
+            // description:
+            //      publishes error
+            // tags:
+            //      private
+            // returns:
+            //       
+            console.info(this.declaredClass + "::" + arguments.callee.nom);
+
+            style.set(this.errorMsg, 'display', 'inline');
+            domClass.add(this.errorMsg.parentElement.parentElement, 'error');
+
+            // re-enable find button
+            this._done();
+
+            topic.publish('agrc.widgets.locate.FindAddress.OnFindError', [err]);
+        }
     });
+});

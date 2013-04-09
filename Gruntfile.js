@@ -15,7 +15,9 @@ module.exports = function(grunt) {
                     specs: [
                         // 'widgets/tests/spec/*.js',
                         // 'modules/tests/spec/*.js'
-                        'widgets/tests/spec/SpecBaseMap.js'
+                        'widgets/tests/spec/SpecBaseMap.js',
+                        'widgets/tests/spec/SpecFindAddress.js',
+                        'modules/tests/spec/SpecString.js'
                     ]
                 }
             }
@@ -25,7 +27,11 @@ module.exports = function(grunt) {
                 // 'widgets/**/*.js',
                 // 'modules/**/*.js'
                 'widgets/tests/spec/SpecBaseMap.js',
-                'widgets/map/BaseMap.js'
+                'widgets/map/BaseMap.js',
+                'widgets/tests/spec/SpecFindAddress.js',
+                'widgest/locate/SpecFindAddress.js',
+                'modules/String.js',
+                'modules/SpecString.js'
             ],
             options: {
                 jshintrc: '.jshintrc'
