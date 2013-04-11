@@ -1,42 +1,42 @@
 define([
 	'dojo/_base/declare',
-	'esri/map',
 	'dijit/form/Button',
-	'esri/toolbars/navigation',
-	'esri/geometry/Extent',
 	'dojo/_base/lang',
-	'esri/config',
 	'dojo/dom-construct',
 	'dojo/dom-class',
 	'dijit/Destroyable',
 	'dojo/aspect',
-	'esri/domUtils',
-	'esri/layers/ArcGISTiledMapServiceLayer',
 	'dojo/dom',
 	'dojo/dom-style',
 	'dojo/dom-geometry',
-	'dojo/_base/array'
-
+	'dojo/_base/array',
+	'agrc/modules/EsriLoader!esri/map',
+	'agrc/modules/EsriLoader!esri/toolbars/navigation',
+	'agrc/modules/EsriLoader!esri/geometry/Extent',
+	'agrc/modules/EsriLoader!esri/config',
+	'agrc/modules/EsriLoader!esri/domUtils',
+	'agrc/modules/EsriLoader!esri/layers/ArcGISTiledMapServiceLayer'
+	
 ],
 
 function (
 	declare,
-	esriMap,
 	Button,
-	Navigation,
-	Extent,
 	lang,
-	esriConfig,
 	domConstruct,
 	domClass,
 	Destroyable,
 	aspect,
-	domUtils,
-	ArcGISTiledMapServiceLayer,
 	dom,
 	domStyle,
 	domGeometry,
-	array
+	array,
+	esriMap,
+	Navigation,
+	Extent,
+	esriConfig,
+	domUtils,
+	ArcGISTiledMapServiceLayer
 	) {
 	return declare('agrc/widgets/map/BaseMap', [esriMap, Destroyable], {
 		// description:

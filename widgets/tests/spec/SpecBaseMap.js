@@ -2,7 +2,7 @@ require([
     'agrc/widgets/map/BaseMap',
     'dojo/dom-construct',
     'dojo/_base/window',
-    'esri/geometry/Extent',
+    'agrc/modules/EsriLoader!esri/geometry/Extent',
     'dijit/registry',
     'dojo/_base/lang'
 ],
