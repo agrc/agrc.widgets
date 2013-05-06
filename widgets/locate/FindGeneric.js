@@ -43,7 +43,6 @@ dojo.declare("agrc.widgets.locate.FindGeneric", [dijit._Widget, dijit._Templated
 	// |		map: map,
 	// |		layerName: 'SGID93.BOUNDARIES.Counties',
 	// |		searchFieldName: 'NAME',
-	// |		label: 'Counties',
 	// |		fieldLabel: 'Name'
 	// |	}, 'test2');
 
@@ -62,10 +61,6 @@ dojo.declare("agrc.widgets.locate.FindGeneric", [dijit._Widget, dijit._Templated
 	// attributeMap: [private] Object
 	//		Attribute map.
 	attributeMap: dojo.delegate(dijit._Widget.prototype.attributeMap, {
-		label: {
-			node: 'labelNode',
-			type: 'innerHTML'
-		},
 		fieldLabel: {
 			node: 'fieldLabelNode',
 			type: 'innerHTML'
@@ -228,10 +223,12 @@ dojo.declare("agrc.widgets.locate.FindGeneric", [dijit._Widget, dijit._Templated
 		//      public
 		console.info(this.declaredClass + "::" + arguments.callee.nom);
 
+		dojo.stopEvent(args);
+
 		if (this.txt_box.isValid()) {
 			// hide error message
 			dojo.style(this.errorMsg, 'display', 'none');
-			this.btn_find.makeBusy();
+			// this.btn_find.makeBusy();
 
 			var value = (args && args.value) ? args.value : this.txt_box.get('displayedValue');
 
@@ -306,7 +303,7 @@ dojo.declare("agrc.widgets.locate.FindGeneric", [dijit._Widget, dijit._Templated
 
 			this.map.setExtent(extent, true);
 
-			this.btn_find.cancel();
+			// this.btn_find.cancel();
 
 			dojo.publish('agrc.widgets.locate.FindGeneric.OnFind');
 		}
@@ -353,7 +350,7 @@ dojo.declare("agrc.widgets.locate.FindGeneric", [dijit._Widget, dijit._Templated
 		dojo.style(this.errorMsg, 'display', 'block');
 
 		// re-enable find button
-		this.btn_find.cancel();
+		// this.btn_find.cancel();
 
 		dojo.publish('agrc.widgets.locate.FindGeneric.OnFindError', [err]);
 	},

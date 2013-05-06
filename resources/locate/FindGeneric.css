@@ -1,0 +1,18 @@
+.find-generic .error-msg, .find-generic .help-inline {
+    display: none;
+}
+.find-generic .dijitValidationTextBox {
+    border: none;
+    width: 220px !important;
+}
+.find-generic .dijitValidationTextBox .dijitInputContainer input {
+    border: solid 1px #cccccc !important;
+    padding: 4px 6px !important;
+    width: 200px !important;
+}
+.find-generic .dijitInputContainer {
+    padding: 0 !important;
+}
+.find-generic .dijitTextBoxHover {
+    background-color: white !important;
+}
