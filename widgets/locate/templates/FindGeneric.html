@@ -1,18 +1,18 @@
 <div class="find-generic">
     <form>
         <div class="control-group">
-            <span dojoAttachPoint='fieldLabelNode'></span>
+            <span data-dojo-attach-point='fieldLabelNode'>${fieldLabel}</span>
             <div class="controls">
-                <div dojoAttachPoint="txt_box"
+                <div data-dojo-attach-point="txt_box"
                     class="text-box" hasDownArrow="${displayDropDownArrow}"
-                    dojoType="dijit.form.FilteringSelect"
+                    data-dojo-type="dijit.form.FilteringSelect"
                     searchattr="Value" required='false'></div>
             </div>
         </div>
         <div class="control-group">
             <div class="controls">
-                <button dojoattachpoint="btn_find" class="btn" dojoattachevent="onclick:find">Zoom</button>
-                <span dojoattachpoint='errorMsg' class="help-inline error">There was a problem with the last request.</span>
+                <button data-dojo-attach-point="btn_find" class="btn" data-dojo-attach-event="click:find">Zoom</button>
+                <span data-dojo-attach-point='errorMsg' class="help-inline error">There was a problem with the last request.</span>
             </div>
         </div>
     </form>

@@ -10,12 +10,12 @@ define([
 	'dojo/dom-style',
 	'dojo/dom-geometry',
 	'dojo/_base/array',
-	'agrc/modules/EsriLoader!esri/map',
-	'agrc/modules/EsriLoader!esri/toolbars/navigation',
-	'agrc/modules/EsriLoader!esri/geometry/Extent',
-	'agrc/modules/EsriLoader!esri/config',
-	'agrc/modules/EsriLoader!esri/domUtils',
-	'agrc/modules/EsriLoader!esri/layers/ArcGISTiledMapServiceLayer'
+	'esri/map',
+	'esri/toolbars/navigation',
+	'esri/geometry/Extent',
+	'esri/config',
+	'esri/domUtils',
+	'esri/layers/ArcGISTiledMapServiceLayer'
 	
 ],
 
