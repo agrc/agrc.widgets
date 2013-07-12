@@ -3,7 +3,7 @@ define([
     'dijit/_WidgetBase',
     'dijit/_TemplatedMixin',
     'dojo/text!agrc/widgets/locate/templates/FindAddress.html',
-    'dojo/request',
+    'agrc/modules/EsriLoader!esri/request',
     'dojo/topic',
     'dojo/dom-style',
     'dojo/_base/Color',
@@ -11,10 +11,10 @@ define([
     'dojo/_base/lang',
     'dojo/on',
     'dojo/string',
-    'esri/symbols/SimpleMarkerSymbol',
-    'esri/geometry/Point',
-    'esri/geometry/scaleUtils',
-    'esri/graphic',
+    'agrc/modules/EsriLoader!esri/symbols/SimpleMarkerSymbol',
+    'agrc/modules/EsriLoader!esri/geometry/Point',
+    'agrc/modules/EsriLoader!esri/geometry/scaleUtils',
+    'agrc/modules/EsriLoader!esri/graphic',
     'dojo/_base/array',
     'dojo/query',
     'dojo/dom-class'
@@ -26,7 +26,7 @@ function(
     widgetBase,
     templatedMixin,
     template,
-    script,
+    esriRequest,
     topic,
     style,
     color,
@@ -144,14 +144,14 @@ function(
             var address = this.txt_address.value;
             var zone = this.txt_zone.value;
 
-            if (this.request && !this.request.isFulfilled()) {
+            if (this.request) {
                 this.request.cancel('duplicate in flight');
                 this.request = null;
             }
             
-            this.request = this._invokeWebService({ street: address, zone: zone });
-            
-            when(this.request, lang.hitch(this, '_onFind'), lang.hitch(this, '_onError'));
+            this.request = this._invokeWebService({ street: address, zone: zone }).then(
+                lang.hitch(this, '_onFind'), lang.hitch(this, '_onError')
+            );
 
             return false;
         },
@@ -175,10 +175,10 @@ function(
             
             url = lang.replace(url, {geocode: geocode});
 
-            return script.get(url, {
-                preventCache: true,
-                handleAs: 'json',
-                query: options
+            return esriRequest({
+                url: url,
+                content: options,
+                callbackParamName: 'callback'
             });
         },
 
@@ -245,24 +245,29 @@ function(
             //      private
             console.info(this.declaredClass + "::" + arguments.callee.nom);
 
-            this.onFind(response.result);
+            if (response.status === 200) {
+                this.onFind(response.result);
 
-            if (this.map) {
-                var point = new Point(response.result.location.x, response.result.location.y, this.map.spatialReference);
+                if (this.map) {
+                    var point = new Point(response.result.location.x, response.result.location.y, this.map.spatialReference);
 
-                if (this.map.getLevel() > -1) {
-                    this.map.centerAndZoom(point, this.zoomLevel);
-                } else {
-                    this.map.centerAndZoom(point, scaleUtils.getScale(this.map.extent, this.map.width, this.map.spatialReference.wkid) / this.zoomLevel);
+                    if (this.map.getLevel() > -1) {
+                        this.map.centerAndZoom(point, this.zoomLevel);
+                    } else {
+                        this.map.centerAndZoom(point, scaleUtils.getScale(this.map.extent, this.map.width, this.map.spatialReference.wkid) / this.zoomLevel);
+                    }
+
+                    this._graphic = new Graphic(point, this.symbol, response.result);
+                    this.graphicsLayer.add(this._graphic);
                 }
 
-                this._graphic = new Graphic(point, this.symbol, response.result);
-                this.graphicsLayer.add(this._graphic);
+                this.done();
+
+                topic.publish("agrc.widgets.locate.FindAddress.OnFind", [response.result]);
+            } else {
+                this._onError();
             }
 
-            this.done();
-
-            topic.publish("agrc.widgets.locate.FindAddress.OnFind", [response.result]);
         },
 
         _onError: function(err) {

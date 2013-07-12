@@ -1,18 +1,18 @@
 /* layer */
-@import url("layer/LayerList.css");
-@import url('layer/OpacitySlider.css');
+@import "layer/LayerList.css";
+@import 'layer/OpacitySlider.css';
 
 /* locate */
-@import url('locate/FindAddress.css');
-@import url('locate/FindGeneric.css');
-@import url('locate/FindGNIS.css');
-@import url('locate/MagicZoom.css');
-@import url('locate/TRSsearch.css');
-@import url('locate/ZoomToCoords.css');
+/*@import 'locate/FindAddress.css';*/
+/*@import 'locate/FindGeneric.css';*/
+@import 'locate/FindGNIS.css';
+@import 'locate/MagicZoom.css';
+@import 'locate/TRSsearch.css';
+@import 'locate/ZoomToCoords.css';
 
 /* map */
-@import url("map/BaseMap.css");
-@import url("map/BaseMapSelector.css");
+/*@import "map/BaseMap.css";*/
+@import "map/BaseMapSelector.css";
 
 .agrc .widgetHidden {
     /* To hide unselected panes in StackContainer etc. */

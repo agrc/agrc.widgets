@@ -1,3 +1,6 @@
+// TODO:
+//      fallback to local storage if no network connection
+//      do not submit more than one request to the server at a time
 define([
     'dojo/dom-construct',
     'dojo/Deferred',
@@ -30,6 +33,8 @@ define([
             var def = new Deferred();
 
             function buildOptions(values) {
+                // add empty option
+                domConstruct.create('option', null, select);
                 array.forEach(values, function (v) {
                     domConstruct.create('option', {
                         value: v.code,
@@ -78,7 +83,7 @@ define([
                 return fieldData.domain.codedValues;
             }
 
-            request(featureServiceUrl).then(
+            request(featureServiceUrl + '?f=json').then(
                 function (response) {
                     def.resolve(getValues(response));
                 }, function (error) {

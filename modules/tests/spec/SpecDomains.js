@@ -62,10 +62,10 @@ function (
                     }, 'popDef to be fulfilled');
                 });
                 it("creates the correct number of options", function () {
-                    expect(select.children.length).toEqual(9);
+                    expect(select.children.length).toEqual(10);
                 });
                 it("populates the correct value and innerHTML", function () {
-                    var option = select.children[0];
+                    var option = select.children[1];
 
                     expect(option.value).toEqual('cr');
                     expect(option.innerHTML).toEqual('Coldwater river');
