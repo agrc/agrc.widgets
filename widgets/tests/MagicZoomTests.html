@@ -9,7 +9,7 @@
 	<!-- CSS -->		
 	<link rel='stylesheet' href='http://js.arcgis.com/3.6/js/dojo/dijit/themes/claro/claro.css'>
 	<link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.6/js/esri/css/esri.css" />
-	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap.min.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
 	<style type='text/css'>
 	@import '../../resources/locate/MagicZoom.css';
 	#map-div {
@@ -48,7 +48,7 @@
 	function(Module, mapDependency) {
 		var map = new mapDependency('map-div');
 
-		var widgetUnderTest = new Module({
+		widgetUnderTest = new Module({
 			mapServiceURL: 'http://mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Vector/MapServer',
 			searchLayerIndex: 1,
 			searchField: 'NAME',
@@ -58,7 +58,7 @@
 
 		widgetUnderTest.startup();
 
-		var widgetUnderTest = new Module({
+		var w2 = new Module({
 			promptMessage: 'Please type a city name...',
 			mapServiceURL: 'http://mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Vector/MapServer',
 			searchLayerIndex: 1,
@@ -66,9 +66,9 @@
 			map: map,
 			maxResultsToDisplay: 10
 		}, 'search-div2');
-		widgetUnderTest.startup();
+		w2.startup();
 
-		var widgetUnderTest = new Module({
+		var w3 = new Module({
 			promptMessage: 'Please type a city name...',
 			mapServiceURL: 'http://mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Vector/MapServer',
 			searchLayerIndex: 1,
@@ -76,7 +76,7 @@
 			map: map,
 			maxResultsToDisplay: 10
 		}, 'search-div3');
-		widgetUnderTest.startup();
+		w3.startup();
 	});
 </script>
 </head>

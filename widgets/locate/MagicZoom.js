@@ -6,6 +6,7 @@ define([
 
         'dojo/dom-class',
         'dojo/dom-style',
+        'dojo/dom-construct',
 
         'dojo/on',
         'dojo/query',
@@ -25,6 +26,7 @@ define([
         'esri/symbols/SimpleLineSymbol',
         'esri/symbols/SimpleMarkerSymbol',
         'esri/geometry/Multipoint',
+        'dojo/mouse',
 
         'dojo/_base/sniff'
     ],
@@ -36,6 +38,7 @@ define([
 
         domClass,
         domStyle,
+        domConstruct,
 
         on,
         query,
@@ -54,7 +57,8 @@ define([
         SimpleFillSymbol,
         SimpleLineSymbol,
         SimpleMarkerSymbol,
-        Multipoint
+        Multipoint,
+        mouse
     ) {
         return declare('agrc.widgets.locate.MagicZoom', [_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
 
@@ -249,28 +253,28 @@ define([
                         })),
                     on(this.textBox, 'focus', lang.hitch(this,
                         function() {
-                            this._startSearchTimer();
-                        }))
-                );
-
-                this.own(
-                    on(this.matchesTable, 'mouseenter', lang.hitch(this, function() {
+                            if (this.textBox.value.length > 0) {
+                                this._startSearchTimer();
+                            }
+                        })),
+                    on(this.matchesTable, mouse.enter, lang.hitch(this, function() {
+                        console.log('enter');
                         // set switch
                         this._isOverTable = true;
 
                         // remove any rows selected using arrow keys
-                        query('.selected-cell').removeClass('selected-cell');
+                        query('.highlighted-row').removeClass('highlighted-row');
 
                         // reset current selection
                         this._currentIndex = 0;
                     })),
-
-                    on(this.matchesTable, 'mouseleave', lang.hitch(this, function() {
+                    on(this.matchesTable, mouse.leave, lang.hitch(this, function() {
+                        console.log('mouseleave');
                         // set switch
                         this._isOverTable = false;
 
                         // set first row as selected
-                        domClass.add(this.matchesTable.rows[0].cells[0], 'selected-cell');
+                        domClass.add(this.matchesList.children[0], 'highlighted-row');
                     }))
                 );
             },
@@ -283,8 +287,8 @@ define([
 
                 if (evt.keyCode === keys.ENTER) {
                     // zoom if there is at least one match
-                    if (this.matchesTable.rows.length > 0) {
-                        this._setMatch(this.matchesTable.rows[this._currentIndex]);
+                    if (this.matchesList.children.length > 0) {
+                        this._setMatch(this.matchesList.children[this._currentIndex]);
                     } else {
                         // search
                         this._search(this.textBox.value);
@@ -322,13 +326,13 @@ define([
                 console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
 
                 // exit if there are no matches in table
-                if (this.matchesTable.rows.length === 0) {
+                if (this.matchesList.children.length === 0) {
                     this._startSearchTimer();
                     return;
                 }
 
                 // remove selected class if any
-                domClass.remove(this.matchesTable.rows[this._currentIndex].cells[0], 'selected-cell');
+                domClass.remove(this.matchesList.children[this._currentIndex], 'highlighted-row');
 
                 // increment index
                 this._currentIndex = this._currentIndex + increment;
@@ -336,12 +340,12 @@ define([
                 // prevent out of bounds index
                 if (this._currentIndex < 0) {
                     this._currentIndex = 0;
-                } else if (this._currentIndex > this.matchesTable.rows.length - 1) {
-                    this._currentIndex = this.matchesTable.rows.length - 1;
+                } else if (this._currentIndex > this.matchesList.children.length - 1) {
+                    this._currentIndex = this.matchesList.children.length - 1;
                 }
 
                 // add selected class using new index
-                domClass.add(this.matchesTable.rows[this._currentIndex].cells[0], 'selected-cell');
+                domClass.add(this.matchesList.children[this._currentIndex], 'highlighted-row');
             },
             _search: function(searchString) {
                 // summary:
@@ -465,24 +469,27 @@ define([
                 features = this._sortArray(features);
 
                 // loop through all features
-                array.forEach(features, function(feat, i) {
-                    // insert new empty row
-                    var row = this.matchesTable.insertRow(i);
+                array.forEach(features, function(feat) {
+                    // // insert new empty row
+                    // var row = this.matchesTable.insertRow(i);
+                    var row = domConstruct.create('li', null, this.matchesList);
 
-                    // insert match value cell
-                    var matchCell = row.insertCell(0);
+                    // // insert match value cell
+                    // var matchCell = row.insertCell(0);
 
-                    // get match value string and bold the matching letters
+                    // // get match value string and bold the matching letters
                     var fString = feat.attributes[this.searchField];
                     var sliceIndex = this.textBox.value.length;
-                    matchCell.innerHTML = fString.slice(0, sliceIndex) + fString.slice(sliceIndex).bold();
+                    // matchCell.innerHTML = fString.slice(0, sliceIndex) + fString.slice(sliceIndex).bold();
+                    row.innerHTML = fString.slice(0, sliceIndex) + fString.slice(sliceIndex).bold();
 
                     // wire onclick event
-                    this.own(on(row, "click", this._onRowClick));
+                    this.own(on(row, "click", lang.hitch(this, this._onRowClick)));
                 }, this);
 
                 // select first row
-                domClass.add(this.matchesTable.rows[0].cells[0], 'selected-cell');
+                // domClass.add(this.matchesTable.rows[0].cells[0], 'highlighted-row');
+                domClass.add(this.matchesList.children[0], 'highlighted-row');
 
                 // show table
                 this._toggleTable(true);
@@ -519,10 +526,8 @@ define([
                 this._graphicsLayer.clear();
 
                 // set textbox to full value
-                var cell = row.cells[0];
-                // textContent is the standard supported by everyone but < IE9.
-                // https://developer.mozilla.org/en/DOM/Node.textContent
-                this.textBox.value = (has('ie') < 9) ? cell.innerText : cell.textContent;
+                // var cell = row.cells[0];
+                this.textBox.value = (has('ie') < 9) ? row.innerText : row.textContent;
 
                 // clear table
                 this._toggleTable(false);
@@ -587,10 +592,11 @@ define([
                 //      private
                 console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
 
-                // delete all rows in table
-                for (var i = table.rows.length; i > 0; i--) {
-                    table.deleteRow(i - 1);
-                }
+                // // delete all rows in table
+                // for (var i = table.rows.length; i > 0; i--) {
+                //     table.deleteRow(i - 1);
+                // }
+                query('li', this.matchesTable).forEach(domConstruct.destroy);
 
                 // hide table
                 domStyle.set(table, "display", "none");
@@ -607,9 +613,7 @@ define([
                 //      private
                 console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
 
-                var table = (has('ie') == 7) ? 'block' : 'table';
-
-                var displayValue = (show) ? table : 'none';
+                var displayValue = (show) ? 'block' : 'none';
                 domStyle.set(this.matchesTable, 'display', displayValue);
             },
             _sortArray: function(list) {
