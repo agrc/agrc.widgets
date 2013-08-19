@@ -1,92 +1,93 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-	<head>
-        <title>Magic Zoom Tests</title>
+<head>
+	<title>Magic Zoom Tests</title>
 
-        <!-- META TAGS -->
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-		
-		<!-- CSS -->		
-		<link rel='stylesheet' href='http://serverapi.arcgisonline.com/jsapi/arcgis/2.2/js/dojo/dijit/themes/claro/claro.css'>
-    	<link rel='stylesheet' type='text/css' href='../../themes/standard/agrc.css' />
-		<style type='text/css'>
-			#map-div {
-				height: 400px;
-				width: 500px;
-				border: solid 1px gray;
-				position: relative;
-			}
-			#search-div2 {
-				position: relative;
-				z-index: 27;
-			}
-			#search-div3 {
-				position: relative;
-				z-index: 26;
-			}
-		</style>
-		
-		<!-- JAVASCRIPT -->
-		<script type='text/javascript'>
-			djConfig={
-				isDebug: true,
-				debugAtAllCosts: true,
-				parseOnLoad: true,
-				baseUrl: './',
-				modulePaths: {
-					'agrc': '../../'
-				}
-			};
-		</script>
-		<script type='text/javascript' src='http://serverapi.arcgisonline.com/jsapi/arcgis/?v=2.2'></script>
-		<script type='text/javascript'>
-			dojo.require('agrc.widgets.map.BaseMap');
-			dojo.require('agrc.widgets.locate.MagicZoom');
-			
-			function init(){
-				var map = new agrc.widgets.map.BaseMap('map-div');
-				var zoom = new agrc.widgets.locate.MagicZoom({
-					promptMessage: 'Please type a city name...',
-					mapServiceURL: 'http://mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Vector/MapServer',
-					searchLayerIndex: 1,
-					searchField: 'NAME',
-					map: map,
-					maxResultsToDisplay: 10
-				}, 'search-div');
-				zoom.startup();
-				
-				zoom = new agrc.widgets.locate.MagicZoom({
-					promptMessage: 'Please type a city name...',
-					mapServiceURL: 'http://mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Vector/MapServer',
-					searchLayerIndex: 1,
-					searchField: 'NAME',
-					map: map,
-					maxResultsToDisplay: 10
-				}, 'search-div2');
-				zoom.startup();
-				
-				zoom = new agrc.widgets.locate.MagicZoom({
-					promptMessage: 'Please type a city name...',
-					mapServiceURL: 'http://mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Vector/MapServer',
-					searchLayerIndex: 1,
-					searchField: 'NAME',
-					map: map,
-					maxResultsToDisplay: 10
-				}, 'search-div3');
-				zoom.startup();
-			}
-			
-			dojo.ready(init);
-		</script>
-	</head>
-	<body class='claro'>
-		<div id='map-div'>
-			<div id='search-div'></div>
-		</div>
-		layout tests
-		<div id="search-div2"></div>
-		<br><br>
-		layout tests
-		<div id="search-div3"></div>
-	</body>
+	<!-- META TAGS -->
+	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+	<!-- CSS -->		
+	<link rel='stylesheet' href='http://js.arcgis.com/3.6/js/dojo/dijit/themes/claro/claro.css'>
+	<link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.6/js/esri/css/esri.css" />
+	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0-rc2/css/bootstrap.min.css" rel="stylesheet">
+	<style type='text/css'>
+	@import '../../resources/locate/MagicZoom.css';
+	#map-div {
+		height: 400px;
+		width: 500px;
+		border: solid 1px gray;
+		position: relative;
+	}
+	#search-div2 {
+		position: relative;
+		z-index: 27;
+	}
+	#search-div3 {
+		position: relative;
+		z-index: 26;
+	}
+	</style>
+
+	<!-- JAVASCRIPT -->
+	<script type='text/javascript' src='http://js.arcgis.com/3.6'></script>
+	<script type="text/javascript">
+	var projectUrl = location.pathname.replace(/\/[^\/]+$/, "") + '/';
+	var widgetUnderTest;
+
+	require({
+		packages: [{
+			name: 'agrc',
+			location: projectUrl + '../../../agrc'
+		}]
+	}, [
+	'agrc/widgets/locate/MagicZoom',
+	'agrc/widgets/map/BaseMap',
+
+	'dojo/domReady!'
+	],
+	function(Module, mapDependency) {
+		var map = new mapDependency('map-div');
+
+		var widgetUnderTest = new Module({
+			mapServiceURL: 'http://mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Vector/MapServer',
+			searchLayerIndex: 1,
+			searchField: 'NAME',
+			map: map,
+			maxResultsToDisplay: 10
+		}, 'search-div');
+
+		widgetUnderTest.startup();
+
+		var widgetUnderTest = new Module({
+			promptMessage: 'Please type a city name...',
+			mapServiceURL: 'http://mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Vector/MapServer',
+			searchLayerIndex: 1,
+			searchField: 'NAME',
+			map: map,
+			maxResultsToDisplay: 10
+		}, 'search-div2');
+		widgetUnderTest.startup();
+
+		var widgetUnderTest = new Module({
+			promptMessage: 'Please type a city name...',
+			mapServiceURL: 'http://mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Vector/MapServer',
+			searchLayerIndex: 1,
+			searchField: 'NAME',
+			map: map,
+			maxResultsToDisplay: 10
+		}, 'search-div3');
+		widgetUnderTest.startup();
+	});
+</script>
+</head>
+<body class='claro'>
+	<div id='map-div'>
+		<div id='search-div'></div>
+	</div>
+	layout tests
+	<div id="search-div2"></div>
+	<br><br>
+	layout tests
+	<div id="search-div3"></div>
+</body>
 </html>

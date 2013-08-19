@@ -1,0 +1,60 @@
+.magic-zoom {
+	padding: 5px;
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	z-index: 25;
+	width: 200px;
+	height: 24px;
+}
+.magic-zoom .search-img {
+	background: url('../images/search_icon.png') no-repeat scroll 0 0 transparent;
+	position: absolute;
+	right: 9px;
+	top: 9px;
+	width: 16px;
+	height: 16px;
+}
+.magic-zoom .text-box {
+	font-size: 14px;
+	float: left;
+	width: 198px;
+	height: 22px;
+}
+.magic-zoom .matches-table {
+	border: 1px solid #8BA0BD;
+	width: 200px;
+	background-color: white;
+	font-size: 12px;
+	display: none;
+	float: left;
+	z-index: 99;
+	position: absolute;
+	top: 28px;
+}
+.magic-zoom .matches-table td {
+	padding: 2px;
+	border: solid 1px white;
+}
+.magic-zoom .matches-table td:hover {
+	background-color: #D7E7F4;
+	cursor: pointer;
+}
+.magic-zoom .matches-table .highlighted-row {
+    background-color: #D7E7F4;
+}
+.magic-zoom .shadow {	
+	-moz-box-shadow: 0 1px 1px rgba(0, 0, 0, 0.15);
+}
+.magic-zoom .hidden-cell {
+	display: none;
+}
+.magic-zoom .selected-cell {
+    background-color: #D7E7F4;
+}
+
+/* dojo hacks */
+.magic-zoom INPUT {
+	font-family: Verdana, Arial, Helvetica, sans-serif !important;
+	font-size: 13px !important;
+}
