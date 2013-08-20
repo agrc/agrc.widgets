@@ -570,6 +570,13 @@ define([
                 // add graphic
                 graphic.setSymbol(sym);
                 this._graphicsLayer.add(graphic);
+
+                this.onZoomed(graphic);
+            },
+            onZoomed: function(/*graphic*/){
+                // summary:
+                //      Fires after the map has been zoomed to the graphic.
+                console.log(this.declaredClass + "::onZoomed", arguments);
             },
             _deleteAllTableRows: function(table) {
                 // summary:
