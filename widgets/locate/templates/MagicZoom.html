@@ -1,12 +1,14 @@
 <div class='magic-zoom'>
 	<div class="input-group">
         <input data-dojo-attach-point='textBox' 
-            class='form-control'></input>
+            class='form-control' placeholder='${placeHolder}'></input>
         <span class="input-group-addon">
             <span class='glyphicon glyphicon-search'></span>
         </span>
     </div>
 	<div data-dojo-attach-point='matchesTable' class='matches-table dropdown'>
-        <ul class="dropdown-menu" data-dojo-attach-point='matchesList'></ul>   
+        <ul class="dropdown-menu" data-dojo-attach-point='matchesList'>
+            <li data-dojo-attach-point='msg' class="dropdown-header"></li>
+        </ul>   
     </div>
 </div>

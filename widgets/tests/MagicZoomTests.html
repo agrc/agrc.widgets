@@ -53,13 +53,13 @@
 			searchLayerIndex: 1,
 			searchField: 'NAME',
 			map: map,
-			maxResultsToDisplay: 10
+			maxResultsToDisplay: 10,
+			placeHolder: 'placeholder txt'
 		}, 'search-div');
 
 		widgetUnderTest.startup();
 
 		var w2 = new Module({
-			promptMessage: 'Please type a city name...',
 			mapServiceURL: 'http://mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Vector/MapServer',
 			searchLayerIndex: 1,
 			searchField: 'NAME',
@@ -69,7 +69,6 @@
 		w2.startup();
 
 		var w3 = new Module({
-			promptMessage: 'Please type a city name...',
 			mapServiceURL: 'http://mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Vector/MapServer',
 			searchLayerIndex: 1,
 			searchField: 'NAME',

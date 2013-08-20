@@ -15,7 +15,6 @@ define([
 
         'dijit/_WidgetBase',
         'dijit/_TemplatedMixin',
-        'dijit/_WidgetsInTemplateMixin',
 
         'dojo/text!agrc/widgets/locate/templates/MagicZoom.html',
 
@@ -47,7 +46,6 @@ define([
 
         _WidgetBase,
         _TemplatedMixin,
-        _WidgetsInTemplateMixin,
 
         template,
 
@@ -60,12 +58,7 @@ define([
         Multipoint,
         mouse
     ) {
-        return declare('agrc.widgets.locate.MagicZoom', [_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
-
-            widgetsInTemplate: true,
-
-            // templatePath: [private] String
-            //      Path to template. See dijit._Templated
+        return declare('agrc.widgets.locate.MagicZoom', [_WidgetBase, _TemplatedMixin], {
             templateString: template,
 
             // _deferred: [private] Dojo.Deferred
@@ -105,6 +98,7 @@ define([
             //      The index of the currently selected item in the results.
             _currentIndex: 0,
 
+
             // Parameters to constructor
 
             // map: esri.Map
@@ -140,9 +134,6 @@ define([
             //     The placeholder text in the text box
             placeHolder: 'Map Search...',
 
-            // tooltipPosition: String
-            tooltipPosition: 'before',
-
             // token: String
             //      Allows the widget to work with secured services
             token: null,
@@ -152,30 +143,23 @@ define([
             //      If set to null, then only the searchField will be added.
             outFields: null,
 
-            constructor: function() {
-                // summary:
-                //      first function to fire after page loads
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
-            },
             postCreate: function() {
                 // summary:
                 //      Overrides method of same name in dijit._Widget.
                 // tags:
                 //      private
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
+                console.log(this.declaredClass + "::postCreate", arguments);
 
                 this._setUpQueryTask();
                 this._wireEvents();
                 this._setUpGraphicsLayer();
-
-                this.inherited(arguments);
             },
             _setUpQueryTask: function() {
                 // summary:
                 //      Sets up the esri QueryTask.
                 // tags:
                 //      private
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
+                console.log(this.declaredClass + "::_setUpQueryTask", arguments);
 
                 // create new query parameter
                 this.query = new Query();
@@ -188,14 +172,14 @@ define([
                 this.queryTask = new QueryTask(url);
 
                 // wire events
-                //this.connect(this.queryTask, 'onError', this._onQueryTaskError);
+                this.queryTask.on('error', lang.hitch(this, this._onQueryTaskError));
             },
             _setUpGraphicsLayer: function() {
                 // summary:
                 //      Sets up the graphics layer and associated symbols.
                 // tags:
                 //      private
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
+                console.log(this.declaredClass + "::_setUpGraphicsLayer", arguments);
 
                 var afterMapLoaded = lang.hitch(this,
                     function() {
@@ -239,26 +223,23 @@ define([
                 //      Wires events.
                 // tags:
                 //      private
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
+                console.log(this.declaredClass + "::_wireEvents", arguments);
 
                 this.own(
                     on(this.textBox, 'keyup', lang.hitch(this, this._onTextBoxKeyUp)),
-                    on(this.textBox, 'blur', lang.hitch(this,
-                        function() {
+                    on(this.textBox, 'blur', lang.hitch(this, function() {
                             // don't hide table if the cursor is over it
                             if (!this._isOverTable) {
                                 // hide table
                                 this._toggleTable(false);
                             }
                         })),
-                    on(this.textBox, 'focus', lang.hitch(this,
-                        function() {
+                    on(this.textBox, 'focus', lang.hitch(this, function() {
                             if (this.textBox.value.length > 0) {
                                 this._startSearchTimer();
                             }
                         })),
                     on(this.matchesTable, mouse.enter, lang.hitch(this, function() {
-                        console.log('enter');
                         // set switch
                         this._isOverTable = true;
 
@@ -269,7 +250,6 @@ define([
                         this._currentIndex = 0;
                     })),
                     on(this.matchesTable, mouse.leave, lang.hitch(this, function() {
-                        console.log('mouseleave');
                         // set switch
                         this._isOverTable = false;
 
@@ -283,11 +263,11 @@ define([
                 //      Handles the text box onKeyUp evt.
                 // tags:
                 //      private
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
+                console.log(this.declaredClass + "::_onTextBoxKeyUp", arguments);
 
                 if (evt.keyCode === keys.ENTER) {
                     // zoom if there is at least one match
-                    if (this.matchesList.children.length > 0) {
+                    if (this.matchesList.children.length > 1) {
                         this._setMatch(this.matchesList.children[this._currentIndex]);
                     } else {
                         // search
@@ -301,21 +281,21 @@ define([
                     this._startSearchTimer();
                 }
             },
-            _startSearchTimer: function() {
+            _startSearchTimer: function () {
                 // summary:
                 //      Sets a timer before searching so that the search function
                 //      isn't called too many times.
                 // tags:
                 //      private
                 // set timer so that it doesn't fire repeatedly during typing
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
+                console.log(this.declaredClass + "::_startSearchTimer", arguments);
 
                 clearTimeout(this._timer);
                 this._timer = setTimeout(lang.hitch(this, function() {
                     this._search(this.textBox.value);
                 }), 250);
             },
-            _moveSelection: function(increment) {
+            _moveSelection: function (increment) {
                 // summary:
                 //      Moves the selected row in the results table based upon
                 //      the arrow keys being pressed.
@@ -323,10 +303,10 @@ define([
                 //      The number of rows to move. Positive moves down, negative moves up.
                 // tags:
                 //      private
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
+                console.log(this.declaredClass + "::_moveSelection", arguments);
 
                 // exit if there are no matches in table
-                if (this.matchesList.children.length === 0) {
+                if (this.matchesList.children.length < 2) {
                     this._startSearchTimer();
                     return;
                 }
@@ -340,8 +320,8 @@ define([
                 // prevent out of bounds index
                 if (this._currentIndex < 0) {
                     this._currentIndex = 0;
-                } else if (this._currentIndex > this.matchesList.children.length - 1) {
-                    this._currentIndex = this.matchesList.children.length - 1;
+                } else if (this._currentIndex > this.matchesList.children.length - 2) {
+                    this._currentIndex = this.matchesList.children.length - 2;
                 }
 
                 // add selected class using new index
@@ -354,15 +334,11 @@ define([
                 //      The string that is used to construct the LIKE query.
                 // tags:
                 //      private
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
-
-                // clear table
-                this._deleteAllTableRows(this.matchesTable);
+                console.log(this.declaredClass + "::_search", arguments);
 
                 // return if not enough characters
                 if (searchString.length < 1) {
                     this._deleteAllTableRows(this.matchesTable);
-                    //          this.textBox.displayMessage("please type at least 2 characters...");
                     return;
                 }
 
@@ -380,10 +356,16 @@ define([
                 this._deferred = this.queryTask.execute(this.query)
                     .then(lang.hitch(this,
                         function(featureSet) {
+                            // clear table
+                            this._deleteAllTableRows(this.matchesTable);
+
                             this._processResults(featureSet.features);
                         }
                     ), lang.hitch(this,
                         function(err) {
+                            // clear table
+                            this._deleteAllTableRows(this.matchesTable);
+
                             // swallow errors from cancels
                             if (err.message != 'undefined') {
                                 throw new Error(this.declaredClass + " ArcGISServerError: " + err.message);
@@ -402,13 +384,13 @@ define([
                 //      The features returned from the query task.
                 // tags:
                 //      private
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
+                console.log(this.declaredClass + "::_processResults", arguments);
 
                 try {
                     console.info(features.length + " search features found.");
 
                     // remove duplicates
-                    features = this._removeDuplicateResults(features);
+                    features = this._sortArray(this._removeDuplicateResults(features));
 
                     // get number of unique results
                     var num = features.length;
@@ -416,11 +398,12 @@ define([
 
                     // return if too many values or no values
                     if (num > this.maxResultsToDisplay) {
-                        //this.textBox.displayMessage("More than " + this.maxResultsToDisplay + " matches found. Keep typing...");
+                        this.showMessage("More than " + this.maxResultsToDisplay + " matches found...");
+                        this._populateTable(features.slice(0, this.maxResultsToDisplay - 1));
                     } else if (num === 0) {
-                        //this.textBox.displayMessage("There are no matches.");
+                        this.showMessage("There are no matches.");
                     } else {
-                        //this.textBox.displayMessage("");
+                        this.hideMessage();
 
                         this._populateTable(features);
                     }
@@ -441,7 +424,7 @@ define([
                 //      The array after it has been processed.
                 // tags:
                 //      private
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
+                console.log(this.declaredClass + "::_removeDuplicateResults", arguments);
 
                 var list = [];
                 array.forEach(features, function(f) {
@@ -464,23 +447,16 @@ define([
                 //      The array of features to populate the table with.
                 // tags:
                 //      private
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
-
-                features = this._sortArray(features);
+                console.log(this.declaredClass + "::_populateTable", arguments);
 
                 // loop through all features
                 array.forEach(features, function(feat) {
-                    // // insert new empty row
-                    // var row = this.matchesTable.insertRow(i);
-                    var row = domConstruct.create('li', null, this.matchesList);
+                    // insert new empty row
+                    var row = domConstruct.create('li', {'class': 'match'}, this.msg, 'before');
 
-                    // // insert match value cell
-                    // var matchCell = row.insertCell(0);
-
-                    // // get match value string and bold the matching letters
+                    // get match value string and bold the matching letters
                     var fString = feat.attributes[this.searchField];
                     var sliceIndex = this.textBox.value.length;
-                    // matchCell.innerHTML = fString.slice(0, sliceIndex) + fString.slice(sliceIndex).bold();
                     row.innerHTML = fString.slice(0, sliceIndex) + fString.slice(sliceIndex).bold();
 
                     // wire onclick event
@@ -488,14 +464,10 @@ define([
                 }, this);
 
                 // select first row
-                // domClass.add(this.matchesTable.rows[0].cells[0], 'highlighted-row');
                 domClass.add(this.matchesList.children[0], 'highlighted-row');
 
                 // show table
                 this._toggleTable(true);
-
-                // update message
-                //this.textBox.displayMessage("Click on a result to zoom to it.");
             },
             _onRowClick: function(event) {
                 // summary:
@@ -505,7 +477,7 @@ define([
                 //      The event object.
                 // tags:
                 //      private
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
+                console.log(this.declaredClass + "::_onRowClick", arguments);
 
                 this._setMatch(event.currentTarget);
             },
@@ -517,20 +489,19 @@ define([
                 //      The row object that you want to set the textbox to.
                 // tags:
                 //      private
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
-
-                // clear prompt message
-                //this.textBox.displayMessage("");
+                console.log(this.declaredClass + "::_setMatch", arguments);
 
                 // clear any old graphics
                 this._graphicsLayer.clear();
 
                 // set textbox to full value
-                // var cell = row.cells[0];
                 this.textBox.value = (has('ie') < 9) ? row.innerText : row.textContent;
 
                 // clear table
                 this._toggleTable(false);
+
+                // clear prompt message
+                this.hideMessage();
 
                 // switch to return geometry and build where clause
                 this.query.returnGeometry = true;
@@ -548,6 +519,23 @@ define([
                     this.query.returnGeometry = false;
                 }));
             },
+            showMessage: function (msg) {
+                // summary:
+                //      shows a messages at the top of the matches list
+                // msg: String
+                console.log(this.declaredClass + "::showMessage", arguments);
+            
+                this.msg.innerHTML = msg;
+                domStyle.set(this.msg, 'display', 'block');
+                this._toggleTable(true);
+            },
+            hideMessage: function () {
+                // summary:
+                //      hids the message at the top of the matches list
+                console.log(this.declaredClass + "::hideMessage", arguments);
+            
+                domStyle.set(this.msg, 'display', 'none');
+            },
             _zoom: function(graphic) {
                 // summary:
                 //      Zooms to the passed in graphic.
@@ -555,7 +543,7 @@ define([
                 //      The esri.Graphic that you want to zoom to.
                 // tags:
                 //      private
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
+                console.log(this.declaredClass + "::_zoom", arguments);
 
                 var sym;
 
@@ -590,13 +578,10 @@ define([
                 //      The table that you want to act upon.
                 // tags:
                 //      private
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
+                console.log(this.declaredClass + "::_deleteAllTableRows", arguments);
 
-                // // delete all rows in table
-                // for (var i = table.rows.length; i > 0; i--) {
-                //     table.deleteRow(i - 1);
-                // }
-                query('li', this.matchesTable).forEach(domConstruct.destroy);
+                // delete all rows in table
+                query('li.match', this.matchesTable).forEach(domConstruct.destroy);
 
                 // hide table
                 domStyle.set(table, "display", "none");
@@ -611,13 +596,13 @@ define([
                 //      If true, table is shown. If false, table is hidden.
                 // tags:
                 //      private
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
+                console.log(this.declaredClass + "::_toggleTable", arguments);
 
                 var displayValue = (show) ? 'block' : 'none';
                 domStyle.set(this.matchesTable, 'display', displayValue);
             },
             _sortArray: function(list) {
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
+                console.log(this.declaredClass + "::_sortArray", arguments);
 
                 // custom sort function
                 var that = this;
@@ -640,7 +625,7 @@ define([
                 //      Array of features that you want to zoom to.
                 // tags:
                 //      private
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
+                console.log(this.declaredClass + "::_zoomToMultipleFeatures", arguments);
 
                 var that = this;
 
@@ -683,7 +668,7 @@ define([
             destroyRecursive: function() {
                 // summary:
                 //     Overridden from dijit._Widget. Removes graphics layer from map.
-                console.info(this.declaredClass + "::" + arguments.callee.nom, arguments);
+                console.log(this.declaredClass + "::detroyRecursive", arguments);
 
                 if (this._graphicsLayer) {
                     this.map.removeLayer(this._graphicsLayer);
