@@ -7,7 +7,7 @@ define([
     'esri/tasks/GeometryService',
     'esri/layers/GraphicsLayer',
     'esri/geometry/Point',
-    'esri/Graphic',
+    'esri/graphic',
     'esri/symbols/SimpleMarkerSymbol',
     'esri/SpatialReference',
 

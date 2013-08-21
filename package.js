@@ -27,6 +27,9 @@ profile = (function () {
                 return copyOnly(filename, mid);
                 // Tag our copy only files
             }
+            // amd: function (filename) {
+            //     return (/\.js$/).test(filename);
+            // }
         }
     };
 })();

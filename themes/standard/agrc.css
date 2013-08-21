@@ -6,13 +6,13 @@
 /*@import 'locate/FindAddress.css';*/
 /*@import 'locate/FindGeneric.css';*/
 @import 'locate/FindGNIS.css';
-@import 'locate/MagicZoom.css';
+/*@import 'locate/MagicZoom.css';*/
 @import 'locate/TRSsearch.css';
-@import 'locate/ZoomToCoords.css';
+/*@import 'locate/ZoomToCoords.css';*/
 
 /* map */
 /*@import "map/BaseMap.css";*/
-@import "map/BaseMapSelector.css";
+/*@import "map/BaseMapSelector.css";*/
 
 .agrc .widgetHidden {
     /* To hide unselected panes in StackContainer etc. */
