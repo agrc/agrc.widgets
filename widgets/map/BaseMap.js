@@ -10,7 +10,7 @@ define([
 		'dojo/dom-style',
 		'dojo/dom-geometry',
 		'dojo/_base/array',
-		'esri/Map',
+		'esri/map',
 		'esri/toolbars/navigation',
 		'esri/geometry/Extent',
 		'esri/config',
