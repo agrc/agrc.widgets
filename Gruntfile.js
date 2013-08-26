@@ -17,7 +17,8 @@ module.exports = function(grunt) {
                         // 'modules/tests/spec/*.js'
                         'widgets/tests/spec/SpecBaseMap.js',
                         'widgets/tests/spec/SpecFindAddress.js',
-                        'modules/tests/spec/SpecString.js'
+                        'modules/tests/spec/SpecString.js',
+                        'modules/tests/spec/SpecJSONLoader.js'
                     ]
                 }
             }
