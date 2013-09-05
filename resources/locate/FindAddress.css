@@ -1,9 +1,9 @@
-.find-address .error-msg, .find-address .help-inline {
+.find-address .help-block {
 	display: none;
 }
-.find-address .control-group {
-    margin-bottom: 0;
+.find-address .has-error .help-block {
+    display: block;
 }
-.find-address .control-group>label {
-    margin-bottom: 0;
+.find-address .has-error [data-dojo-attach-point='errorMsg'] {
+    display: inline-block;
 }

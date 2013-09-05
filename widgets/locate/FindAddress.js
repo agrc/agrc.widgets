@@ -196,8 +196,7 @@ function(
             var that = this;
 
             // hide error messages
-            query('.help-inline.error', this.domNode).style('display', 'none');
-            query('.control-group', this.domNode).removeClass('error');
+            query('.form-group', this.domNode).removeClass('has-error');
 
             return array.every([
                 this.txt_address,
@@ -217,8 +216,7 @@ function(
             var valid = dojoString.trim(textBox.value).length > 0;
 
             if (!valid) {
-                query('span', textBox.parentElement).style('display', 'inline');
-                domClass.add(textBox.parentElement.parentElement, 'error');
+                domClass.add(textBox.parentElement, 'has-error');
             }
 
             return valid;
@@ -281,8 +279,7 @@ function(
             //       
             console.info(this.declaredClass + "::" + arguments.callee.nom);
 
-            style.set(this.errorMsg, 'display', 'inline');
-            domClass.add(this.errorMsg.parentElement.parentElement, 'error');
+            domClass.add(this.errorMsg.parentElement, 'has-error');
 
             // re-enable find button
             this._done();
