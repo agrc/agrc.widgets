@@ -3,10 +3,11 @@ profile = (function () {
     var testResourceRe = /^app\/tests\//;
     var copyOnly = function(filename, mid){
         var list = {
-            "app/app.profile": true,
+            "agrc/app.profile": true,
             // we shouldn't touch our profile
-            "app/package.json": true
+            "agrc/package.json": true,
             // we shouldn't touch our package.json
+            'agrc/modules/JSONLoaderBuildPlugin': true
         };
         return (mid in list) ||
             (/^app\/resources\//.test(mid) && 

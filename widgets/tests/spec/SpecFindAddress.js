@@ -4,9 +4,9 @@ require([
     'dojo/_base/window',
     'dojo/Deferred',
     'dojo/dom-style',
-    'agrc/modules/EsriLoader!esri/SpatialReference',
-    'agrc/modules/EsriLoader!esri/geometry/Extent',
-    'agrc/modules/EsriLoader!esri/geometry/Point',
+    'esri/SpatialReference',
+    'esri/geometry/Extent',
+    'esri/geometry/Point',
     'dojo/query',
     'dojo/dom-class'
 
