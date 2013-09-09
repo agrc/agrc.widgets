@@ -251,7 +251,9 @@ function (
             //      public
             console.info(this.declaredClass + "::" + arguments.callee.nom);
 
-            event.stop(args);
+            if (args) {
+                event.stop(args);
+            }
 
             if (this.txt_box.isValid()) {
                 // hide error message
