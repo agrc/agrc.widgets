@@ -46,7 +46,7 @@
 	'dojo/domReady!'
 	],
 	function(Module, mapDependency) {
-		var map = new mapDependency('map-div');
+		map = new mapDependency('map-div');
 
 		widgetUnderTest = new Module({
 			mapServiceURL: 'http://mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Vector/MapServer',
@@ -69,11 +69,12 @@
 		w2.startup();
 
 		var w3 = new Module({
-			mapServiceURL: 'http://mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Vector/MapServer',
-			searchLayerIndex: 1,
-			searchField: 'NAME',
+			mapServiceURL: 'http://mapserv.utah.gov/arcgis/rest/services/BaseMaps/Vector/MapServer',
+			searchLayerIndex: 0,
+			searchField: 'FULLNAME',
 			map: map,
-			maxResultsToDisplay: 10
+			maxResultsToDisplay: 10,
+			contextField: 'ZIPLEFT'
 		}, 'search-div3');
 		w3.startup();
 	});
@@ -86,7 +87,7 @@
 	layout tests
 	<div id="search-div2"></div>
 	<br><br>
-	layout tests
+	contextField
 	<div id="search-div3"></div>
 </body>
 </html>
