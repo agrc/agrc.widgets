@@ -360,7 +360,7 @@ define([
                 }
 
                 // update query where clause
-                this.query.where = "UPPER(" + this.searchField + ") LIKE UPPER('" + searchString + "%') ORDER BY " + this.searchField;
+                this.query.where = "UPPER(" + this.searchField + ") LIKE UPPER('" + searchString + "%')";
 
                 // execute query / canceling any previous query
                 if (this._deferred) {
@@ -649,8 +649,6 @@ define([
                 //      with the 'ORDER BY' statement. I tried to add a second field to the 
                 //      'ORDER BY' statement but ArcGIS Server just choked.
                 console.log(this.declaredClass + "::_sortArray", arguments);
-
-                if (!this.contextField) { return list; }
 
                 // custom sort function
                 var that = this;
