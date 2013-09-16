@@ -11,8 +11,12 @@ define(function () {
             //      module making the plugin request
             // callback: Function
             //      Callback function which will be called, when the loading is finished
-            require(['dojo/text!' + id], function (txt) {
-                callback(JSON.parse(txt));
+            require(['dojo/text!' + id, 'dojo/_base/lang'], function (txt, lang) {
+                if (lang.isObject(txt)) {
+                    callback(txt);
+                } else {
+                    callback(JSON.parse(txt));
+                }
             });
         }
     };

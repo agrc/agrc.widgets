@@ -3,11 +3,9 @@ profile = (function () {
     var testResourceRe = /^app\/tests\//;
     var copyOnly = function(filename, mid){
         var list = {
-            "agrc/app.profile": true,
-            // we shouldn't touch our profile
+            "agrc/agrc.profile": true,
             "agrc/package.json": true,
-            // we shouldn't touch our package.json
-            'agrc/modules/JSONLoaderBuildPlugin': true
+            'agrc/modules/JSONLoaderPluginResolver': true
         };
         return (mid in list) ||
             (/^app\/resources\//.test(mid) && 
@@ -23,7 +21,6 @@ profile = (function () {
                 return testResourceRe.test(mid) || mid=="app/tests";
                 // Tag our test files
             },
- 
             copyOnly: function(filename, mid){
                 return copyOnly(filename, mid);
                 // Tag our copy only files
