@@ -143,6 +143,11 @@ define([
             //      If set to null, then only the searchField will be added.
             outFields: null,
 
+            // contextField: String
+            //      A second field to display in the results table to 
+            //      give context to the results in case of duplicate results.
+            contextField: null,
+
             postCreate: function() {
                 // summary:
                 //      Overrides method of same name in dijit._Widget.
@@ -164,7 +169,15 @@ define([
                 // create new query parameter
                 this.query = new Query();
                 this.query.returnGeometry = false;
-                this.query.outFields = this.outFields || [this.searchField];
+                var outFields; 
+                if (this.outFields) {
+                    outFields = this.outFields;
+                } else if (this.contextField) {
+                    outFields = [this.searchField, this.contextField];
+                } else {
+                    outFields = [this.searchField];
+                }
+                this.query.outFields = outFields;
 
                 // create new query task
                 var url = (this.token) ? this.mapServiceURL + "/" + this.searchLayerIndex + '/?token=' + this.token :
@@ -430,7 +443,13 @@ define([
                 array.forEach(features, function(f) {
                     if (array.some(list, function(existingF) {
                         if (existingF.attributes[this.searchField] === f.attributes[this.searchField]) {
-                            return true; // there is a match
+                            if (this.contextField) {
+                                if (existingF.attributes[this.contextField] === f.attributes[this.contextField]) {
+                                    return true;
+                                }
+                            } else {
+                                return true; // there is a match
+                            }
                         }
                     }, this) === false) {
                         // add item
@@ -457,7 +476,17 @@ define([
                     // get match value string and bold the matching letters
                     var fString = feat.attributes[this.searchField];
                     var sliceIndex = this.textBox.value.length;
-                    row.innerHTML = fString.slice(0, sliceIndex) + fString.slice(sliceIndex).bold();
+                    if (!this.contextField) {
+                        row.innerHTML = fString.slice(0, sliceIndex) + fString.slice(sliceIndex).bold();
+                    } else {
+                        // add context field values
+                        var matchDiv = domConstruct.create('div', {'class': 'first-cell'}, row);
+                        matchDiv.innerHTML = fString.slice(0, sliceIndex) + fString.slice(sliceIndex).bold();
+                        var cntyDiv = domConstruct.create('div', {'class': 'cnty-cell'}, row);
+                        cntyDiv.innerHTML = feat.attributes[this.contextField] || '';
+                        var clearDiv;
+                        clearDiv = domConstruct.create('div', {style: 'clear: both;'}, row);
+                    }
 
                     // wire onclick event
                     this.own(on(row, "click", lang.hitch(this, this._onRowClick)));
@@ -494,18 +523,23 @@ define([
                 // clear any old graphics
                 this._graphicsLayer.clear();
 
-                // set textbox to full value
-                this.textBox.value = (has('ie') < 9) ? row.innerText : row.textContent;
-
                 // clear table
                 this._toggleTable(false);
 
                 // clear prompt message
                 this.hideMessage();
 
-                // switch to return geometry and build where clause
+                // set textbox to full value
+                if (!this.contextField) {
+                    this.textBox.value = (has('ie') < 9) ? row.innerText : row.textContent;
+                    this.query.where = this.searchField + " = '" + this.textBox.value + "'";
+                } else {
+                    // dig deeper when context values are present
+                    this.textBox.value = (has('ie') < 9) ? row.children[0].innerText : row.children[0].textContent;
+                    this.query.where = this.searchField + " = '" + this.textBox.value + "' AND " + this.contextField + " = '" + row.children[1].innerHTML + "'";
+                }
+
                 this.query.returnGeometry = true;
-                this.query.where = this.searchField + " = '" + this.textBox.value + "'";
                 this.queryTask.execute(this.query, lang.hitch(this, function(featureSet) {
                     // set switch to prevent graphic from being cleared
                     this._addingGraphic = true;
@@ -550,7 +584,6 @@ define([
                 // check for point feature
                 if (graphic.geometry.type === 'point') {
                     // zoom and center on point
-                    // TODO: this will not work for a map that does not have a cached service in it
 
                     // get base layer
                     var bLayer = this.map.getLayer(this.map.layerIds[0]);
@@ -609,13 +642,25 @@ define([
                 domStyle.set(this.matchesTable, 'display', displayValue);
             },
             _sortArray: function(list) {
+                // summary:
+                //      Sorts the array by both the searchField and contextField
+                //      if there is a contextField specied. If no context field is 
+                //      specified, no sorting is done since it's already done on the server
+                //      with the 'ORDER BY' statement. I tried to add a second field to the 
+                //      'ORDER BY' statement but ArcGIS Server just choked.
                 console.log(this.declaredClass + "::_sortArray", arguments);
 
                 // custom sort function
                 var that = this;
-
                 function sortFeatures(a, b) {
-                    if (a.attributes[that.searchField] < b.attributes[that.searchField]) {
+                    var searchField = that.searchField;
+                    if (a.attributes[searchField] === b.attributes[searchField]) {
+                        if (a.attributes[that.contextField] < b.attributes[that.contextField]) {
+                            return -1;
+                        } else {
+                            return 1;
+                        }
+                    } else if (a.attributes[searchField] < b.attributes[searchField]) {
                         return -1;
                     } else {
                         return 1;
@@ -635,6 +680,7 @@ define([
                 console.log(this.declaredClass + "::_zoomToMultipleFeatures", arguments);
 
                 var that = this;
+                var graphics = [];
 
                 function makeMultipoint() {
                     var multiPoint = new Multipoint(that.map.spatialReference);
@@ -646,7 +692,7 @@ define([
                         f.setSymbol(that.symbolPoint);
 
                         // add to graphics layer
-                        that._graphicsLayer.add(f);
+                        graphics.push(f);
                     });
                     return multiPoint.getExtent();
                 }
@@ -657,13 +703,13 @@ define([
                         if (!extent) {
                             extent = f.geometry.getExtent();
                         } else {
-                            extent.union(f.geometry.getExtent());
+                            extent = extent.union(f.geometry.getExtent());
                         }
 
                         var sym = (f.geometry.type === 'polyline') ? that.symbolLine : that.symbolFill;
                         f.setSymbol(sym);
 
-                        that._graphicsLayer.add(f);
+                        graphics.push(f);
                     });
                     return extent;
                 }
@@ -671,6 +717,11 @@ define([
                 var extent = (features[0].geometry.type === 'point') ? makeMultipoint() : unionExtents();
 
                 this.map.setExtent(extent, true);
+
+                array.forEach(graphics, function (g) {
+                    that._graphicsLayer.add(g);
+                });
+                console.log('this._graphicsLayer.graphics', this._graphicsLayer.graphics);
             },
             destroyRecursive: function() {
                 // summary:

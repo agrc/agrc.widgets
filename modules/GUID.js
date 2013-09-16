@@ -66,7 +66,7 @@ Dual licensed under the MIT and GPL licenses.
       }
     }
 
-    return uuid.join('');
+    return '{' + uuid.join('') + '}';
   };
 
   // A more performant, but slightly bulkier, RFC4122v4 solution.  We boost performance
