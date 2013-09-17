@@ -2,7 +2,8 @@ require([
     'agrc/modules/Domains',
     'dojo/dom-construct',
     'dojo/Deferred',
-    'dojo/request'
+    'dojo/request',
+    'StubModule/StubModule'
 
 ],
 
@@ -10,7 +11,8 @@ function (
     Domains,
     domConstruct,
     Deferred,
-    request
+    request,
+    StubModule
     ) {
     describe('agrc/modules/Domains', function () {
         var select;
@@ -79,7 +81,7 @@ function (
             var xhrDef;
             beforeEach(function () {
                 xhrDef = new Deferred();
-                StubbedDomains = stubModule('agrc/modules/Domains', {
+                StubbedDomains = StubModule('agrc/modules/Domains', {
                     'dojo/request': function () {
                         return xhrDef;
                     }
