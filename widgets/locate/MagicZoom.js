@@ -536,7 +536,14 @@ define([
                 } else {
                     // dig deeper when context values are present
                     this.textBox.value = (has('ie') < 9) ? row.children[0].innerText : row.children[0].textContent;
-                    this.query.where = this.searchField + " = '" + this.textBox.value + "' AND " + this.contextField + " = '" + row.children[1].innerHTML + "'";
+                    var contextValue = row.children[1].innerHTML;
+                    if (contextValue.length > 0) {
+                        this.query.where = this.searchField + " = '" + this.textBox.value + 
+                            "' AND " + this.contextField + " = '" + contextValue + "'";
+                    } else {
+                        this.query.where = this.searchField + " = '" + this.textBox.value +
+                            "' AND " + this.contextField + " IS NULL"; 
+                    }
                 }
 
                 this.query.returnGeometry = true;
