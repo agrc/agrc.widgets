@@ -28,6 +28,9 @@
 		position: relative;
 		z-index: 26;
 	}
+	#search-div-dropdown {
+		position: inherit;
+	}
 	</style>
 
 	<!-- JAVASCRIPT -->
@@ -112,7 +115,7 @@
         <li class="dropdown">
           <a class="dropdown-toggle" href="#" data-toggle='dropdown'><span class="glyphicon glyphicon-globe"></span> Find Place <b class="caret"></b></a>
           <div class='dropdown-menu'>
-            <form action="">
+            <form onsubmit='return false;'>
             	<div id="search-div-dropdown"></div>
             </form>
           </div>
