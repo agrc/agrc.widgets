@@ -7,6 +7,9 @@
 	width: 200px;
 	height: 44px;
 }
+.dropdown-menu form .magic-zoom {
+	position: inherit;
+}
 .magic-zoom .text-box {
 	box-shadow: 0 6px 12px rgba(0,0,0,0.175);
 }
