@@ -1,5 +1,5 @@
 .DS_Store
-*.sublime*
+*.sublime-workspace
 node_modules/
 .grunt/
 Web.config

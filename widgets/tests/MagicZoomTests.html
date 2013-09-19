@@ -18,6 +18,7 @@
 		border: solid 1px gray;
 		position: relative;
 		top: 60px;
+		margin-bottom: 80px;
 	}
 	#search-div2 {
 		position: relative;
@@ -26,6 +27,9 @@
 	#search-div3 {
 		position: relative;
 		z-index: 26;
+	}
+	#search-div-dropdown {
+		position: inherit;
 	}
 	</style>
 
@@ -111,7 +115,9 @@
         <li class="dropdown">
           <a class="dropdown-toggle" href="#" data-toggle='dropdown'><span class="glyphicon glyphicon-globe"></span> Find Place <b class="caret"></b></a>
           <div class='dropdown-menu'>
-            <div id="search-div-dropdown"></div>
+            <form onsubmit='return false;'>
+            	<div id="search-div-dropdown"></div>
+            </form>
           </div>
         </li> 
       </ul>
