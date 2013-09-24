@@ -12,6 +12,7 @@ define([
         'dojo/query',
         'dojo/keys',
         'dojo/has',
+        'dojo/mouse',
 
         'dijit/_WidgetBase',
         'dijit/_TemplatedMixin',
@@ -25,7 +26,8 @@ define([
         'esri/symbols/SimpleLineSymbol',
         'esri/symbols/SimpleMarkerSymbol',
         'esri/geometry/Multipoint',
-        'dojo/mouse',
+
+        '../../resources/libs/spin',
 
         'dojo/_base/sniff'
     ],
@@ -43,6 +45,7 @@ define([
         query,
         keys,
         has,
+        mouse,
 
         _WidgetBase,
         _TemplatedMixin,
@@ -56,7 +59,8 @@ define([
         SimpleLineSymbol,
         SimpleMarkerSymbol,
         Multipoint,
-        mouse
+
+        Spinner
     ) {
         return declare('agrc.widgets.locate.MagicZoom', [_WidgetBase, _TemplatedMixin], {
             templateString: template,
@@ -89,10 +93,14 @@ define([
             //      A switch to help with onBlur callback on search box.
             _isOverTable: false,
 
-            // _timer: Object
+            // _timer: Number
             //      A timer to delay the search so that it doesn't fire too 
             //      many times when typing quickly.
             _timer: null,
+
+            // _spinTimer: Number
+            //      A timer to delay the spinner from showing too soon
+            _spinTimer: null,
 
             // _currentIndex: Integer
             //      The index of the currently selected item in the results.
@@ -158,6 +166,49 @@ define([
                 this._setUpQueryTask();
                 this._wireEvents();
                 this._setUpGraphicsLayer();
+            },
+            showSpinner: function () {
+                // summary:
+                //      sets up and shows the spinner
+                console.log(this.declaredClass + "::showSpinner", arguments);
+            
+                var opts = {
+                    lines: 9, // The number of lines to draw
+                    length: 4, // The length of each line
+                    width: 3, // The line thickness
+                    radius: 4, // The radius of the inner circle
+                    corners: 1, // Corner roundness (0..1)
+                    rotate: 0, // The rotation offset
+                    direction: 1, // 1: clockwise, -1: counterclockwise
+                    color: '#000', // #rgb or #rrggbb or array of colors
+                    speed: 1, // Rounds per second
+                    trail: 60, // Afterglow percentage
+                    shadow: false, // Whether to render a shadow
+                    hwaccel: true, // Whether to use hardware acceleration
+                    className: 'spinner', // The CSS class to assign to the spinner
+                    zIndex: 2e9, // The z-index (defaults to 2000000000)
+                    top: 'auto', // Top position relative to parent in px
+                    left: 'auto' // Left position relative to parent in px
+                };
+                domStyle.set(this.searchIconSpan, 'display', 'none');
+
+                if (!this.spinner) {
+                    this.spinner = new Spinner(opts).spin(this.spinnerDiv);
+                } else {
+                    if (!this.spinner.el) {
+                        // only start if it's not already started
+                        this.spinner.spin(this.spinnerDiv);
+                    }
+                }
+            },
+            hideSpinner: function () {
+                // summary:
+                //      hides the spinner and shows the search icon again
+                console.log(this.declaredClass + "::hideSpinner", arguments);
+            
+                clearTimeout(this._spinTimer);
+                this.spinner.stop();
+                domStyle.set(this.searchIconSpan, 'display', 'inline');
             },
             _setUpQueryTask: function() {
                 // summary:
@@ -355,9 +406,8 @@ define([
                     return;
                 }
 
-                if (this.map.showLoader) {
-                    this.map.showLoader();
-                }
+                // delay spinner a bit
+                this._spinTimer = setTimeout(lang.hitch(this, this.showSpinner), 250);
 
                 // update query where clause
                 this.query.where = "UPPER(" + this.searchField + ") LIKE UPPER('" + searchString + "%')";
@@ -384,9 +434,7 @@ define([
                                 throw new Error(this.declaredClass + " ArcGISServerError: " + err.message);
                             }
 
-                            if (this.map.hideLoader) {
-                                this.map.hideLoader();
-                            }
+                            this.hideSpinner();
                         }
                     ));
             },
@@ -424,9 +472,7 @@ define([
                     throw new Error(this.declaredClass + "_processResults: " + e.message);
                 }
 
-                if (this.map.hideLoader) {
-                    this.map.hideLoader();
-                }
+                this.hideSpinner();
             },
             _removeDuplicateResults: function(features) {
                 // summary:
