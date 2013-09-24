@@ -10,6 +10,9 @@
 .dropdown-menu form .magic-zoom {
 	position: relative;
 }
+.magic-zoom .input-group-addon {
+	width: 39px;
+}
 .magic-zoom .text-box {
 	box-shadow: 0 6px 12px rgba(0,0,0,0.175);
 }
