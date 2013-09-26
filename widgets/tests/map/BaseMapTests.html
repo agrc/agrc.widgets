@@ -74,6 +74,9 @@
                 includeBackButton: true,
                 sliderStyle: 'large'
             });
+
+            var loaderBaseMap = new BaseMap('basemap-div-loader');
+            loaderBaseMap.showLoader();
         });
     </script>
 </head>
@@ -95,5 +98,9 @@
     <br>
     Back Button
     <div id='basemap-div-back' class='claro basemap'></div>
+    <br>
+    Loader
+    <div id="basemap-div-loader" class="claro basemap"></div>
+    <div style='height: 200px'></div>
 </body>
 </html>

@@ -1,18 +1,14 @@
 .mapContainer {
 	position: relative;
 }
-.mapContainer .loadingImg {
-	position: absolute;
-    bottom: 8px;
-    left: 8px;
-    z-index: 100;
-    display: none;
-	width: 32px;
-	height: 32px;
-	background: url('../images/loader_MAP.gif') no-repeat;
-}
 .mapContainer .button-container {
 	position: absolute;
+}
+.mapContainer .spinner {
+    position: absolute !important;
+    bottom: 28px !important;
+    left: 28px !important;
+    top: auto !important;
 }
 .mapContainer .full-extent-button-icon {
 	background-image: url('../images/nav_fullextent.png');
