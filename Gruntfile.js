@@ -28,7 +28,10 @@ module.exports = function(grunt) {
             ],
             options: {
                 jshintrc: '.jshintrc',
-                ignores: ['resources/libs/*.js']
+                ignores: [
+                    'resources/libs/*.js',
+                    'widgets/tests/stubmodule/**/*.js'
+                ]
             }
         },
         watch: {
