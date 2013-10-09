@@ -1,12 +1,12 @@
 {
-	"folders":
-	[
-		{
-			"follow_symlinks": true,
-			"path": "/",
-            "file_exclude_patterns": [
-                "*.sublime-workspace"
-            ]
-		}
-	]
+    "folders": [{
+        "folder_exclude_patterns": [
+            "node_modules",
+            ".grunt"
+        ],
+        "file_exclude_patterns": [
+            "*.sublime-workspace"
+        ],
+        "path": "/"
+    }]
 }

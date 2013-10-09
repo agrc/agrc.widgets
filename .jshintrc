@@ -1,8 +1,11 @@
 {
     "predef": [
+        "alert",
         "define",
         "require",
         "console",
+        "module",
+        "AGRC",
         "it", 
         "xit",
         "expect", 
@@ -14,7 +17,8 @@
         "waitsFor",
         "describe",
         "xdescribe",
-        "stubModule"
+        "stubModule",
+        "$"
     ],
 
     "evil": true,
@@ -23,5 +27,6 @@
     "wsh": true,
     "sub": true,
     "undef": true,
-    "unused": true
+    "unused": "true",
+    "eqnull": true
 }

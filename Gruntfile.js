@@ -19,9 +19,16 @@ module.exports = function(grunt) {
             }
         },
         jshint: {
-            files: ['/**/**/*.js'],
+            files: [
+                'modules/**/*.js',
+                'resources/**/*.js',
+                'widgets/**/*.js',
+                'Gruntfile.js',
+                'agrc.profile.js'
+            ],
             options: {
-                jshintrc: '.jshintrc'
+                jshintrc: '.jshintrc',
+                ignores: ['resources/libs/*.js']
             }
         },
         watch: {
