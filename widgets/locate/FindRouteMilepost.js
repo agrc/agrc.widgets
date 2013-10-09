@@ -81,12 +81,12 @@ define([
             apiKey: null,
 
             constructor: function() {
-                console.log(this.declaredClass + "::constructor", arguments);
+                console.log(this.declaredClass + '::constructor', arguments);
             },
             postMixInProperties: function() {
                 // summary:
                 //      description
-                console.log(this.declaredClass + "::postMixinProperties", arguments);
+                console.log(this.declaredClass + '::postMixinProperties', arguments);
 
                 if (this.map && !this.graphicsLayer) {
                     this.graphicsLayer = new GraphicsLayer();
@@ -103,21 +103,21 @@ define([
             postCreate: function() {
                 // summary:
                 //      dom is ready
-                console.log(this.declaredClass + "::postCreate", arguments);
+                console.log(this.declaredClass + '::postCreate', arguments);
 
                 this.wireEvents();
             },
             wireEvents: function() {
                 // summary:
                 //      wires the events for the widget
-                console.log(this.declaredClass + "::wireEvents", arguments);
+                console.log(this.declaredClass + '::wireEvents', arguments);
 
                 this.connect(this.findBtn, 'click', '_onFindClick');
             },
             _onFindClick: function() {
                 // summary:
                 //      description
-                console.log(this.declaredClass + "::_onFindClick", arguments);
+                console.log(this.declaredClass + '::_onFindClick', arguments);
 
                 if (this.graphicsLayer) {
                     this.graphicsLayer.clear();
@@ -131,7 +131,7 @@ define([
                 // summary:
                 //      validates the values in the text boxes
                 // returns: Boolean
-                console.log(this.declaredClass + "::_validate", arguments);
+                console.log(this.declaredClass + '::_validate', arguments);
 
                 function validate(textBox, invalidSpan) {
                     if (lang.trim(textBox.value) === '') {
@@ -158,7 +158,7 @@ define([
                 // summary:
                 //      description
                 // returned: Deferred
-                console.log(this.declaredClass + "::_invokeWebService", arguments);
+                console.log(this.declaredClass + '::_invokeWebService', arguments);
                 var that = this;
 
                 var url = 'http://api.mapserv.utah.gov/api/v1/geocode/milepost/${route}/${milepost}?apiKey=${key}';
@@ -191,7 +191,7 @@ define([
                 // summary:
                 //      callback for service
                 // result: {}
-                console.log(this.declaredClass + "::_onXHRSuccess", arguments);
+                console.log(this.declaredClass + '::_onXHRSuccess', arguments);
 
                 var graphic;
 
@@ -207,7 +207,7 @@ define([
                     if (!noZoom) {
                         if (this.map.getLevel() > -1) {
                             this.map.centerAndZoom(pnt, this.zoomLevel);
-                        } else { 
+                        } else {
                             this.map.centerAndZoom(pnt, scaleUtils.getScale(this.map) / this.zoomLevel);
                         }
                     }
@@ -219,7 +219,7 @@ define([
             _onXHRFailure: function() {
                 // summary:
                 //      description
-                console.log(this.declaredClass + "::_onXHRFailure", arguments);
+                console.log(this.declaredClass + '::_onXHRFailure', arguments);
 
                 domStyle.set(this.errorMsg, 'display', 'inline');
             },
@@ -227,7 +227,7 @@ define([
                 // summary:
                 //      Event that fires when the service successfully returns a point
                 // result: {}
-                console.log(this.declaredClass + "::onFind", arguments);
+                console.log(this.declaredClass + '::onFind', arguments);
             }
         });
     });
