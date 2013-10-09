@@ -5,45 +5,41 @@ module.exports = function(grunt) {
         pkg: grunt.file.readJSON('package.json'),
         jasmine: {
             app: {
-                src: [
-                    'widgets/tests/SetUpTests.js'
-                ],
+                src: [],
                 options: {
                     vendor: [
-                        'http://serverapi.arcgisonline.com/jsapi/arcgis/3.4/'
+                        'widgets/tests/SetUpTests.js',
+                        'http://js.arcgis.com/3.7/'
                     ],
                     specs: [
-                        // 'widgets/tests/spec/*.js',
-                        // 'modules/tests/spec/*.js'
-                        'widgets/tests/spec/SpecBaseMap.js',
-                        'widgets/tests/spec/SpecFindAddress.js',
-                        'modules/tests/spec/SpecString.js',
-                        'modules/tests/spec/SpecJSONLoader.js'
+                        'widgets/tests/spec/*.js',
+                        'modules/tests/spec/*.js'
                     ]
                 }
             }
         },
         jshint: {
-            files: [
-                // 'widgets/**/*.js',
-                // 'modules/**/*.js'
-                'widgets/tests/spec/SpecBaseMap.js',
-                'widgets/map/BaseMap.js',
-                'widgets/tests/spec/SpecFindAddress.js',
-                'widgest/locate/SpecFindAddress.js',
-                'modules/String.js',
-                'modules/SpecString.js'
-            ],
+            files: ['/**/**/*.js'],
             options: {
                 jshintrc: '.jshintrc'
             }
         },
         watch: {
             files: [
+                'modules/**/*.js',
+                'resources/**/*.js',
                 'widgets/**/*.js',
-                'modules/**/*.js'
+                'modules/**/*.html',
+                'resources/**/*.html',
+                'widgets/**/*.html',
+                'modules/**/*.css',
+                'resources/**/*.css',
+                'widgets/**/*.css'
             ],
-            tasks: ['jasmine:app:build', 'jshint']
+            tasks: ['jasmine:app:build', 'jshint'],
+            options: {
+                livereload: true
+            }
         },
         connect: {
             uses_defaults: {}
