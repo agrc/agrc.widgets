@@ -3,8 +3,7 @@ require([
     'dojo/dom-construct',
     'dojo/Deferred',
     'dojo/request',
-    'StubModule/StubModule'
-
+    'stubmodule/StubModule'
 ],
 
 function (
@@ -53,7 +52,7 @@ function (
                         getDef = new Deferred();
                         spyOn(Domains, 'getCodedValues').andReturn(getDef);
                         popDef = Domains.populateSelectWithDomainValues(select, fakeUrl, fieldName);
-                        request('src/agrc/modules/tests/data/featureServiceResponse.json').then(
+                        request('modules/tests/data/featureServiceResponse.json').then(
                             function (response) {
                                 getDef.resolve(JSON.parse(response).fields[3].domain.codedValues);
                             }
@@ -111,7 +110,7 @@ function (
                 var requestDef;
                 var jsonData;
                 runs(function () {
-                    requestDef = request('src/agrc/modules/tests/data/featureServiceResponse.json');
+                    requestDef = request('modules/tests/data/featureServiceResponse.json');
                     requestDef.then(function (response) {
                         jsonData = JSON.parse(response);
                         xhrDef.resolve(response);
