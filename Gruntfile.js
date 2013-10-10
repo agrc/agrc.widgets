@@ -44,7 +44,9 @@ module.exports = function(grunt) {
                 'widgets/**/*.html',
                 'modules/**/*.css',
                 'resources/**/*.css',
-                'widgets/**/*.css'
+                'widgets/**/*.css',
+                '!**/node_modules/**',
+                '!**/stubmodule/**'
             ],
             tasks: ['jasmine:app:build', 'jshint'],
             options: {
