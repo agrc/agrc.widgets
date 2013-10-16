@@ -10,12 +10,6 @@
     left: 28px !important;
     top: auto !important;
 }
-.mapContainer .full-extent-button-icon {
-	background-image: url('../images/nav_fullextent.png');
-}
-.mapContainer .back-button-icon {
-    background-image: url('../images/nav_previous.png');
-}
 .mapContainer .button-icon {
     background-repeat: no-repeat;
     text-align: center;

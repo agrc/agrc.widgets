@@ -17,7 +17,7 @@ define([
 
         'esri/layers/GraphicsLayer',
         'esri/symbols/SimpleMarkerSymbol',
-        'esri/Graphic',
+        'esri/graphic',
         'esri/geometry/Point',
         'esri/geometry/scaleUtils'
     ],
@@ -181,7 +181,7 @@ define([
                         def.reject();
                     }
                     that._onXHRSuccess(response);
-                }, function(er) {
+                }, function( /*er*/ ) {
                     that._onXHRFailure();
                 });
 
@@ -223,7 +223,7 @@ define([
 
                 domStyle.set(this.errorMsg, 'display', 'inline');
             },
-            onFind: function(result) {
+            onFind: function( /*result*/ ) {
                 // summary:
                 //      Event that fires when the service successfully returns a point
                 // result: {}
