@@ -77,6 +77,21 @@
 
             var loaderBaseMap = new BaseMap('basemap-div-loader');
             loaderBaseMap.showLoader();
+
+            loaderBaseMapAerials = new BaseMap('basemap-div-loader-aerials', {
+                'defaultBaseMap': 'Hybrid',
+                'useDefaultExtent': false,
+                'extent': new esri.geometry.Extent({
+                        "xmin": 435525.2820766177,
+                        "ymin": 4503112.014830209,
+                        "xmax": 450812.6877336324,
+                        "ymax": 4522221.271901477,
+                        "spatialReference": {
+                            "wkid": 26912
+                        }
+                })
+            });
+            loaderBaseMapAerials.showLoader();
         });
     </script>
 </head>
@@ -101,6 +116,9 @@
     <br>
     Loader
     <div id="basemap-div-loader" class="claro basemap"></div>
+    <br>
+    Loader on Aerials
+    <div id="basemap-div-loader-aerials" class="claro basemap"></div>
     <div style='height: 200px'></div>
 </body>
 </html>
