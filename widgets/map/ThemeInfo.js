@@ -8,7 +8,7 @@ function (
     declare,
     lang
     ) {
-    return declare(null, {
+    return declare('agrc.widgets.map.themeInfo', null, {
         // description:
         //      **Summary**: A class used in the agrc.widgets.map.BaseMapSelector.
         //      <p>

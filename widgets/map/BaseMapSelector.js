@@ -24,7 +24,7 @@ function (
     lang,
     domClass
     ) {
-        return declare([_BaseMapSelector], {
+        return declare('agrc.widgets.map.BaseMapSelector', [_BaseMapSelector], {
         // description:
         //      **Summary**: A visual widget to change map base maps and themes.
         //      <p>
