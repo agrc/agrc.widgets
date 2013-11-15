@@ -1,4 +1,4 @@
-﻿require([
+require([
     'agrc/modules/String'
 ], 
 
@@ -40,6 +40,14 @@ function (
 
         it("toProperCase properCases correctly on mixed case words", function () {
             expect(agrcString.toProperCase("DAvIs CoUnTy")).toEqual("Davis County");
+        });
+        describe('endsWith', function () {
+            it('matches suffix', function () {
+                expect(agrcString.endsWith('test', 'st')).toBe(true);
+            });
+            it('returns false if no match', function () {
+                expect(agrcString.endsWith('test', 'asdf')).toBe(false);
+            });
         });
     });
 });

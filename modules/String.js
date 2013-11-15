@@ -1,12 +1,10 @@
 ﻿define([
 
-], 
+], function(
 
-function (
-
-    ) {
+) {
     return {
-        replaceAll: function (inputString, searchString, replaceString) {
+        replaceAll: function(inputString, searchString, replaceString) {
             console.log('agrc/modules/String::replaceAll', arguments);
             var stringParts = inputString.split(searchString);
             return stringParts.join(replaceString);
@@ -26,6 +24,9 @@ function (
             return str.replace(/\w\S*/g, function(txt) {
                 return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
             });
+        },
+        endsWith: function(str, suffix) {
+            return str.indexOf(suffix, str.length - suffix.length) !== -1;
         }
     };
 });
