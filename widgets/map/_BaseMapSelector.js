@@ -1,27 +1,32 @@
 define([
     'dojo/_base/declare',
+    'dojo/_base/array',
+
+    'dojo/topic',
+
     'dijit/_WidgetBase',
     'dijit/_TemplatedMixin',
     'dijit/_WidgetsInTemplateMixin',
-    'agrc/widgets/map/ThemeInfo',
-    'dojo/text!agrc/widgets/map/data/defaultThemeInfos.json',
-    'dojo/_base/array',
+
     'esri/layers/ArcGISTiledMapServiceLayer',
-    'dojo/topic'
 
-],
-
-function (
+    'agrc/widgets/map/ThemeInfo',
+    'agrc/widgets/map/resources/defaultThemeInfos'
+], function(
     declare,
+    array,
+
+    topic,
+
     _WidgetBase,
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
-    ThemeInfo,
-    defaultThemeInfosTxt,
-    array,
+
     ArcGISTiledMapServiceLayer,
-    topic
-    ) {
+
+    ThemeInfo,
+    defaultThemeInfos
+) {
     return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
         // description:
         //      **Summary**: A base class to orchestrate the changing of basemaps/themes.
@@ -65,55 +70,55 @@ function (
         //      Holds the default themes. Contains all agrc basemap services.
         data: null,
 
-        constructor: function () {
-            // summary: 
+        constructor: function() {
+            // summary:
             //      Constructor function for object
             // args: Object?
             //      The parameters that you want to pass into the object. Includes: map: agrc.widgets.map.BaseMap || esri.Map || anything that inherits from esri.Map
             //      The esri.Map object for switching the base map on, defaultThemeLabel and themeInfos
-            console.info("agrc.widgets.map._BaseMapSelector::" + arguments.callee.nom);
+            console.info('agrc.widgets.map._BaseMapSelector::constructor', arguments);
 
             this.themeInfos = [];
             this.currentTheme = {};
             this.data = [];
         },
 
-        postMixInProperties: function () {
+        postMixInProperties: function() {
             // summary:
-            //       
+            //
             // description:
             //      i am a property
             // tags:
             //      public
             // returns:
-            //       
-            console.info(this.declaredClass + "::" + arguments.callee.nom);
-            
+            //
+            console.info('agrc.widgets.map._BaseMapSelector::postMixInProperties', arguments);
+
             if (!this.data || this.data.length === 0) {
-                this.data = JSON.parse(defaultThemeInfosTxt);
+                this.data = defaultThemeInfos;
             }
 
             if (!this.defaultThemeLabel) {
-                this.defaultThemeLabel = "Terrain";
+                this.defaultThemeLabel = 'Terrain';
             }
         },
 
-        postCreate: function () {
-            // summary: 
+        postCreate: function() {
+            // summary:
             //      Sets up the widget
             // description:
             //      If the themeInfos being sent in are empty loads the default agrc themes.
             // tags:
             //      protected
-            console.info("agrc.widgets.map._BaseMapSelector::" + arguments.callee.nom);
+            console.info('agrc.widgets.map._BaseMapSelector::postCreate', arguments);
 
             if (this.themeInfos.length === 0) {
                 this.loadDefaultThemes(this.data);
             }
         },
 
-        loadDefaultThemes: function (data) {
-            // summary: 
+        loadDefaultThemes: function(data) {
+            // summary:
             //      Takes the data in the data property and calls addTheme on them.
             // description:
             //      Parses the data object into theme info's and sets up the current theme.  Also adds the first theme to the map.
@@ -131,14 +136,14 @@ function (
             //      public
             // data: json object - see example
 
-            console.info("agrc.widgets.map._BaseMapSelector::" + arguments.callee.nom);
+            console.info('agrc.widgets.map._BaseMapSelector::loadDefaultThemes', arguments);
 
             // load default themes
             if (data) {
-                array.forEach(data, function (basemap) {
+                array.forEach(data, function(basemap) {
                     // create new themeInfo from basemap
                     var layersArray = [];
-                    array.forEach(basemap.layers, function (layer) {
+                    array.forEach(basemap.layers, function(layer) {
                         layersArray.push(new ArcGISTiledMapServiceLayer(layer.url, {
                             id: basemap.label,
                             opacity: layer.opacity
@@ -158,16 +163,16 @@ function (
             this.changeTheme(this.currentTheme.label);
         },
 
-        changeTheme: function (newThemeLabel) {
-            // summary: 
+        changeTheme: function(newThemeLabel) {
+            // summary:
             //      Swaps themes
             // description:
-            //      Changes ThemeInfos. Publishes onChangeTheme.  See Publishing and Events 
+            //      Changes ThemeInfos. Publishes onChangeTheme.  See Publishing and Events
             // tags:
             //      public
             // returns: agrc.widgets.map.ThemeInfo
             //       The new themeInfo object.
-            console.info("agrc.widgets.map._BaseMapSelector::" + arguments.callee.nom);
+            console.info('agrc.widgets.map._BaseMapSelector::changeTheme', arguments);
 
             // return if this is already the current theme and it's loaded
             if (newThemeLabel === this.currentTheme.label && this.map.layerIds.length > 0) {
@@ -175,7 +180,7 @@ function (
             }
 
             // remove old theme layers from map
-            array.forEach(this.currentTheme.layers, function (esriLayer) {
+            array.forEach(this.currentTheme.layers, function(esriLayer) {
                 if (esriLayer) {
                     this.map.removeLayer(esriLayer);
                 }
@@ -188,17 +193,17 @@ function (
             this.currentTheme = newTheme.themeInfo;
 
             // add layers to map
-            array.forEach(newTheme.themeInfo.layers, function (layer) {
+            array.forEach(newTheme.themeInfo.layers, function(layer) {
                 this.map.addLayer(layer, 0);
             }, this);
 
-            topic.publish("agrc.widgets.map.BaseMapSelector.onChangeTheme_" + this.id, [this.currentTheme]);
+            topic.publish('agrc.widgets.map.BaseMapSelector.onChangeTheme_' + this.id, [this.currentTheme]);
 
             return newTheme;
         },
 
-        addTheme: function (newThemeInfo) {
-            // summary: 
+        addTheme: function(newThemeInfo) {
+            // summary:
             //      Adds a new theme info to the array
             // description:
             //      Pushes the new themeinfo into the themeInfos object
@@ -206,13 +211,13 @@ function (
             //      The new theme info to add to the array.
             // tags:
             //      public
-            console.info("agrc.widgets.map._BaseMapSelector::" + arguments.callee.nom);
+            console.info('agrc.widgets.map._BaseMapSelector::addTheme', arguments);
 
             this.themeInfos.push(newThemeInfo);
         },
 
-        _getTheme: function (label) {
-            // summary: 
+        _getTheme: function(label) {
+            // summary:
             //      Gets the themeinfo with the current label test
             // description:
             //      Searches the themeInfos to find where theme.label matches the input label.
@@ -223,10 +228,10 @@ function (
             // returns: Object
             //      An object containign themeinfo: ThemeInfo and index the index of the themeinfo in the array.
 
-            console.info("agrc.widgets.map._BaseMapSelector::" + arguments.callee.nom);
+            console.info('agrc.widgets.map._BaseMapSelector::_getTheme', arguments);
             var themeArgs;
 
-            array.some(this.themeInfos, function (theme, index) {
+            array.some(this.themeInfos, function(theme, index) {
                 if (theme.label === label) {
                     themeArgs = {
                         'themeInfo': theme,
@@ -240,7 +245,7 @@ function (
             }, this);
 
             if (!themeArgs) {
-                throw new Error(this.declaredClass + " NullReferenceException: theme.  Theme name not found " + label + ".");
+                throw new Error('agrc.widgets.map._BaseMapSelector NullReferenceException: theme.  Theme name not found ' + label + '.');
             }
             return themeArgs;
         }

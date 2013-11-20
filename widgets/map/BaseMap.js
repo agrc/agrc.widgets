@@ -48,7 +48,7 @@ define([
 
     Spinner
 ) {
-    return declare('agrc/widgets/map/BaseMap', [esriMap, Destroyable], {
+    return declare([esriMap, Destroyable], {
         // description:
         //      **Summary**: Map Control with default functionality specific to State of Utah data. Extends esri.Map.
         //      <p></p>
@@ -158,7 +158,7 @@ define([
             // options: Object?
             //      The parameters that you want to pass into the widget. Includes useDefaultBaseMap,
             //      useDefaultExtent, defaultBaseMap, and includeFullExtentButton. All are optional.
-            console.log(this.declaredClass + "::constructor", arguments);
+            console.log('agrc.widgets.map.BaseMap::constructor', arguments);
 
             if (!options) {
                 options = {};
@@ -191,7 +191,7 @@ define([
             }
 
             // replace default link on logo
-            esriConfig.defaults.map.logoLink = "http://gis.utah.gov/";
+            esriConfig.defaults.map.logoLink = 'http://gis.utah.gov/';
 
             // not sure if this is needed?
             domClass.add(mapDiv, 'mapContainer');
@@ -199,14 +199,14 @@ define([
         setDefaultExtent: function() {
             // summary:
             //      Sets the extent to the State of Utah
-            console.log(this.declaredClass + "::setDefaultExtent", arguments);
+            console.log('agrc.widgets.map.BaseMap::setDefaultExtent', arguments);
 
             this.setExtent(this._defaultExtent);
         },
         showDefaultBaseMap: function() {
             // summary:
             //      Adds the UtahBaseMap-Vector map service.
-            console.log(this.declaredClass + "::showDefaultBaseMap", arguments);
+            console.log('agrc.widgets.map.BaseMap::showDefaultBaseMap', arguments);
 
             this.addAGRCBaseMap(this.defaultBaseMap);
         },
@@ -215,7 +215,7 @@ define([
             //      Wires up the loader image to display when the passed layer is drawing.
             // lyr: esri.Layer
             //      The layer that you want to work with.
-            console.log(this.declaredClass + "::addLoaderToLayer", arguments);
+            console.log('agrc.widgets.map.BaseMap::addLoaderToLayer', arguments);
 
             var that = this;
 
@@ -238,14 +238,14 @@ define([
 
             // wire layer events
             this.own(
-                aspect.before(lyr, "onUpdateStart", showLoading),
-                aspect.after(lyr, "onUpdateEnd", hideLoading)
+                aspect.before(lyr, 'onUpdateStart', showLoading),
+                aspect.after(lyr, 'onUpdateEnd', hideLoading)
             );
         },
         showLoader: function() {
             // summary:
             //      Displays the loader icon in the bottom, left-hand corner of the map
-            console.log(this.declaredClass + "::showLoader", arguments);
+            console.log('agrc.widgets.map.BaseMap::showLoader', arguments);
 
             var opts = {
                 lines: 9, // The number of lines to draw
@@ -278,7 +278,7 @@ define([
         hideLoader: function() {
             // summary:
             //      Hides the loader icon.
-            console.log(this.declaredClass + "::hideLoader", arguments);
+            console.log('agrc.widgets.map.BaseMap::hideLoader', arguments);
 
             this.spinner.stop();
         },
@@ -287,7 +287,7 @@ define([
             //      Add one of the AGRC basemaps to the map.
             // cacheName: String
             //      The name of the base map that you want to add. (ie. Vector)
-            console.log(this.declaredClass + "::addAGRCBaseMap", arguments);
+            console.log('agrc.widgets.map.BaseMap::addAGRCBaseMap', arguments);
 
             // build basemap url
             var url = 'http://mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/' + cacheName + '/MapServer';
@@ -302,7 +302,7 @@ define([
             // button: this._buttons
             // tags:
             //      private
-            console.log(this.declaredClass + "::_addButton", arguments);
+            console.log('agrc.widgets.map.BaseMap::_addButton', arguments);
 
             // calculate button's top and left based on zoom slider size and position
             var mapSlider = dom.byId(this.id + '_zoom_slider');
@@ -322,7 +322,7 @@ define([
 
             new Button({
                 id: this.id + '_' + button.id,
-                "class": 'button',
+                'class': 'button',
                 iconClass: 'button-icon ' + button.id + '-icon',
                 showLabel: false,
                 type: 'button',
@@ -331,7 +331,7 @@ define([
             }, domConstruct.create('button')).placeAt(container);
         },
         onLoad: function() {
-            console.log(this.declaredClass + "::onLoad", arguments);
+            console.log('agrc.widgets.map.BaseMap::onLoad', arguments);
 
             if (this.includeFullExtentButton) {
                 this.navBar = new Navigation(this);
@@ -359,9 +359,9 @@ define([
             // summary:
             //      Zooms the map to any type of geometry
             // geometry: esri.Geometry
-            console.log(this.declaredClass + "::zoomToGeometry", arguments);
+            console.log('agrc.widgets.map.BaseMap::zoomToGeometry', arguments);
 
-            if (geometry.type === "polygon" || geometry.type === "polyline" || geometry.type === "multipoint") {
+            if (geometry.type === 'polygon' || geometry.type === 'polyline' || geometry.type === 'multipoint') {
                 this.setExtent(geometry.getExtent(), true);
             } else {
                 // point
@@ -371,14 +371,14 @@ define([
         onFullExtentButtonClicked: function() {
             // summary:
             //      description
-            console.log(this.declaredClass + "::onFullExtentButtonClicked", arguments);
+            console.log('agrc.widgets.map.BaseMap::onFullExtentButtonClicked', arguments);
 
             this.setDefaultExtent();
         },
         onBackButtonClicked: function() {
             // summary:
             //      description
-            console.log(this.declaredClass + "::onBackButtonClicked", arguments);
+            console.log('agrc.widgets.map.BaseMap::onBackButtonClicked', arguments);
 
             this.navBar.zoomToPrevExtent();
         }
