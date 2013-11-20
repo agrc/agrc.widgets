@@ -1,43 +1,53 @@
 define([
+    'dojo/text!agrc/widgets/locate/templates/FindGeneric.html',
+
     'dojo/_base/declare',
+    'dojo/_base/event',
+    'dojo/_base/lang',
+
+    'dojo/dom-style',
+
+    'dojo/keys',
+    'dojo/topic',
+
+    'dojo/data/ItemFileReadStore',
+
     'dijit/_WidgetBase',
     'dijit/_TemplatedMixin',
     'dijit/_WidgetsInTemplateMixin',
+
     'dijit/form/FilteringSelect',
-    'dojo/data/ItemFileReadStore',
-    'dojo/text!agrc/widgets/locate/templates/FindGeneric.html',
-    'dojo/keys',
-    'dojo/_base/event',
-    'dojo/dom-style',
+
     'esri/request',
     'esri/SpatialReference',
-    'dojo/_base/lang',
     'esri/geometry/Point',
-    'esri/geometry/Extent',
-    'dojo/topic'
+    'esri/geometry/Extent'
+], function(
+    template,
 
-],
-
-function (
     declare,
+    event,
+    lang,
+
+    domStyle,
+
+    keys,
+    topic,
+
+    ItemFileReadStore,
+
     _WidgetBase,
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
+
     FilteringSelect,
-    ItemFileReadStore,
-    template,
-    keys,
-    event,
-    domStyle,
+
     esriRequest,
     SpatialReference,
-    lang,
     Point,
-    Extent,
-    topic
-    ) {
-    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin],
-    {
+    Extent
+) {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
         // description:
         //      **Summary**: A simple form tied to the map allowing a user to quickly zoom to a feature
         //      within any layer in SDE.
@@ -50,9 +60,9 @@ function (
         //      </p>
         //      <p>
         //      **Description**:
-        //      Pass in any layer in SDE with a field name that you want to search. NOTE: Doesn't work 
-        //      with large datasets (ie GNIS). Need to rewrite GetFeatureAttributes web service to enable 
-        //      LIKE queries. Then you could refresh the datastore on every click instead of trying to 
+        //      Pass in any layer in SDE with a field name that you want to search. NOTE: Doesn't work
+        //      with large datasets (ie GNIS). Need to rewrite GetFeatureAttributes web service to enable
+        //      LIKE queries. Then you could refresh the datastore on every click instead of trying to
         //      load all features at initialization.
         //      </p>
         //      <p>
@@ -64,7 +74,7 @@ function (
         //      </p>
         //      <ul><li>agrc.widgets.locate.FindGeneric NullReferenceException: map. Pass the map in the constructor.</li></ul>
         //      <p>
-        //      **Required Files**: 
+        //      **Required Files**:
         //      </p>
         //      <ul><li>agrc/themes/standard/locate/FindGeneric.css</li></ul>
         //
@@ -114,11 +124,11 @@ function (
         // _store: dojo.data.Store
         //      the autocomeplete store
         _store: null,
-        
+
         // Parameters to constructor
 
         // layerName: String
-        //      The layer to search - must be full name (ie. SGID93.BOUNDARIES.Counties) 
+        //      The layer to search - must be full name (ie. SGID93.BOUNDARIES.Counties)
         //      and an existing layer in SDE.
         layerName: '',
 
@@ -127,7 +137,7 @@ function (
         searchFieldName: '',
 
         // label: String
-        //      The text that shows up in the ui. If none is provided, then it 
+        //      The text that shows up in the ui. If none is provided, then it
         //      defaults to the last part of the layerName (ie. Counties)
         label: '',
 
@@ -138,13 +148,13 @@ function (
         // map: esri.Map
         //      A reference to esri.Map.
         map: null,
-        
+
         // displayDropDownArrow: Boolean
         //      Controls whether or not the drop down arrow is displayed on
         //      the filtering select. Defaults to false
         displayDropDownArrow: false,
 
-        constructor: function () {
+        constructor: function() {
             // summary:
             //      Constructor method
             // params: Object
@@ -152,21 +162,21 @@ function (
             //      and searchFieldName. label, fieldLabel, and displayDropDownArrow are optional.
             // div: String|DomNode
             //      A reference to the div that you want the widget to be created in.
-            console.info(this.declaredClass + '::' + arguments.callee.nom);
+            console.info('agrc.widgets.locate.FindGeneric::constructor', arguments);
         },
 
-        postMixInProperties: function () {
+        postMixInProperties: function() {
             // summary:
             //      postMixin properties like symbol and graphics layer
             // description:
             //      decide whether to use default graphics layer and symbol
             // tags:
             //      public
-            console.info(this.declaredClass + "::" + arguments.callee.nom);
+            console.info('agrc.widgets.locate.FindGeneric::postMixInProperties', arguments);
 
             // check for map
             if (!this.map) {
-                throw new Error(this.declaredClass + " NullReferenceException: map.  Pass the map in the constructor.");
+                throw new Error('agrc.widgets.locate.FindGeneric NullReferenceException: map.  Pass the map in the constructor.');
             }
 
             if (!this.label) {
@@ -178,12 +188,12 @@ function (
             }
         },
 
-        postCreate: function () {
+        postCreate: function() {
             // summary:
             //      Overrides method of same name in dijit._Widget.
             // tags:
             //      private
-            console.info(this.declaredClass + "::" + arguments.callee.nom);
+            console.info('agrc.widgets.locate.FindGeneric::postCreate', arguments);
 
             // build urls
             this.updateFindItemsWith({
@@ -196,16 +206,16 @@ function (
             this._wireEvents();
         },
 
-        _getDefaultLabel: function (layerName) {
+        _getDefaultLabel: function(layerName) {
             // summary:
             //      Gets the last part of the layer name.
             // returns: String
             //      The default label.
             // tags:
             //      private
-            console.info(this.declaredClass + "::" + arguments.callee.nom);
+            console.info('agrc.widgets.locate.FindGeneric::_getDefaultLabel', arguments);
 
-            var label = "Generic";
+            var label = 'Generic';
 
             if (layerName) {
                 // returns the last part of the layer name
@@ -219,22 +229,22 @@ function (
             return label;
         },
 
-        _wireEvents: function () {
+        _wireEvents: function() {
             // summary:
             //      Wire events.
             // tags:
             //      private
-            console.info(this.declaredClass + "::" + arguments.callee.nom);
+            console.info('agrc.widgets.locate.FindGeneric::_wireEvents', arguments);
 
-            this.connect(this.txt_box, "onKeyUp", this._checkEnter);
+            this.connect(this.txt_box, 'onKeyUp', this._checkEnter);
         },
 
-        _checkEnter: function (event) {
+        _checkEnter: function(event) {
             // summary:
             //      Checks to see if the Enter key was pressed and zooms if it was pressed.
             // tags:
             //      private
-            //      console.info(this.declaredClass + "::" + arguments.callee.nom);
+            //      console.info(this.declaredClass + "::", arguments);
 
             // zoom on Enter key
             if (event.keyCode === keys.ENTER) {
@@ -242,14 +252,14 @@ function (
             }
         },
 
-        find: function (args) {
-            // summary: 
+        find: function(args) {
+            // summary:
             //      initiate the find
             // description:
             //      calls the webservice
             // tags:
             //      public
-            console.info(this.declaredClass + "::" + arguments.callee.nom);
+            console.info('agrc.widgets.locate.FindGeneric::find', arguments);
 
             if (args) {
                 event.stop(args);
@@ -264,13 +274,15 @@ function (
 
                 var url = this._envelopeUrl.replace('[searchValue]', value);
 
-                var deferred = this._invokeWebService({ url: url });
+                var deferred = this._invokeWebService({
+                    url: url
+                });
 
                 deferred.then(lang.hitch(this, '_onFind'), lang.hitch(this, '_onError'));
             }
         },
 
-        _invokeWebService: function (args) {
+        _invokeWebService: function(args) {
             // summary:
             //      calls the web service
             // description:
@@ -278,20 +290,20 @@ function (
             // tags:
             //      private
             // returns:
-            //     Deferred 
-            console.info(this.declaredClass + "::" + arguments.callee.nom);
+            //     Deferred
+            console.info('agrc.widgets.locate.FindGeneric::_invokeWebService', arguments);
 
             // set up url
             var params = {
-                callbackParamName: "callback",
+                callbackParamName: 'callback',
                 url: args.url,
-                handleAs: "json"
+                handleAs: 'json'
             };
 
             return esriRequest(params);
         },
 
-        onFind: function (/* result */) {
+        onFind: function(/* result */ ) {
             // summary:
             //      event fired after successful find
             // description:
@@ -299,26 +311,30 @@ function (
             // tags:
             //      public
             // returns:
-            //       
+            //
         },
 
-        _onFind: function (result) {
+        _onFind: function(result) {
             // summary:
             //      zooms the map to the exent of the response
             // description:
             //      creates an esri Extent and zooms the map
             // tags:
             //      private
-            console.log(this.declaredClass + "::" + arguments.callee.nom);
+            console.log('agrc.widgets.locate.FindGeneric::_onFind', arguments);
 
-            var query = { query: this.txt_box.get('displayedValue') };
+            var query = {
+                query: this.txt_box.get('displayedValue')
+            };
 
             this.onFind(lang.mixin(result, query));
 
             // get first result
             if (result && result.Count && result.Count > 0) {
                 var ext = result.Results[0];
-                var sr = new SpatialReference({wkid: 26912});
+                var sr = new SpatialReference({
+                    wkid: 26912
+                });
 
                 if (ext.MinX === ext.MaxX) {
                     // point
@@ -338,46 +354,45 @@ function (
                 }
 
                 topic.publish('agrc.widgets.locate.FindGeneric.OnFind');
-            }
-            else {
+            } else {
                 this._onError(result);
             }
         },
 
-        _getStoreForTextBox: function () {
+        _getStoreForTextBox: function() {
             // summary:
             //      Get all of the features within the layer and jams them into
             //      the store for the validation text box. TODO: this needs to be
             //      changed once the web service is changed to support LIKE.
             // tags:
             //      private
-            console.info(this.declaredClass + "::" + arguments.callee.nom);
+            console.info('agrc.widgets.locate.FindGeneric::_getStoreForTextBox', arguments);
 
             esriRequest({
-                callbackParamName: "callback",
+                callbackParamName: 'callback',
                 url: this._searchUrl,
-                handleAs: "json"
-            }).then(lang.hitch(this, function (result) {
+                handleAs: 'json'
+            }).then(lang.hitch(this, function(result) {
                     this._store = new ItemFileReadStore({
                         data: result
                     });
 
                     this.txt_box.set('store', this._store);
                 }),
-                lang.hitch(this, function (error) {
-                    this._onError("There has been an error with ArcGIS Server.\n" + error.message);
+                lang.hitch(this, function(error) {
+                    this._onError('There has been an error with ArcGIS Server.\n' + error.message);
                 })
             );
         },
 
-        _onError: function (err) {
+        _onError: function(err) {
             // summary:
             //      handles script io geocoding error
             // description:
             //      publishes error
             // tags:
             //      private
-            console.info(this.declaredClass + "::" + arguments.callee.nom);
+            console.info('agrc.widgets.locate.FindGeneric::_onError', arguments);
 
             domStyle.set(this.errorMsg, 'display', 'block');
 
@@ -387,14 +402,14 @@ function (
             topic.publish('agrc.widgets.locate.FindGeneric.OnFindError', [err]);
         },
 
-        updateFindItemsWith: function (args) {
+        updateFindItemsWith: function(args) {
             // summary:
             //      updates the layer and field being found
             // description:
             //      take a property bag of layerName and searchFieldName, label, or fieldLabel to update widget to search other layer and fields
             // tags:
             //      public
-            console.info(this.declaredClass + "::" + arguments.callee.nom);
+            console.info('agrc.widgets.locate.FindGeneric::updateFindItemsWith', arguments);
 
             if (args.layerName && args.searchFieldName) {
                 this._searchUrl = lang.replace(this._searchUrlTemplate, {

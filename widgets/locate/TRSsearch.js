@@ -1,37 +1,50 @@
 define([
+    'dojo/text!agrc/widgets/locate/templates/TRSsearch.html',
+    'dojo/text!agrc/widgets/locate/data/townships.json',
+
     'dojo/_base/declare',
+    'dojo/_base/lang',
+    'dojo/_base/array',
+
+    'dojo/dom-style',
+
+    'dojo/io/script',
+
+    'dojo/data/ItemFileReadStore',
+
     'dijit/_WidgetBase',
     'dijit/_TemplatedMixin',
     'dijit/_WidgetsInTemplateMixin',
-    'dojo/text!agrc/widgets/locate/templates/TRSsearch.html',
-    'dojo/text!agrc/widgets/locate/data/townships.json',
+
     'dijit/form/FilteringSelect',
-    'dojo/data/ItemFileReadStore',
-    'dojo/io/script',
-    'dojo/dom-style',
-    'dojo/_base/lang',
-    'dojo/_base/array',
+
     'esri/geometry/Extent',
+
 
     'dijit/form/RadioButton',
     'dojox/form/BusyButton'
-], 
+], function(
+    template,
+    townshipsTxt,
 
-function (
     declare,
+    lang,
+    array,
+
+    domStyle,
+
+    script,
+
+    ItemFileReadStore,
+
     _WidgetBase,
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
-    template,
-    townshipsTxt,
+
     FilteringSelect,
-    ItemFileReadStore,
-    script,
-    domStyle,
-    lang,
-    array,
+
     Extent
-    ) {
+) {
     return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
         // description:
         //      **Summary**: Allows the user to quickly zoom to a specific township, range, and optionally section.
@@ -66,47 +79,47 @@ function (
         // _rangeQueryUrl: [private]String
         //      The url for the web service to query for appropriate ranges based on
         //      the passed in meridian and township
-        _rangeQueryUrl: "//mapserv.utah.gov/WSUT/GetFeatureAttributes.svc/trssearch-widget/layer(SGID10.CADASTRE.PLSS_TR_Lookup)returnAttributes(PairsWith)where(TorRName)(=)({0})?dojo",
+        _rangeQueryUrl: '//mapserv.utah.gov/WSUT/GetFeatureAttributes.svc/trssearch-widget/layer(SGID10.CADASTRE.PLSS_TR_Lookup)returnAttributes(PairsWith)where(TorRName)(=)({0})?dojo',
 
         // _sectionQueryUrl: [private]String
         //      The url for the web service to query for appropriate sections based on
         //      the passed in meridian, township and range.
-        _sectionQueryUrl: "//mapserv.utah.gov/WSUT/GetFeatureAttributes.svc/trssearch-widget/layer(SGID10.CADASTRE.PLSS_Sec_Lookup)returnAttributes(PairsWith)where(TRName)(=)({0})?dojo",
+        _sectionQueryUrl: '//mapserv.utah.gov/WSUT/GetFeatureAttributes.svc/trssearch-widget/layer(SGID10.CADASTRE.PLSS_Sec_Lookup)returnAttributes(PairsWith)where(TRName)(=)({0})?dojo',
 
         // _getEnvelopeUrl: [private]String
         //      The url for the get envelope web service
-        _getEnvelopeUrl: "//mapserv.utah.gov/WSUT/FeatureGeometry.svc/GetEnvelope/trssearch-widget/layer(*queryLayer*)where(LABEL)(=)(*queryString*)quotes=false",
+        _getEnvelopeUrl: '//mapserv.utah.gov/WSUT/FeatureGeometry.svc/GetEnvelope/trssearch-widget/layer(*queryLayer*)where(LABEL)(=)(*queryString*)quotes=false',
 
         // _baseMeridanFld: [private]String
         //      BASEMERIDIAN field name
-        _baseMeridianFld: "BASEMERIDIAN",
+        _baseMeridianFld: 'BASEMERIDIAN',
 
         // _firstDivFld: [private]String
         _firstDivFld: 'FRSTDIVNO',
 
         // _sectionsFCName: [private]String
         //      The sections feature class name.
-        _sectionsFCName: "SGID10.CADASTRE.PLSSSections_GCDB",
+        _sectionsFCName: 'SGID10.CADASTRE.PLSSSections_GCDB',
 
         // _townshipsFCName: [private]String
         //      The townships feature class name.
-        _townshipsFCName: "SGID10.CADASTRE.PLSSTownships_GCDB",
+        _townshipsFCName: 'SGID10.CADASTRE.PLSSTownships_GCDB',
 
         // meridian: String
         //      The currently selected meridian. (sl or ub)
-        meridian: "",
+        meridian: '',
 
         // township: String
         //      The currently selected township. (ie. 1N)
-        township: "",
+        township: '',
 
         // range: String
         //      The currently selected range. (ie. R1E)
-        range: "",
+        range: '',
 
         // section: String
         //      The currently selected section. (ie. 23)
-        section: "",
+        section: '',
 
         // attach points
         // _townshipDD: dijit.form.Select
@@ -134,26 +147,26 @@ function (
             //    Overrides method of same name in dijit._Widget.
             // tags:
             //    private
-            console.log(this.declaredClass + "::postCreate", arguments);
+            console.log('agrc.widgets.locate.TRSsearch::postCreate', arguments);
 
             var store = new ItemFileReadStore({
                 data: JSON.parse(townshipsTxt)
             });
 
-            this._townshipDD.set("store", store);
-            this._changeMeridian("sl");
+            this._townshipDD.set('store', store);
+            this._changeMeridian('sl');
 
             this._wireEvents();
 
-            if(!this.map) {
+            if (!this.map) {
                 domStyle.set(this._zoomBtn.domNode, 'display', 'none');
             }
 
-            if(this.sectionRequired) {
+            if (this.sectionRequired) {
                 domStyle.set(this._optionalMsg, 'display', 'none');
-                this._townshipDD.set("required", true);
-                this._rangeDD.set("required", true);
-                this._sectionDD.set("required", true);
+                this._townshipDD.set('required', true);
+                this._rangeDD.set('required', true);
+                this._sectionDD.set('required', true);
             }
         },
 
@@ -162,54 +175,54 @@ function (
             //    Wires events.
             // tags:
             //    private
-            console.log(this.declaredClass + "::_wireEvents", arguments);
+            console.log('agrc.widgets.locate.TRSsearch::_wireEvents', arguments);
 
-            this.connect(this._slRB, "onChange", function(newValue) {
-                if(newValue) {
-                    this._changeMeridian("sl");
+            this.connect(this._slRB, 'onChange', function(newValue) {
+                if (newValue) {
+                    this._changeMeridian('sl');
                 }
 
                 this._validateForm();
             });
 
-            this.connect(this._ubRB, "onChange", function(newValue) {
-                if(newValue) {
-                    this._changeMeridian("ub");
+            this.connect(this._ubRB, 'onChange', function(newValue) {
+                if (newValue) {
+                    this._changeMeridian('ub');
                 }
 
                 this._validateForm();
             });
 
-            this.connect(this._townshipDD, "onChange", function() {
-                this._onTownshipChange(this._townshipDD.get("displayedValue"));
+            this.connect(this._townshipDD, 'onChange', function() {
+                this._onTownshipChange(this._townshipDD.get('displayedValue'));
                 this._validateForm();
             });
 
-            this.connect(this._townshipDD, "onBlur", function() {
+            this.connect(this._townshipDD, 'onBlur', function() {
                 this._validateForm();
             });
 
-            this.connect(this._rangeDD, "onChange", function() {
-                this._onRangeChange(this._rangeDD.get("displayedValue"));
+            this.connect(this._rangeDD, 'onChange', function() {
+                this._onRangeChange(this._rangeDD.get('displayedValue'));
                 this._validateForm();
             });
 
-            this.connect(this._rangeDD, "onBlur", function() {
+            this.connect(this._rangeDD, 'onBlur', function() {
                 this._validateForm();
             });
 
-            this.connect(this._sectionDD, "onChange", function(newValue) {
+            this.connect(this._sectionDD, 'onChange', function(newValue) {
                 this.section = newValue;
                 this._validateForm();
                 this.onSectionChange(newValue);
                 this.onValueChange(this._getAllValues());
             });
 
-            this.connect(this._sectionDD, "onBlur", function() {
+            this.connect(this._sectionDD, 'onBlur', function() {
                 this._validateForm();
             });
 
-            this.connect(this._zoomBtn, "onClick", function() {
+            this.connect(this._zoomBtn, 'onClick', function() {
                 this.zoom();
             });
         },
@@ -221,13 +234,13 @@ function (
             //      The id of the meridian. sl or ub
             // tags:
             //      private
-            console.log(this.declaredClass + "::_changeMeridian", arguments);
+            console.log('agrc.widgets.locate.TRSsearch::_changeMeridian', arguments);
 
             this.meridian = meridian;
             this._townshipDD.query.meridian = meridian;
 
             this._checkCurrentValue(this._townshipDD, {
-                township: this._townshipDD.get("displayedValue"),
+                township: this._townshipDD.get('displayedValue'),
                 meridian: meridian
             });
 
@@ -245,16 +258,16 @@ function (
             //      The query string to use for searching for a match
             // tags:
             //      private
-            console.log(this.declaredClass + "::_checkCurrentValue", arguments);
+            console.log('agrc.widgets.locate.TRSsearch::_checkCurrentValue', arguments);
 
-            var displayedValue = checkDD.get("displayedValue");
+            var displayedValue = checkDD.get('displayedValue');
 
-            if(displayedValue && displayedValue !== "") {
+            if (displayedValue && displayedValue !== '') {
                 checkDD.store.fetch({
                     query: query,
                     onBegin: function(total) {
-                        if(total === 0) {
-                            checkDD.set("displayedValue", "");
+                        if (total === 0) {
+                            checkDD.set('displayedValue', '');
                         }
                     }
                 });
@@ -272,20 +285,20 @@ function (
             //      The drop down that you want to update
             // tags:
             //      private
-            console.log(this.declaredClass + "::_updateDDStore", arguments);
+            console.log('agrc.widgets.locate.TRSsearch::_updateDDStore', arguments);
 
             var that = this;
             var args = {
                 url: lang.replace(url, [queryStr]),
-                callbackParamName: "callback",
+                callbackParamName: 'callback',
                 load: function(data) {
-                    dropDown.set("store", that._makeStore(data));
+                    dropDown.set('store', that._makeStore(data));
                     that._checkCurrentValue(dropDown, {
-                        value: dropDown.get("displayedValue")
+                        value: dropDown.get('displayedValue')
                     });
                 },
                 error: function() {
-                    console.error("There was an error retrieving ranges.");
+                    console.error('There was an error retrieving ranges.');
                 }
             };
 
@@ -298,10 +311,10 @@ function (
             // newTownship: String
             // tags:
             //      private
-            console.log(this.declaredClass + "::_onTownshipChange", arguments);
+            console.log('agrc.widgets.locate.TRSsearch::_onTownshipChange', arguments);
 
             this.township = newTownship;
-            this._updateDDStore(this.meridian + "T" + this.township, this._rangeQueryUrl, this._rangeDD);
+            this._updateDDStore(this.meridian + 'T' + this.township, this._rangeQueryUrl, this._rangeDD);
             this.onTownshipChange(newTownship);
             this.onValueChange(this._getAllValues());
         },
@@ -313,10 +326,10 @@ function (
             //      The new range
             // tags:
             //      private
-            console.log(this.declaredClass + "::_onRangeChange", arguments);
+            console.log('agrc.widgets.locate.TRSsearch::_onRangeChange', arguments);
 
             this.range = newRange;
-            this._updateDDStore(this.meridian + "T" + this.township + "R" + this.range, this._sectionQueryUrl, this._sectionDD);
+            this._updateDDStore(this.meridian + 'T' + this.township + 'R' + this.range, this._sectionQueryUrl, this._sectionDD);
             this.onRangeChange(newRange);
             this.onValueChange(this._getAllValues());
         },
@@ -329,17 +342,19 @@ function (
             //      The data object returned from the web service.
             // tags:
             //      private
-            console.log(this.declaredClass + "::_makeStore", arguments);
+            console.log('agrc.widgets.locate.TRSsearch::_makeStore', arguments);
 
             var newData = {
-                identifier: "value",
-                label: "value",
+                identifier: 'value',
+                label: 'value',
                 items: []
             };
 
-            if(data.items[0]) {
-                var values = data.items[0].Value.split("|");
-                values = array.map(values, function(v) { return v.replace("R", ""); });
+            if (data.items[0]) {
+                var values = data.items[0].Value.split('|');
+                values = array.map(values, function(v) {
+                    return v.replace('R', '');
+                });
                 this._sort(values);
                 array.forEach(values, function(v) {
                     newData.items.push({
@@ -358,34 +373,30 @@ function (
             //      Sorts the values from north to south or west to east.
             // tags:
             //      private
-            console.log(this.declaredClass + "::_sort", arguments);
+            console.log('agrc.widgets.locate.TRSsearch::_sort', arguments);
 
             var sortFunction = function(a, b) {
                 var aDir = a.charAt(a.length - 1);
                 var bDir = b.charAt(b.length - 1);
 
-                if(aDir === "N" || aDir === "S" || aDir === "E" || aDir === "W") {
-                    if(aDir === bDir) {
+                if (aDir === 'N' || aDir === 'S' || aDir === 'E' || aDir === 'W') {
+                    if (aDir === bDir) {
                         return (a.split(aDir)[0] - b.split(bDir)[0]);
-                    }
-                    else {
-                        if(aDir === "N" || aDir === "W") {
+                    } else {
+                        if (aDir === 'N' || aDir === 'W') {
                             return -1;
-                        }
-                        else {
+                        } else {
                             return 1;
                         }
                     }
-                }
-                else {
+                } else {
                     return parseInt(a, 10) - parseInt(b, 10);
                 }
             };
 
             try {
                 sortArray.sort(sortFunction);
-            } 
-            catch(e) {
+            } catch (e) {
                 // swallow
             }
         },
@@ -396,61 +407,60 @@ function (
             //      this pattern: "26T1NR3WSec30"
             // returns: String | null
             //      Returns null if there is not enough data.
-            console.log(this.declaredClass + "::getFormattedTRSstring", arguments);
+            console.log('agrc.widgets.locate.TRSsearch::getFormattedTRSstring', arguments);
 
-            if(this.township === "" || this.range === "") {
+            if (this.township === '' || this.range === '') {
                 return null;
             }
 
-            var section = (this.section !== "") ? "Sec" + this.section : "";
+            var section = (this.section !== '') ? 'Sec' + this.section : '';
 
-            return this.getMeridianNumber() + "T" + this.township + "R" + this.range + section;
+            return this.getMeridianNumber() + 'T' + this.township + 'R' + this.range + section;
         },
 
         getMeridianNumber: function() {
             // summary:
             //      Returns the number of the selected meridian
-            console.log(this.declaredClass + "::getMeridianNumber", arguments);
+            console.log('agrc.widgets.locate.TRSsearch::getMeridianNumber', arguments);
 
-            return (this.meridian === "sl") ? 26 : 30;
+            return (this.meridian === 'sl') ? 26 : 30;
         },
 
         zoom: function() {
             // summary:
             //      Zooms to the selected section or range.
-            console.log(this.declaredClass + "::zoom", arguments);
+            console.log('agrc.widgets.locate.TRSsearch::zoom', arguments);
 
             var that = this;
+
             function showBusy(busy) {
-                if(busy) {
+                if (busy) {
                     that.map.showLoader();
-                } 
-                else {
+                } else {
                     that.map.hideLoader();
                     that._zoomBtn.cancel();
                 }
             }
 
-            if(!this.map) {
-                throw "no map object found!";
+            if (!this.map) {
+                throw 'no map object found!';
             }
 
             showBusy(true);
 
             var url = this._getEnvelopeUrl;
 
-            if(this.section) {
-                url = url.replace("*queryLayer*", this._sectionsFCName);
-            } 
-            else {
-                url = url.replace("*queryLayer*", this._townshipsFCName);
+            if (this.section) {
+                url = url.replace('*queryLayer*', this._sectionsFCName);
+            } else {
+                url = url.replace('*queryLayer*', this._townshipsFCName);
             }
 
-            url = url.replace("*queryString*", this._getStringForGetEnvelope());
+            url = url.replace('*queryString*', this._getStringForGetEnvelope());
 
             var params = {
                 url: url,
-                callbackParamName: "callback",
+                callbackParamName: 'callback',
                 load: function(data) {
                     var result = data.Results[0];
                     var zoomExtent = new Extent({
@@ -477,10 +487,10 @@ function (
             // returns: String
             // tags:
             //      private
-            console.log(this.declaredClass + "::_getStringForGetEnvelope", arguments);
+            console.log('agrc.widgets.locate.TRSsearch::_getStringForGetEnvelope', arguments);
 
-            var value = "'T" + this.township + " R" + this.range;
-            if(this.section) {
+            var value = "'T" + this.township + ' R' + this.range;
+            if (this.section) {
                 var s = (parseInt(this.section, 10) < 10) ? '0' + this.section : this.section;
                 value += "' AND " + this._firstDivFld + " = '" + s;
             }
@@ -497,17 +507,17 @@ function (
             //      Enables the zoom button if appropriate.
             // tags:
             //      private
-            console.log(this.declaredClass + "::_validateForm", arguments);
+            console.log('agrc.widgets.locate.TRSsearch::_validateForm', arguments);
 
             var value = (this.township && this.range && this._sectionDD.isValid());
-            this._zoomBtn.set("disabled", !value);
+            this._zoomBtn.set('disabled', !value);
         },
 
         _getAllValues: function() {
             // summary:
             //      Gets all of the current values for the form.
             // Returns: {meridian: String, township: String, range: String, section: String}
-            console.log(this.declaredClass + "::_getAllValues", arguments);
+            console.log('agrc.widgets.locate.TRSsearch::_getAllValues', arguments);
 
             return {
                 meridian: this.meridian,
@@ -519,37 +529,37 @@ function (
 
         // setter methods - see _WidgetBase:set
         _setMeridianAttr: function(value) {
-            console.log(this.declaredClass + "::_setMeridianAttr", arguments);
+            console.log('agrc.widgets.locate.TRSsearch::_setMeridianAttr', arguments);
 
             this.meridian = value;
-            this["_" + value + "RB"].set("checked", true);
+            this['_' + value + 'RB'].set('checked', true);
             this.onMeridianChange(value);
             this.onValueChange(this._getAllValues());
         },
 
         _setTownshipAttr: function(value) {
-            console.log(this.declaredClass + "::_setTownshipAttr", arguments);
+            console.log('agrc.widgets.locate.TRSsearch::_setTownshipAttr', arguments);
 
             this.township = value;
-            this._townshipDD.set("displayedValue", value);
+            this._townshipDD.set('displayedValue', value);
             this.onTownshipChange(value);
             this.onValueChange(this._getAllValues());
         },
 
         _setRangeAttr: function(value) {
-            console.log(this.declaredClass + "::_setRangeAttr", arguments);
+            console.log('agrc.widgets.locate.TRSsearch::_setRangeAttr', arguments);
 
             this.range = value;
-            this._rangeDD.set("displayedValue", value);
+            this._rangeDD.set('displayedValue', value);
             this.onRangeChange(value);
             this.onValueChange(this._getAllValues());
         },
 
         _setSectionAttr: function(value) {
-            console.log(this.declaredClass + "::_setSectionAttr", arguments);
+            console.log('agrc.widgets.locate.TRSsearch::_setSectionAttr', arguments);
 
             this.section = value;
-            this._sectionDD.set("displayedValue", value);
+            this._sectionDD.set('displayedValue', value);
             this.onSectionChange(value);
             this.onValueChange(this._getAllValues());
         },
@@ -585,7 +595,7 @@ function (
 
         onValueChange: function(newValues) {
             // summary:
-            //      Fires whenever any value (meridian, township, range, or section) 
+            //      Fires whenever any value (meridian, township, range, or section)
             //      changes.
             // newValues: {meridian: String, township: String, range: String, section: String}
             //      An object with the updated values.
