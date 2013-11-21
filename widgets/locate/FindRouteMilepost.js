@@ -1,10 +1,6 @@
 define([
         'dojo/text!agrc/widgets/locate/templates/FindRouteMilepost.html',
 
-        'dijit/_WidgetBase',
-        'dijit/_TemplatedMixin',
-        'dijit/_WidgetsInTemplateMixin',
-
         'dojo/_base/declare',
         'dojo/_base/lang',
         'dojo/_base/Color',
@@ -14,6 +10,10 @@ define([
         'dojo/string',
         'dojo/io/script',
         'dojo/when',
+
+        'dijit/_WidgetBase',
+        'dijit/_TemplatedMixin',
+        'dijit/_WidgetsInTemplateMixin',
 
         'esri/layers/GraphicsLayer',
         'esri/symbols/SimpleMarkerSymbol',
@@ -25,10 +25,6 @@ define([
     function(
         template,
 
-        _WidgetBase,
-        _TemplatedMixin,
-        _WidgetsInTemplateMixin,
-
         declare,
         lang,
         Color,
@@ -39,6 +35,10 @@ define([
         dojoScript,
         when,
 
+        _WidgetBase,
+        _TemplatedMixin,
+        _WidgetsInTemplateMixin,
+        
         GraphicsLayer,
         SimpleMarkerSymbol,
         Graphic,
@@ -81,12 +81,12 @@ define([
             apiKey: null,
 
             constructor: function() {
-                console.log(this.declaredClass + '::constructor', arguments);
+                console.log('agrc.widgets.locate.FindRouteMilepost::constructor', arguments);
             },
             postMixInProperties: function() {
                 // summary:
                 //      description
-                console.log(this.declaredClass + '::postMixinProperties', arguments);
+                console.log('agrc.widgets.locate.FindRouteMilepost::postMixinProperties', arguments);
 
                 if (this.map && !this.graphicsLayer) {
                     this.graphicsLayer = new GraphicsLayer();
@@ -103,21 +103,21 @@ define([
             postCreate: function() {
                 // summary:
                 //      dom is ready
-                console.log(this.declaredClass + '::postCreate', arguments);
+                console.log('agrc.widgets.locate.FindRouteMilepost::postCreate', arguments);
 
                 this.wireEvents();
             },
             wireEvents: function() {
                 // summary:
                 //      wires the events for the widget
-                console.log(this.declaredClass + '::wireEvents', arguments);
+                console.log('agrc.widgets.locate.FindRouteMilepost::wireEvents', arguments);
 
                 this.connect(this.findBtn, 'click', '_onFindClick');
             },
             _onFindClick: function() {
                 // summary:
                 //      description
-                console.log(this.declaredClass + '::_onFindClick', arguments);
+                console.log('agrc.widgets.locate.FindRouteMilepost::_onFindClick', arguments);
 
                 if (this.graphicsLayer) {
                     this.graphicsLayer.clear();
@@ -131,7 +131,7 @@ define([
                 // summary:
                 //      validates the values in the text boxes
                 // returns: Boolean
-                console.log(this.declaredClass + '::_validate', arguments);
+                console.log('agrc.widgets.locate.FindRouteMilepost::_validate', arguments);
 
                 function validate(textBox, invalidSpan) {
                     if (lang.trim(textBox.value) === '') {
@@ -158,7 +158,7 @@ define([
                 // summary:
                 //      description
                 // returned: Deferred
-                console.log(this.declaredClass + '::_invokeWebService', arguments);
+                console.log('agrc.widgets.locate.FindRouteMilepost::_invokeWebService', arguments);
                 var that = this;
 
                 var url = 'http://api.mapserv.utah.gov/api/v1/geocode/milepost/${route}/${milepost}?apiKey=${key}';
@@ -191,7 +191,7 @@ define([
                 // summary:
                 //      callback for service
                 // result: {}
-                console.log(this.declaredClass + '::_onXHRSuccess', arguments);
+                console.log('agrc.widgets.locate.FindRouteMilepost::_onXHRSuccess', arguments);
 
                 var graphic;
 
@@ -219,7 +219,7 @@ define([
             _onXHRFailure: function() {
                 // summary:
                 //      description
-                console.log(this.declaredClass + '::_onXHRFailure', arguments);
+                console.log('agrc.widgets.locate.FindRouteMilepost::_onXHRFailure', arguments);
 
                 domStyle.set(this.errorMsg, 'display', 'inline');
             },
@@ -227,7 +227,7 @@ define([
                 // summary:
                 //      Event that fires when the service successfully returns a point
                 // result: {}
-                console.log(this.declaredClass + '::onFind', arguments);
+                console.log('agrc.widgets.locate.FindRouteMilepost::onFind', arguments);
             }
         });
     });

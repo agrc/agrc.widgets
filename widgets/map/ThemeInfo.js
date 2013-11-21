@@ -1,14 +1,11 @@
 ﻿define([
     'dojo/_base/declare',
     'dojo/_base/lang'
-
-],
-
-function (
+], function(
     declare,
     lang
-    ) {
-    return declare('agrc.widgets.map.themeInfo', null, {
+) {
+    return declare([], {
         // description:
         //      **Summary**: A class used in the agrc.widgets.map.BaseMapSelector.
         //      <p>
@@ -57,7 +54,7 @@ function (
         //      array of esri.layers.Layer ordered from bottom up
         layers: null,
 
-        constructor: function (args) {
+        constructor: function(args) {
             // summary:
             //      Constructor function for object
             // description:
@@ -66,7 +63,7 @@ function (
             //      public
             // args: [public] Object?
             //      The optional params to mixin, including layers.
-            console.log(this.declaredClass + "::" + arguments.callee.nom);
+            console.log('agrc.widgets.map.themeInfo::constructor', arguments);
 
             this.layers = [];
             lang.mixin(this, args);

@@ -1,9 +1,12 @@
 define([
+    'dojo/text!agrc/widgets/locate/templates/ZoomToCoords.html',
+
     'dojo/_base/declare',
+
     'dijit/_WidgetBase',
     'dijit/_TemplatedMixin',
     'dijit/_WidgetsInTemplateMixin',
-    'dojo/text!agrc/widgets/locate/templates/ZoomToCoords.html',
+
     'esri/tasks/GeometryService',
     'esri/layers/GraphicsLayer',
     'esri/geometry/Point',
@@ -11,27 +14,28 @@ define([
     'esri/symbols/SimpleMarkerSymbol',
     'esri/SpatialReference',
 
+
     'dijit/form/NumberTextBox',
     'dijit/form/Select',
     'dijit/layout/StackContainer',
     'dijit/layout/ContentPane'
-],
+], function(
+    template,
 
-function (
     declare,
+
     _WidgetBase,
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
-    template,
+
     GeometryService,
     GraphicsLayer,
     Point,
     Graphic,
     SimpleMarkerSymbol,
     SpatialReference
-    ) {
-    return declare('agrc/widgets/locate/ZoomToCoords', 
-        [_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
+) {
+    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
         // description:
         //    **Summary**: Used to zoom to a point on the map specified by a pair of coordinates that may or
         //      may not be in the same coordinate system as the map.
@@ -89,22 +93,22 @@ function (
         //      The cache level that you want to zoom to. Defaults to 12.
         zoomLevel: 12,
 
-        constructor: function (/*params, div*/) {
+        constructor: function(/*params, div*/ ) {
             // summary:
             //    Constructor method
             // params: Object
             //    Parameters to pass into the widget. Required values include: map. Optional values include: zoomLevel.
             // div: String|DomNode
             //    A reference to the div that you want the widget to be created in.
-            console.info(this.declaredClass + '::' + arguments.callee.nom);
+            console.info('agrc/widgets/locate/ZoomToCoords::constructor', arguments);
         },
 
-        postCreate: function () {
+        postCreate: function() {
             // summary:
             //    Overrides method of same name in dijit._Widget.
             // tags:
             //    private
-            console.info(this.declaredClass + '::' + arguments.callee.nom);
+            console.info('agrc/widgets/locate/ZoomToCoords::postCreate', arguments);
 
             this._geoService = new GeometryService(this.geoServiceURL);
 
@@ -117,53 +121,52 @@ function (
             this.stackContainer.startup(); // required to get it to layout correctly.
         },
 
-        _wireEvents: function () {
+        _wireEvents: function() {
             // summary:
             //    Wires events.
             // tags:
             //    private
-            console.info(this.declaredClass + '::' + arguments.callee.nom);
+            console.info('agrc/widgets/locate/ZoomToCoords::_wireEvents', arguments);
 
             this.connect(this.zoomButton, 'onClick', this._onZoomClick);
             this.connect(this._geoService, 'onError', this._onGeoServiceError);
             this.connect(this._geoService, 'onProjectComplete', this._onProjectComplete);
-            this.connect(this.typeSelect, "onChange", this._onTypeChange);
+            this.connect(this.typeSelect, 'onChange', this._onTypeChange);
         },
 
-        _onZoomClick: function () {
+        _onZoomClick: function() {
             // summary:
             //      Fires when the user clicks on the Zoom button
-            console.info(this.declaredClass + '::' + arguments.callee.nom);
+            console.info('agrc/widgets/locate/ZoomToCoords::_onZoomClick', arguments);
 
-            var coords = this.getCoords(this.typeSelect.get("value"));
+            var coords = this.getCoords(this.typeSelect.get('value'));
             console.log(coords);
 
             var point = new Point(coords.x, coords.y, this._inputSpatialReference);
 
             if (point.spatialReference !== this.map.spatialReference) {
                 this._geoService.project([point], this.map.spatialReference);
-            }
-            else {
+            } else {
                 this._zoomToPoint(point);
             }
         },
 
-        _onGeoServiceError: function (error) {
+        _onGeoServiceError: function(error) {
             // summary:
             //      Handles any errors returned by the geometry service
             // error: Error
             //      A JavaScript error object
-            console.info(this.declaredClass + '::' + arguments.callee.nom);
+            console.info('agrc/widgets/locate/ZoomToCoords::_onGeoServiceError', arguments);
 
             window.alert('There was an error with the Geometry Service.' + error.message);
         },
 
-        _onProjectComplete: function (geometries) {
+        _onProjectComplete: function(geometries) {
             // summary:
             //      Handles the callback from the project function on the geometry service
             // geometries: Geometry[]
             //      An array of the projected geometries.
-            console.info(this.declaredClass + '::' + arguments.callee.nom);
+            console.info('agrc/widgets/locate/ZoomToCoords::_onProjectComplete', arguments);
 
             var newPoint = geometries[0];
 
@@ -190,14 +193,14 @@ function (
             this._zoomToPoint(point);
         },
 
-        _zoomToPoint: function (point) {
+        _zoomToPoint: function(point) {
             // summary:
-            //      Zoom to the point created 
+            //      Zoom to the point created
             // description:
             //      clears old map graphics and centers and zooms on the input point
             // tags:
             //      private
-            console.info(this.declaredClass + "::" + arguments.callee.nom);
+            console.info('agrc/widgets/locate/ZoomToCoords::_zoomToPoint', arguments);
 
             // clear any
             this._graphicsLayer.clear();
@@ -209,25 +212,25 @@ function (
             this.map.centerAndZoom(point, this.zoomLevel);
         },
 
-        _onTypeChange: function (newValue) {
+        _onTypeChange: function(newValue) {
             // summary:
             //      Fires when the user changes the value of the drop-down.
             //      Moves the stack container to the appropriate pane.
-            console.info(this.declaredClass + "::" + arguments.callee.nom);
+            console.info('agrc/widgets/locate/ZoomToCoords::_onTypeChange', arguments);
 
             var child;
 
             switch (newValue) {
-                case "dd":
+                case 'dd':
                     child = this.dd;
                     break;
-                case "dm":
+                case 'dm':
                     child = this.dm;
                     break;
-                case "dms":
+                case 'dms':
                     child = this.dms;
                     break;
-                case "utm":
+                case 'utm':
                     child = this.utm;
                     break;
             }
@@ -235,14 +238,14 @@ function (
             this.stackContainer.selectChild(child);
         },
 
-        getCoords: function (type) {
+        getCoords: function(type) {
             // summary:
             //      Coverts the appropriate set of coordinates to decimal degrees
             // type: String
-            //      The type of coordinates that you want back. Accepted values are found 
+            //      The type of coordinates that you want back. Accepted values are found
             //      in the drop down.
             // returns: Object{x:Number,y:Number}
-            console.info(this.declaredClass + "::" + arguments.callee.nom);
+            console.info('agrc/widgets/locate/ZoomToCoords::getCoords', arguments);
 
             function convert(value) {
                 // summary:
@@ -253,21 +256,21 @@ function (
 
             var coords = {};
             switch (type) {
-                case "dd":
+                case 'dd':
                     coords.x = parseFloat('-' + this._getTextBoxValue(this.w_deg_dd));
                     coords.y = parseFloat(this._getTextBoxValue(this.n_deg_dd));
                     this._inputSpatialReference = new SpatialReference({
                         wkid: 4326
                     });
                     break;
-                case "dm":
+                case 'dm':
                     coords.x = -(parseFloat(this._getTextBoxValue(this.w_deg_dm)) + convert(this._getTextBoxValue(this.w_min_dm)));
                     coords.y = parseFloat(this._getTextBoxValue(this.n_deg_dm)) + convert(this._getTextBoxValue(this.n_min_dm));
                     this._inputSpatialReference = new SpatialReference({
                         wkid: 4326
                     });
                     break;
-                case "dms":
+                case 'dms':
                     var sec = convert(this._getTextBoxValue(this.w_sec_dms));
                     var min = parseFloat(this._getTextBoxValue(this.w_min_dms)) + sec;
                     coords.x = -(parseFloat(this._getTextBoxValue(this.w_deg_dms)) + convert(min));
@@ -278,7 +281,7 @@ function (
                         wkid: 4326
                     });
                     break;
-                case "utm":
+                case 'utm':
                     coords.x = this._getTextBoxValue(this.x_utm);
                     coords.y = this._getTextBoxValue(this.y_utm);
                     this._inputSpatialReference = new SpatialReference({
@@ -290,12 +293,12 @@ function (
             return coords;
         },
 
-        _getTextBoxValue: function (textBox) {
+        _getTextBoxValue: function(textBox) {
             // summary:
             //
-            console.info(this.declaredClass + "::" + arguments.callee.nom);
+            console.info('agrc/widgets/locate/ZoomToCoords::_getTextBoxValue', arguments);
 
-            var value = textBox.get("value");
+            var value = textBox.get('value');
             return (value) ? value : 0;
         }
     });

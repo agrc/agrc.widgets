@@ -1,30 +1,37 @@
 define([
-    'dojo/_base/declare',
-    'agrc/widgets/map/_BaseMapSelector',
-    'dijit/InlineEditBox',
-    'dojo/data/ItemFileReadStore',
-    'dijit/form/ComboBox',
     'dojo/text!agrc/widgets/map/templates/BaseMapSelectorTemplate.htm',
-    'dojo/dom-construct',
+
+    'dojo/_base/declare',
     'dojo/_base/array',
     'dojo/_base/lang',
-    'dojo/dom-class'
 
-],
-
-function (
-    declare,
-    _BaseMapSelector,
-    InlineEditBox,
-    ItemFileReadStore,
-    ComboBox,
+    'dojo/dom-construct',
+    'dojo/dom-class',
+    
+    'dojo/data/ItemFileReadStore',
+    
+    'dijit/InlineEditBox',
+    'dijit/form/ComboBox',
+    
+    'agrc/widgets/map/_BaseMapSelector'
+], function(
     template,
-    domConstruct,
+
+    declare,
     array,
     lang,
-    domClass
-    ) {
-        return declare('agrc.widgets.map.BaseMapSelector', [_BaseMapSelector], {
+    
+    domConstruct,
+    domClass,
+    
+    ItemFileReadStore,
+
+    InlineEditBox,
+    ComboBox,
+    
+    _BaseMapSelector
+) {
+    return declare([_BaseMapSelector], {
         // description:
         //      **Summary**: A visual widget to change map base maps and themes.
         //      <p>
@@ -55,7 +62,7 @@ function (
         // |        'useDefaultExtent': true,
         // |        'useDefaultBaseMap': false
         // |    };
-        // |    
+        // |
         // |    var map = new agrc.widgets.map.BaseMap('basemap-div', options);
         // |    var selector = new agrc.widgets.map.BaseMapSelector({ map: map, id: "tundra", position: "BL" });
         //
@@ -84,7 +91,7 @@ function (
 
         // position: String
         //      Where to place the widget inside the map frame: can be TR (top right) BL (bottom left) BR or TL
-        position: "TR",
+        position: 'TR',
 
         //themeInfos: [], baseClass
 
@@ -102,37 +109,37 @@ function (
         //      store for combobox
         _themeInfoStore: {},
 
-        constructor: function () {
+        constructor: function() {
             // summary:
-            //      Constructor function for object. 
+            //      Constructor function for object.
             // args: Object?
             //      The parameters that you want to pass into the object. Includes: map: agrc.widgets.map.BaseMap || esri.Map || anything that inherits from esri.Map
             //      The esri.Map object for switching the base map on, id,
             //      position.
-            console.info(this.declaredClass + '::' + arguments.callee.nom);
+            console.info('agrc.widgets.map.BaseMapSelector::constructor', arguments);
         },
 
-        postCreate: function () {
+        postCreate: function() {
             // summary:
             //      Sets up the widget
             // description:
             //      Checks for required props, places the widget in the map, clones the theme infos
             //      creates the store for the ComboBox/InlineEdit
             //      inits the theme infos, connects the click events and sets the css class
-            console.info(this.declaredClass + "::" + arguments.callee.nom);
+            console.info('agrc.widgets.map.BaseMapSelector::postCreate', arguments);
 
             this.inherited(arguments);
 
             // check for map
             if (!this.map) {
-                throw new Error(this.declaredClass + " NullReferenceException: map.  Pass the map in the constructor.");
+                throw new Error('agrc.widgets.map.BaseMapSelector NullReferenceException: map.  Pass the map in the constructor.');
             }
 
-            domConstruct.place(this.domNode, this.map.id + '_root', "last");
+            domConstruct.place(this.domNode, this.map.id + '_root', 'last');
 
             this._themeInfoClones = [];
 
-            array.forEach(this.themeInfos, function (theme) {
+            array.forEach(this.themeInfos, function(theme) {
                 this._themeInfoClones.push({
                     label: JSON.parse(JSON.stringify(theme.label))
                 });
@@ -147,12 +154,12 @@ function (
             });
 
             this.mapLabel = new InlineEditBox({
-                editor: "dijit.form.ComboBox",
+                editor: 'dijit.form.ComboBox',
                 editorParams: {
                     store: this._themeInfoStore,
                     searchAttr: 'label'
                 },
-                onChange: lang.hitch(this, "changeTheme")
+                onChange: lang.hitch(this, 'changeTheme')
             }, this.mapLabel);
 
             this.initDefaultThemes();
@@ -162,22 +169,22 @@ function (
             domClass.add(this.container, this.position);
         },
 
-        initDefaultThemes: function () {
-            // summary: 
+        initDefaultThemes: function() {
+            // summary:
             //      Sets the widget up to look right for the default theme
             // description:
             //      Sets the map label to the current theme and also the basemap sprite
             // tags:
             //      private
-            console.info(this.declaredClass + "::" + arguments.callee.nom);
+            console.info('agrc.widgets.map.BaseMapSelector::initDefaultThemes', arguments);
 
             this.mapLabel.set('value', this.currentTheme.label);
 
             domClass.add(this.mapIcon, this.currentTheme.label);
         },
 
-        addTheme: function (newThemeInfo) {
-            // summary: 
+        addTheme: function(newThemeInfo) {
+            // summary:
             //      Adds a new theme to the selector
             // description:
             //      pushes the new theme info into the cloned array so the ComboBox stays in sync
@@ -185,7 +192,7 @@ function (
             //      The new theme info to add to the array.
             // tags:
             //      public
-            console.info(this.declaredClass + "::" + arguments.callee.nom);
+            console.info('agrc.widgets.map.BaseMapSelector::addTheme', arguments);
 
             this.inherited(arguments);
 
@@ -196,19 +203,19 @@ function (
             }
         },
 
-        changeTheme: function (newThemeLabel) {
-            // summary: 
+        changeTheme: function(newThemeLabel) {
+            // summary:
             //      Swaps the theme for a new one
             // description:
             //      Modifies the css and label text to match the newTheme props
             //      and actually changes the map theme
             // tags:
             //      public
-            // newThemeLabel: agrc.widgets.map.ThemeInfo 
+            // newThemeLabel: agrc.widgets.map.ThemeInfo
             //       new theme to display
             // returns:
             //      agrc.widgets.map.ThemeInfo
-            console.info(this.declaredClass + "::" + arguments.callee.nom);
+            console.info('agrc.widgets.map.BaseMapSelector::changeTheme', arguments);
 
             // remove thumbnail
             domClass.remove(this.mapIcon, this.currentTheme.label);
@@ -223,8 +230,8 @@ function (
             return newTheme;
         },
 
-        shuffle: function (args) {
-            // summary: 
+        shuffle: function(args) {
+            // summary:
             //      Click event handler for shuffling through themes
             // description:
             //      Handles the plumbing for figuring out which theme index to show next.
@@ -234,24 +241,26 @@ function (
             // args: Object?
             //       optional object to pass in args.direction. forward or reverse.
 
-            console.info(this.declaredClass + "::" + arguments.callee.nom);
+            console.info('agrc.widgets.map.BaseMapSelector::shuffle', arguments);
 
             this.currentIndex = this._getTheme(this.currentTheme.label).index;
 
-            var direction = args && args.direction || "forward";
+            var direction = args && args.direction || 'forward';
 
             // increment current index by 1 or reset to 0 if it's at the end
-            if (direction === "forward") {
+            if (direction === 'forward') {
                 this.currentIndex = this.currentIndex + 1 > this.themeInfos.length - 1 ? 0 : this.currentIndex + 1;
-            }
-            else {
+            } else {
                 this.currentIndex = this.currentIndex - 1 > 0 ? this.currentIndex - 1 : this.themeInfos.length - 1;
             }
 
             var newTheme = this.changeTheme(this.themeInfos[this.currentIndex].label).themeInfo;
 
-            try { this.mapLabel.set("value", newTheme.label); }
-            catch (err) { console.error(err); }
+            try {
+                this.mapLabel.set('value', newTheme.label);
+            } catch (err) {
+                console.error(err);
+            }
         }
-    }); 
+    });
 });
