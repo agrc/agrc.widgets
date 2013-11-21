@@ -31,8 +31,8 @@ define([
     lang,
     array,
 
-    domClass,
     style,
+    domClass,
 
     query,
     when,
