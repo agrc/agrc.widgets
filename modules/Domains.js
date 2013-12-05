@@ -47,7 +47,7 @@ define([
 
             this.getCodedValues(featureServiceUrl, fieldName).then(function (values) {
                 buildOptions(values);
-                def.resolve();
+                def.resolve(values);
             }, function (error) {
                 def.reject(error);
             });
