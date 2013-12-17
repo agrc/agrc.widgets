@@ -31,8 +31,16 @@ define([
             console.log(this.declaredClass + "::populateSelectWithDomainValues", arguments);
 
             var def = new Deferred();
+            var namespace = 'agrc/modules/Domains_codedValues';
+            var prop = featureServiceUrl + '_' + fieldName;
+            if (!window.AGRC) {
+                window.AGRC = {};
+            }
+            if (!window.AGRC[namespace]) {
+                window.AGRC[namespace] = {};
+            }
 
-            function buildOptions(values) {
+            var buildOptions = function (values) {
                 // add empty option
                 domConstruct.create('option', null, select);
                 array.forEach(values, function (v) {
@@ -41,16 +49,23 @@ define([
                         innerHTML: v.name
                     }, select);
                 });
-            }
+            };
 
             domConstruct.empty(select);
 
-            this.getCodedValues(featureServiceUrl, fieldName).then(function (values) {
-                buildOptions(values);
-                def.resolve(values);
-            }, function (error) {
-                def.reject(error);
-            });
+            if (window.AGRC[namespace][prop]) {
+                buildOptions(window.AGRC[namespace][prop]);
+                def.resolve(window.AGRC[namespace][prop]);
+            } else {
+                this.getCodedValues(featureServiceUrl, fieldName).then(function (values) {
+                    window.AGRC[namespace][prop] = values;
+
+                    buildOptions(values);
+                    def.resolve(values);
+                }, function (error) {
+                    def.reject(error);
+                });
+            }
 
             return def;
         },
