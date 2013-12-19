@@ -23,6 +23,11 @@ function (
             domConstruct.create('option', {}, select);
             domConstruct.create('option', {}, select);
         });
+        afterEach(function () {
+            if (window.AGRC) {
+                window.AGRC['agrc/modules/Domains_codedValues'] = null;
+            }
+        });
         it('returns an object', function () {
             expect(Domains).toEqual(jasmine.any(Object));
         });
@@ -47,6 +52,7 @@ function (
             describe('successful', function () {
                 var getDef;
                 var popDef;
+                var codedValues;
                 beforeEach(function () {
                     runs(function () {
                         getDef = new Deferred();
@@ -54,7 +60,8 @@ function (
                         popDef = Domains.populateSelectWithDomainValues(select, fakeUrl, fieldName);
                         request('modules/tests/data/featureServiceResponse.json').then(
                             function (response) {
-                                getDef.resolve(JSON.parse(response).fields[3].domain.codedValues);
+                                codedValues = JSON.parse(response).fields[3].domain.codedValues;
+                                getDef.resolve(codedValues);
                             }
                         );
                     });
@@ -70,6 +77,18 @@ function (
 
                     expect(option.value).toEqual('cr');
                     expect(option.innerHTML).toEqual('Coldwater river');
+                });
+                it('caches the domain values for future requests', function () {
+                    expect(AGRC['agrc/modules/Domains_codedValues'][fakeUrl + '_' + fieldName])
+                        .toEqual(codedValues);
+                });
+                it('doesnt call getCodedValues if there is an existing cache', function () {
+                    AGRC['agrc/modules/Domains_codedValues'][fakeUrl + '_' + fieldName] = 
+                        [{code: 'blah', name: 'blah'}];
+
+                    Domains.populateSelectWithDomainValues(select, fakeUrl, fieldName);
+
+                    expect(Domains.getCodedValues.callCount).toBe(1);
                 });
             });
         });
