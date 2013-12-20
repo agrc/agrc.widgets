@@ -1,0 +1,113 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>TRS Tests</title>
+
+    <!-- META TAGS -->
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+    <!-- CSS -->        
+    <link rel='stylesheet' href='http://js.arcgis.com/3.7/js/dojo/dijit/themes/claro/claro.css'>
+    <link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.7/js/esri/css/esri.css" />
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
+    <style type='text/css'>
+    #map-div {
+        height: 400px;
+        width: 500px;
+        border: solid 1px gray;
+        position: relative;
+        top: 60px;
+        margin-bottom: 80px;
+    }
+    #search-div2 {
+        position: relative;
+        z-index: 27;
+    }
+    #search-div3 {
+        position: relative;
+        z-index: 26;
+    }
+    </style>
+
+    <!-- JAVASCRIPT -->
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
+    <script type='text/javascript' src='http://js.arcgis.com/3.7'></script>
+    <script type="text/javascript">
+    var projectUrl = location.pathname.replace(/\/[^\/]+$/, "") + '/';
+    var widgetUnderTest;
+
+    require({
+        packages: [{
+            name: 'agrc',
+            location: projectUrl + '../../'
+        }]
+    }, [
+        'agrc/widgets/locate/TrsSearch',
+        'agrc/widgets/map/BaseMap',
+
+        'dojo/domReady!'
+    ], function(Module, mapDependency) {
+        map = new mapDependency('map-div');
+
+        widgetUnderTest = new Module({
+            map: map,
+            apiKey: 'AGRC-B5D62BD2151902'
+        }, 'search-div');
+
+        widgetUnderTest.startup();
+
+        // var w2 = new Module({
+        //     apiKey: 'AGRC-B5D62BD2151902'
+        // }, 'search-div2');
+        // w2.startup();
+
+        // var w3 = new Module({
+        //     apiKey: 'AGRC-B5D62BD2151902'
+        // }, 'search-div3');
+        // w3.startup();
+
+        // var w4 = new Module({
+        //     hideSection: true,
+        //     apiKey: 'AGRC-B5D62BD2151902'
+        // }, 'search-div-dropdown');
+        // w4.startup();
+
+    });
+</script>
+</head>
+<body class='claro'>
+    <div class="navbar navbar-inverse navbar-fixed-top" >
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">TRS</a>
+    </div>
+    <div class="collapse navbar-collapse navbar-main-collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+          <a class="dropdown-toggle" href="#" data-toggle='dropdown'><span class="glyphicon glyphicon-globe"></span> Find Place <b class="caret"></b></a>
+          <div class='dropdown-menu'>
+            <form onsubmit='return false;'>
+                <div id="search-div-dropdown"></div>
+            </form>
+          </div>
+        </li> 
+      </ul>
+    </div>
+  </div>
+    <div id='map-div'>
+        <div id='search-div'></div>
+    </div>
+    layout tests
+    <div id="search-div2"></div>
+    <br><br>
+    contextField
+    <div id="search-div3"></div>
+</body>
+</html>
