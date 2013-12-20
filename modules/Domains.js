@@ -33,6 +33,8 @@ define([
             var def = new Deferred();
             var namespace = 'agrc/modules/Domains_codedValues';
             var prop = featureServiceUrl + '_' + fieldName;
+            var that = this;
+            
             if (!window.AGRC) {
                 window.AGRC = {};
             }
@@ -40,27 +42,16 @@ define([
                 window.AGRC[namespace] = {};
             }
 
-            var buildOptions = function (values) {
-                // add empty option
-                domConstruct.create('option', null, select);
-                array.forEach(values, function (v) {
-                    domConstruct.create('option', {
-                        value: v.code,
-                        innerHTML: v.name
-                    }, select);
-                });
-            };
-
             domConstruct.empty(select);
 
             if (window.AGRC[namespace][prop]) {
-                buildOptions(window.AGRC[namespace][prop]);
+                this.buildOptions(window.AGRC[namespace][prop], select);
                 def.resolve(window.AGRC[namespace][prop]);
             } else {
                 this.getCodedValues(featureServiceUrl, fieldName).then(function (values) {
                     window.AGRC[namespace][prop] = values;
 
-                    buildOptions(values);
+                    that.buildOptions(values, select);
                     def.resolve(values);
                 }, function (error) {
                     def.reject(error);
@@ -68,6 +59,21 @@ define([
             }
 
             return def;
+        },
+        buildOptions: function (values, select) {
+            // summary:
+            //      description
+            // param: type or return: type
+            console.log('module/id:buildOptions', arguments);
+        
+            // add empty option
+            domConstruct.create('option', null, select);
+            array.forEach(values, function (v) {
+                domConstruct.create('option', {
+                    value: v.code,
+                    innerHTML: v.name
+                }, select);
+            });
         },
         getCodedValues: function (featureServiceUrl, fieldName) {
             // summary:
