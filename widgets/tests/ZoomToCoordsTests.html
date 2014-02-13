@@ -1,73 +1,73 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
-	<head>
-        <title>ZoomToCoords Widget Tests</title>
+<head>
+    <title>ZoomToCoords Tests</title>
 
-        <!-- META TAGS -->
-		<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
-		<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8">
-		<meta name="description" content="We should do some SEO" />
-        <meta name="keywords" content="Comma, Separated List"/>
-		
-		<!-- CSS -->
-		<link rel='stylesheet' type='text/css' href='http://serverapi.arcgisonline.com/jsapi/arcgis/2.4/js/dojo/dijit/themes/claro/claro.css'>
-    	<link rel='stylesheet' type='text/css' href='../../themes/standard/agrc.css' />
-    	<link rel="stylesheet" type="text/css" href='../../themes/standard/locate/ZoomToCoords.css' />
-		<link rel="stylesheet" type="text/css" href="jasmine-1.0.1/jasmine.css">
-		<style type="text/css">
-			body {
-				font-family: Verdana,Arial,Helvetica,sans-serif;
-    			font-size: 0.688em;
-			}
-			#map {
-				width: 300px;
-				height: 400px;
-				border: solid 1px gray;
-			}
-			#test-div {
-				width: 250px;
-			}
-		</style>
-		
-		<!-- JAVASCRIPT -->
-		<script type='text/javascript'>
-			dojoConfig={
-				isDebug: true,
-				debugAtAllCosts: true,
-				parseOnLoad: true,
-				baseUrl: './',
-				modulePaths: {
-					"agrc": "../../"
-				}
-			};
-		</script>
-		<script type='text/javascript' src='http://serverapi.arcgisonline.com/jsapi/arcgis/?v=2.4'></script>
-		<script type="text/javascript" src="jasmine-1.0.1/jasmine.js"></script>
-        <script type="text/javascript" src="jasmine-1.0.1/jasmine-html.js"></script>
-		<script type='text/javascript' src='spec/SpecZoomToCoords.js'></script>
-		<script type='text/javascript'>
-			dojo.require('agrc.widgets.locate.ZoomToCoords');
-			dojo.require('agrc.widgets.map.BaseMap');
-			
-			function init(){
-				console.log(this.declaredClass, arguments.callee, arguments);
-				
-				// set up map
-				var map = new agrc.widgets.map.BaseMap('map');
-				
-				// init widget
-				new agrc.widgets.locate.ZoomToCoords({map: map}, 'test-div');
-				
-				// run tests
-				jasmine.getEnv().addReporter(new jasmine.TrivialReporter());
-	            setTimeout("jasmine.getEnv().execute();", 1000);
-			}
-			
-			dojo.ready(init);
-		</script>
-	</head>
-	<body class='claro' style='overflow: auto;'>
-		<div id='map'></div>
-		<div id='test-div'></div>
-	</body>
+    <!-- META TAGS -->
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+    <!-- CSS -->        
+    <link rel='stylesheet' href='http://js.arcgis.com/3.8/js/dojo/dijit/themes/claro/claro.css'>
+    <link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.8/js/esri/css/esri.css" />
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <style type='text/css'>
+    
+    </style>
+
+    <!-- JAVASCRIPT -->
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script type='text/javascript' src='http://js.arcgis.com/3.8'></script>
+    <script type="text/javascript">
+    var projectUrl = location.pathname.replace(/\/[^\/]+$/, "") + '/';
+    var widgetUnderTest;
+
+    require({
+        packages: [{
+            name: 'agrc',
+            location: projectUrl + '../../'
+        }]
+    }, [
+        'agrc/widgets/locate/ZoomToCoords',
+        'agrc/widgets/map/BaseMap',
+
+        'dojo/domReady!'
+    ], function(Module, Dependency) {
+        var dependency = new Dependency('map-div');
+        widgetUnderTest = new Module({
+            map: dependency
+        }, 'node');
+
+        widgetUnderTest.startup();
+
+        var coordinatesInUtah = {
+            utm: {
+                x: 420175.620450571,
+                y: 4506834.205746592
+            },
+            dd: {
+                x: 110.8266273781367,
+                y: 40.70947052391722
+            },
+            dm: {
+                x: 111,
+                xm: 33,
+                y: 40,
+                ym: 39
+            },
+            dms: {
+                x: 111,
+                xm: 33,
+                xs: 33,
+                y: 40,
+                ym: 39,
+                ys: 22
+            }
+        };
+    });
+</script>
+</head>
+<body class='claro'>
+    <div id="node"></div>
+    <div id='map-div'></div>
+</body>
 </html>

@@ -2,10 +2,20 @@ define([
     'dojo/text!agrc/widgets/locate/templates/ZoomToCoords.html',
 
     'dojo/_base/declare',
+    'dojo/_base/lang',
+    'dojo/_base/array',
+    'dojo/_base/event',
+
+    'dojo/query',
+    'dojo/number',
+    'dojo/on',
+    'dojo/aspect',
+
+    'dojo/dom-attr',
+    'dojo/dom-class',
 
     'dijit/_WidgetBase',
     'dijit/_TemplatedMixin',
-    'dijit/_WidgetsInTemplateMixin',
 
     'esri/tasks/GeometryService',
     'esri/layers/GraphicsLayer',
@@ -15,18 +25,25 @@ define([
     'esri/SpatialReference',
 
 
-    'dijit/form/NumberTextBox',
-    'dijit/form/Select',
-    'dijit/layout/StackContainer',
-    'dijit/layout/ContentPane'
+    'dojo/Stateful'
 ], function(
     template,
 
     declare,
+    lang,
+    array,
+    events,
+
+    query,
+    number,
+    on,
+    aspect,
+
+    domAttr,
+    domClass,
 
     _WidgetBase,
     _TemplatedMixin,
-    _WidgetsInTemplateMixin,
 
     GeometryService,
     GraphicsLayer,
@@ -35,271 +52,295 @@ define([
     SimpleMarkerSymbol,
     SpatialReference
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
-        // description:
-        //    **Summary**: Used to zoom to a point on the map specified by a pair of coordinates that may or
-        //      may not be in the same coordinate system as the map.
-        //    <p>
-        //    **Owner(s)**: Scott Davis
-        //    </p>
-        //    <p>
-        //    **Test Page**: <a href='/tests/dojo/agrc/1.0/agrc/widgets/tests/ZoomToCoordsTests.html' target='_blank'>
-        //      agrc.widgets.map.ZoomToCoords.Test</a>
-        //    </p>
-        //    <p>
-        //    **Description**:
-        //    Provides the ability to enter coordinates in three formats: Decimal Degrees, Degrees Decimal Minutes, and
-        //      Degrees, Minutes, Seconds. Others may be added in the future.
-        //    </p>
-        //    <p>
-        //    **Required Files**:
-        //    </p>
-        //    <ul><li>agrc/themes/standard/locate/ZoomToCoords.css</li></ul>
+    return declare([_WidgetBase, _TemplatedMixin], {
+        // summary:
+        //      Zooms the map to different coordinates
+        //      If the input map is in the same spatial reference
+        //      the map is zoomed, otherwise the point is reprojected
+        //      using the geometry service url
         // example:
-        // |  var map = new agrc.widgets.map.BaseMap('basemap-div', options);
-        // |  new agrc.widgets.locate.ZoomToCoords({map: map}, 'test-div');
+        // |    var widget = new ZoomToCoords({
+        // |        map: map
+        // |    }, "node");
 
-        // widgetsInTemplate: [private] Boolean
-        widgetsInTemplate: true,
-
-        // templateString: String
         templateString: template,
 
-        // geoServiceURL: String
-        //      The url to the geometry service
-        geoServiceURL: 'http://mapserv.utah.gov/ArcGIS/rest/services/Geometry/GeometryServer',
+        baseClass: 'zoom-to-coordinate',
 
-        // _geoService: [private] esri.tasks.GeometryService
-        //      A pointer to the geometry service object
-        _geoService: null,
+        // _panelController: {key: DomNode}
+        // summary:
+        //      an object has of domnodes that contain the
+        //      coorindate form elements
+        _panelController: null,
 
-        // _inputSpatialReference: [private] esri.SpatialReference
-        //      The spatial reference used to create the input point to be projected
-        _inputSpatialReference: null,
-
-        // _graphicsLayer: [private] esri.layers.GraphicsLayer
-        //      The graphics layer that the projected points will be added to.
-        //      This is to prevent any collisions with any other graphics that
-        //      may be on the map
-        _graphicsLayer: null,
-
-        // Parameters to constructor
-
-        // map: esri.Map
-        //      The map that you want to hook the widget to
-        map: null,
+        // _geometryService: esri/task/esriGeometryService
+        // summary:
+        //      the service for interacting with the ags geometry service
+        _geometryService: null,
 
         // zoomLevel: Number
-        //      The cache level that you want to zoom to. Defaults to 12.
+        // summary:
+        //      the cache level to zoom the map to
         zoomLevel: 12,
-
-        constructor: function(/*params, div*/ ) {
-            // summary:
-            //    Constructor method
-            // params: Object
-            //    Parameters to pass into the widget. Required values include: map. Optional values include: zoomLevel.
-            // div: String|DomNode
-            //    A reference to the div that you want the widget to be created in.
-            console.info('agrc/widgets/locate/ZoomToCoords::constructor', arguments);
+        // urls: {key: url}
+        // summary:
+        //      holds urls that are important to this class
+        urls: {
+            geometryService: '//mapserv.utah.gov/arcgis/rest/services/Geometry/GeometryServer'
         },
+
+        // Properties to be sent into constructor
+
+        // map: esri/map
+        // summary:
+        //      the map to zoom
+        map: null,
 
         postCreate: function() {
             // summary:
             //    Overrides method of same name in dijit._Widget.
-            // tags:
-            //    private
-            console.info('agrc/widgets/locate/ZoomToCoords::postCreate', arguments);
+            console.log('agrc.widgets.locate.ZoomToCoords::postCreate', arguments);
 
-            this._geoService = new GeometryService(this.geoServiceURL);
-
-            // add new graphics layer to keep them seperate from any other graphics that may be on the map
-            this._graphicsLayer = new GraphicsLayer();
-            this.map.addLayer(this._graphicsLayer);
-
-            this._wireEvents();
-
-            this.stackContainer.startup(); // required to get it to layout correctly.
-        },
-
-        _wireEvents: function() {
-            // summary:
-            //    Wires events.
-            // tags:
-            //    private
-            console.info('agrc/widgets/locate/ZoomToCoords::_wireEvents', arguments);
-
-            this.connect(this.zoomButton, 'onClick', this._onZoomClick);
-            this.connect(this._geoService, 'onError', this._onGeoServiceError);
-            this.connect(this._geoService, 'onProjectComplete', this._onProjectComplete);
-            this.connect(this.typeSelect, 'onChange', this._onTypeChange);
-        },
-
-        _onZoomClick: function() {
-            // summary:
-            //      Fires when the user clicks on the Zoom button
-            console.info('agrc/widgets/locate/ZoomToCoords::_onZoomClick', arguments);
-
-            var coords = this.getCoords(this.typeSelect.get('value'));
-            console.log(coords);
-
-            var point = new Point(coords.x, coords.y, this._inputSpatialReference);
-
-            if (point.spatialReference !== this.map.spatialReference) {
-                this._geoService.project([point], this.map.spatialReference);
-            } else {
-                this._zoomToPoint(point);
+            if (!this.map) {
+                throw 'This widget requires an esri/map to be useful.';
             }
+
+            this._panelController = {
+                panels: {
+                    utm: this.utmNode,
+                    dm: this.dmNode,
+                    dms: this.dmsNode,
+                    dd: this.ddNode
+                },
+                hideAllBut: function(showMe) {
+                    for (var prop in this.panels) {
+                        if (!this.panels.hasOwnProperty(prop))
+                            continue;
+
+                        if (showMe && prop === showMe) {
+                            domClass.replace(this.panels[prop], 'show', 'hide');
+                            this.visible = this.panels[prop];
+                            continue;
+                        }
+
+                        domClass.replace(this.panels[prop], 'hide', 'show');
+                    }
+                },
+                visible: this.utmNode
+            };
+
+            this.set('valid', false);
+
+            this._geometryService = new GeometryService(this.urls.geometryService);
+
+            this._setupConnections();
         },
-
-        _onGeoServiceError: function(error) {
+        zoom: function() {
             // summary:
-            //      Handles any errors returned by the geometry service
-            // error: Error
-            //      A JavaScript error object
-            console.info('agrc/widgets/locate/ZoomToCoords::_onGeoServiceError', arguments);
+            //      zooms the map to the geometry
+            // geometry: esri/Geometry
+            //  summary:
+            //      the point created by the user input or returned by
+            //      the geometry service
+            console.log('agrc.widgets.locate.ZoomToCoords::zoom', arguments);
 
-            window.alert('There was an error with the Geometry Service.' + error.message);
-        },
+            if (!this.map) {
+                throw 'This widget requires an esri/map to be useful.';
+            }
 
-        _onProjectComplete: function(geometries) {
-            // summary:
-            //      Handles the callback from the project function on the geometry service
-            // geometries: Geometry[]
-            //      An array of the projected geometries.
-            console.info('agrc/widgets/locate/ZoomToCoords::_onProjectComplete', arguments);
+            // disable zoom button
+            domClass.add(this.zoomNode, 'disabled');
+            domAttr.set(this.zoomNode, 'disabled', true);
 
-            var newPoint = geometries[0];
+            // reset errors
+            domClass.remove(this.errorNode, ['alert','alert-danger','text-center']);
+            this.errorNode.innerHTML = '';
+            
+            var point = this._getPoint();
 
-            // check for bad point
-            if (isNaN(newPoint.x)) {
-                window.alert('Bad point returned. Please check your coordinates.');
+            if (point.spatialReference.wkid === this.map.spatialReference.wkid) {
+                this.map.centerAndZoom(point, this.zoomLevel);
+
+                // enable zoom button
+                domClass.remove(this.zoomNode, 'disabled');
+                domAttr.remove(this.zoomNode, 'disabled');
+
                 return;
             }
 
-            // clear any
-            this._graphicsLayer.clear();
-
-            // create new geometry. The returned geometry is just an object with x and y. No spatial reference.
-            newPoint.spatialReference = this.map.spatialReference;
-
-            var point = new Point(newPoint, this.map.spatialReference);
-
-            var graphic = new Graphic(point, new SimpleMarkerSymbol(), null, null);
-
-            this._graphicsLayer.add(graphic);
-
-            this.map.centerAndZoom(point, this.zoomLevel);
-
-            this._zoomToPoint(point);
+            this._geometryService.project([point], this.map.spatialReference);
         },
-
-        _zoomToPoint: function(point) {
+        _setupConnections: function() {
             // summary:
-            //      Zoom to the point created
-            // description:
-            //      clears old map graphics and centers and zooms on the input point
-            // tags:
-            //      private
-            console.info('agrc/widgets/locate/ZoomToCoords::_zoomToPoint', arguments);
+            //      place to wire events and such
+            //
+            console.log('agrc.widgets.locate.ZoomToCoords::_setupConnections', arguments);
 
-            // clear any
-            this._graphicsLayer.clear();
-
-            var graphic = new Graphic(point, new SimpleMarkerSymbol(), null, null);
-
-            this._graphicsLayer.add(graphic);
-
-            this.map.centerAndZoom(point, this.zoomLevel);
+            on(this.domNode, 'input:change', lang.hitch(this, '_validate'));
+            on(this.domNode, 'input:input', lang.hitch(this, '_validate'));
+            on(this.formNode, 'submit', function(evt) {
+                events.stop(evt);
+            });
+            on(this._geometryService, 'project-complete', lang.hitch(this, '_projectionComplete'), lang.hitch(this, '_displayError'));
+            this.watch('valid', lang.hitch(this, '_enableZoom'));
+            aspect.after(this, '_updateView', lang.hitch(this, '_validate'));
         },
-
-        _onTypeChange: function(newValue) {
+        _updateView: function(evt) {
             // summary:
-            //      Fires when the user changes the value of the drop-down.
-            //      Moves the stack container to the appropriate pane.
-            console.info('agrc/widgets/locate/ZoomToCoords::_onTypeChange', arguments);
+            //      handles the click event of the coordinate system buttons
+            // evt
+            console.log('agrc.widgets.locate.ZoomToCoords::_updateView', arguments);
 
-            var child;
-
-            switch (newValue) {
-                case 'dd':
-                    child = this.dd;
-                    break;
-                case 'dm':
-                    child = this.dm;
-                    break;
-                case 'dms':
-                    child = this.dms;
-                    break;
-                case 'utm':
-                    child = this.utm;
-                    break;
-            }
-
-            this.stackContainer.selectChild(child);
+            this._panelController.hideAllBut(evt.target.value);
         },
-
-        getCoords: function(type) {
+        _getPoint: function() {
             // summary:
-            //      Coverts the appropriate set of coordinates to decimal degrees
-            // type: String
-            //      The type of coordinates that you want back. Accepted values are found
-            //      in the drop down.
-            // returns: Object{x:Number,y:Number}
-            console.info('agrc/widgets/locate/ZoomToCoords::getCoords', arguments);
+            //      creates a point from the user input
+            console.log('agrc.widgets.locate.ZoomToCoords::_getPoint', arguments);
 
-            function convert(value) {
-                // summary:
-                //      converts minutes to decimal degrees or seconds to decimal minutes
-                var min = parseFloat(value);
-                return min / 60;
-            }
+            var getValue = function(input, match) {
+                var value = array.filter(input, function(node) {
+                    return node.name === match;
+                })[0].value;
 
-            var coords = {};
-            switch (type) {
-                case 'dd':
-                    coords.x = parseFloat('-' + this._getTextBoxValue(this.w_deg_dd));
-                    coords.y = parseFloat(this._getTextBoxValue(this.n_deg_dd));
-                    this._inputSpatialReference = new SpatialReference({
-                        wkid: 4326
-                    });
-                    break;
-                case 'dm':
-                    coords.x = -(parseFloat(this._getTextBoxValue(this.w_deg_dm)) + convert(this._getTextBoxValue(this.w_min_dm)));
-                    coords.y = parseFloat(this._getTextBoxValue(this.n_deg_dm)) + convert(this._getTextBoxValue(this.n_min_dm));
-                    this._inputSpatialReference = new SpatialReference({
-                        wkid: 4326
-                    });
-                    break;
-                case 'dms':
-                    var sec = convert(this._getTextBoxValue(this.w_sec_dms));
-                    var min = parseFloat(this._getTextBoxValue(this.w_min_dms)) + sec;
-                    coords.x = -(parseFloat(this._getTextBoxValue(this.w_deg_dms)) + convert(min));
-                    sec = convert(this._getTextBoxValue(this.n_sec_dms));
-                    min = parseFloat(this._getTextBoxValue(this.n_min_dms)) + sec;
-                    coords.y = parseFloat(this._getTextBoxValue(this.n_deg_dms)) + convert(min);
-                    this._inputSpatialReference = new SpatialReference({
-                        wkid: 4326
-                    });
-                    break;
-                case 'utm':
-                    coords.x = this._getTextBoxValue(this.x_utm);
-                    coords.y = this._getTextBoxValue(this.y_utm);
-                    this._inputSpatialReference = new SpatialReference({
+                return number.parse(value);
+            };
+
+            var inputs = query('[data-required="true"]', this._panelController.visible),
+                sr = new SpatialReference({
+                    wkid: 4326
+                }),
+                point = null,
+                x = null,
+                y = null,
+                xm = null,
+                ym = null,
+                xs = null,
+                ys = null;
+
+            switch (this._panelController.visible) {
+                case this.utmNode:
+                    sr = new SpatialReference({
                         wkid: 26912
                     });
+
+                    x = getValue(inputs, 'x');
+                    y = getValue(inputs, 'y');
+
+                    point = new Point(x, y, sr);
+
+                    break;
+                case this.ddNode:
+                    x = getValue(inputs, 'x');
+                    y = getValue(inputs, 'y');
+
+                    point = new Point(-x, y, sr);
+
+                    break;
+                case this.dmNode:
+                    x = getValue(inputs, 'x');
+                    y = getValue(inputs, 'y');
+                    xm = getValue(inputs, 'xm') / 60;
+                    ym = getValue(inputs, 'ym') / 60;
+
+                    point = new Point(-(x + xm), y + ym, sr);
+
+                    break;
+                case this.dmsNode:
+                    x = getValue(inputs, 'x');
+                    y = getValue(inputs, 'y');
+                    xm = getValue(inputs, 'xm') / 60;
+                    ym = getValue(inputs, 'ym') / 60;
+                    xs = getValue(inputs, 'xs') / 3600;
+                    ys = getValue(inputs, 'ys') / 3600;
+
+                    point = new Point(-(x + xm + xs), (y + ym + ys), sr);
+
                     break;
             }
 
-            return coords;
+            return point;
         },
-
-        _getTextBoxValue: function(textBox) {
+        _validate: function() {
             // summary:
-            //
-            console.info('agrc/widgets/locate/ZoomToCoords::_getTextBoxValue', arguments);
+            //      validates the inputs from the node
+            console.log('agrc.widgets.locate.ZoomToCoords::_validate', arguments);
 
-            var value = textBox.get('value');
-            return (value) ? value : 0;
+            var valid = false,
+                inputs = query('[data-required="true"]', this._panelController.visible);
+
+            //reset validation
+            inputs.forEach(function(node) {
+                domClass.remove(node.parentElement, 'has-error');
+                domClass.remove(node.parentElement, 'has-success');
+            });
+
+            //filter inputs to get bad ones
+            var problems = array.filter(inputs, function(node) {
+                if (!node.value ||
+                    lang.trim(node.value) === '' || !number.parse(node.value)) {
+                    domClass.add(node.parentElement, 'has-error');
+                    return true;
+                } else {
+                    domClass.add(node.parentElement, 'has-success');
+                    return false;
+                }
+            });
+
+            valid = problems.length === 0;
+
+            this.set('valid', valid);
+
+            return valid;
+        },
+        _enableZoom: function(prop, old, value) {
+            // summary:
+            //      if validate returns true, enable the zoom button
+            // valid
+            console.log('agrc.widgets.locate.ZoomToCoords::_enableZoom', arguments);
+
+            if (!value) {
+                domClass.add(this.zoomNode, 'disabled');
+                domAttr.set(this.zoomNode, 'disabled', true);
+
+                return;
+            }
+
+            domClass.remove(this.zoomNode, 'disabled');
+            domAttr.remove(this.zoomNode, 'disabled');
+        },
+        _projectionComplete: function(response) {
+            // summary:
+            //      callback function to the geometryservice project method
+            // response: [esri.Geometry]
+            console.log('agrc.wigets.locate.ZoomToCoords::_projectionComplete', arguments);
+
+            domClass.remove(this.zoomNode, 'disabled');
+            domAttr.remove(this.zoomNode, 'disabled');
+
+            if (!response || !response.geometries) {
+                this._displayError('There was an issue projecting your point.');
+            }
+
+            var point = response.geometries[0];
+
+            if (isNaN(point.x)) {
+                this._displayError('There was an issue projecting your point.');
+            }
+
+            this.map.centerAndZoom(point, this.zoomLevel);
+        },
+        _displayError: function(value) {
+            // summary:
+            //      handles errors
+            console.log('agrc.widgets.locate.ZoomToCoords::_displayError', arguments);
+
+            domClass.remove(this.zoomNode, 'disabled');
+            domAttr.remove(this.zoomNode, 'disabled');
+
+            domClass.add(this.errorNode, ['alert','alert-danger','text-center']);
+
+            this.errorNode.innerHTML = value;
         }
     });
 });
