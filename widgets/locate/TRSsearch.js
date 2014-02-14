@@ -1,49 +1,53 @@
 define([
     'dojo/text!agrc/widgets/locate/templates/TRSsearch.html',
-    'dojo/text!agrc/widgets/locate/data/townships.json',
 
     'dojo/_base/declare',
     'dojo/_base/lang',
     'dojo/_base/array',
 
     'dojo/dom-style',
+    'dojo/dom-construct',
+    'dojo/dom-class',
+    'dojo/dom-attr',
 
-    'dojo/io/script',
+    'dojo/query',
 
-    'dojo/data/ItemFileReadStore',
+    'dojo/request/script',
+
+    'dojo/store/Memory',
 
     'dijit/_WidgetBase',
     'dijit/_TemplatedMixin',
     'dijit/_WidgetsInTemplateMixin',
 
-    'dijit/form/FilteringSelect',
+    'esri/graphic',
 
-    'esri/geometry/Extent',
-
-
-    'dijit/form/RadioButton',
-    'dojox/form/BusyButton'
+    'agrc/widgets/locate/resources/townships'
 ], function(
     template,
-    townshipsTxt,
 
     declare,
     lang,
     array,
 
     domStyle,
+    domConstruct,
+    domClass,
+    domAttr,
+
+    query,
 
     script,
 
-    ItemFileReadStore,
+    MemoryStore,
 
     _WidgetBase,
     _TemplatedMixin,
     _WidgetsInTemplateMixin,
 
-    FilteringSelect,
+    Graphic,
 
-    Extent
+    townships
 ) {
     return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
         // description:
@@ -76,38 +80,38 @@ define([
 
         templateString: template,
 
+        baseClass: 'agrc-trs',
+
         // _rangeQueryUrl: [private]String
         //      The url for the web service to query for appropriate ranges based on
         //      the passed in meridian and township
-        _rangeQueryUrl: '//mapserv.utah.gov/WSUT/GetFeatureAttributes.svc/trssearch-widget/layer(SGID10.CADASTRE.PLSS_TR_Lookup)returnAttributes(PairsWith)where(TorRName)(=)({0})?dojo',
 
         // _sectionQueryUrl: [private]String
         //      The url for the web service to query for appropriate sections based on
         //      the passed in meridian, township and range.
-        _sectionQueryUrl: '//mapserv.utah.gov/WSUT/GetFeatureAttributes.svc/trssearch-widget/layer(SGID10.CADASTRE.PLSS_Sec_Lookup)returnAttributes(PairsWith)where(TRName)(=)({0})?dojo',
 
         // _getEnvelopeUrl: [private]String
         //      The url for the get envelope web service
-        _getEnvelopeUrl: '//mapserv.utah.gov/WSUT/FeatureGeometry.svc/GetEnvelope/trssearch-widget/layer(*queryLayer*)where(LABEL)(=)(*queryString*)quotes=false',
 
-        // _baseMeridanFld: [private]String
-        //      BASEMERIDIAN field name
-        _baseMeridianFld: 'BASEMERIDIAN',
+        urls: {
+            range: '//api.mapserv.utah.gov/api/v1/search/SGID10.CADASTRE.PLSS_TR_Lookup/PairsWith?predicate=TorRNAME=\'{0}\'&apikey={1}',
+            section: '//api.mapserv.utah.gov/api/v1/search/SGID10.CADASTRE.PLSS_Sec_Lookup/PairsWith?predicate=TRNAME=\'{0}\'&apikey={1}',
+            envelope: '//api.mapserv.utah.gov/api/v1/search/{0}/shape@?predicate={1}&apikey={2}'
+        },
 
-        // _firstDivFld: [private]String
-        _firstDivFld: 'FRSTDIVNO',
+        fields: {
+            meridian: 'BASEMERIDIAN',
+            section: 'SECTION'
+        },
 
-        // _sectionsFCName: [private]String
-        //      The sections feature class name.
-        _sectionsFCName: 'SGID10.CADASTRE.PLSSSections_GCDB',
-
-        // _townshipsFCName: [private]String
-        //      The townships feature class name.
-        _townshipsFCName: 'SGID10.CADASTRE.PLSSTownships_GCDB',
+        featureClasses: {
+            section: 'SGID10.CADASTRE.PLSSSections_GCDB',
+            township: 'SGID10.CADASTRE.PLSSTownships_GCDB'
+        },
 
         // meridian: String
         //      The currently selected meridian. (sl or ub)
-        meridian: '',
+        meridian: 'SL',
 
         // township: String
         //      The currently selected township. (ie. 1N)
@@ -122,13 +126,12 @@ define([
         section: '',
 
         // attach points
-        // _townshipDD: dijit.form.Select
-        // _rangeDD: dijit.form.Select
-        // _sectionDD: dijit.form.Select
-        // _slRB: dijit.form.RadioButton
-        // _ubRB: dijit.form.RadioButton
-        // _zoomBtn: dijit.form.Button
-        // _optionalMsg: <span>
+        // townshipNode: <select>
+        // rangeNode: <select>
+        // sectionNode: <select>
+        // slNode: <button>
+        // ubNode: <button>
+        // zoomNode: <buton>
 
         // Parameters to constructor
 
@@ -137,380 +140,316 @@ define([
         //      If no map is provided, the zoom button is hidden.
         map: null,
 
-        // sectionRequired: Boolean
+        // apiKey: string
+        //      Your http://developer.mapserv.utah.gov api key
+        apiKey: '',
+
+        // hideSection: Boolean
+        //      Determines whether or not the section number is used.
+        //      Defaults to false.
+        hideSection: false,
+
+        // requireSection: Boolean
         //      Determines whether or not the section number is required.
         //      Defaults to false.
-        sectionRequired: false,
+        requireSection: false,
+
+        // formName: string
+        //      When using this widget in a form this is the name of the hidden
+        //      input for submitting the trs values.
+        //      defaults to 'trs'
+        formName: 'trs',
 
         postCreate: function() {
             // summary:
             //    Overrides method of same name in dijit._Widget.
             // tags:
             //    private
-            console.log('agrc.widgets.locate.TRSsearch::postCreate', arguments);
+            console.log('agrc.widgets.locate.TrsSearch::postCreate', arguments);
 
-            var store = new ItemFileReadStore({
-                data: JSON.parse(townshipsTxt)
-            });
+            this._cacheTownships(townships);
+            this._setMeridian(this.get('meridian'));
 
-            this._townshipDD.set('store', store);
-            this._changeMeridian('sl');
-
-            this._wireEvents();
+            if (this.hideSection) {
+                domConstruct.destroy(this.sectionNode.parentNode);
+            }
 
             if (!this.map) {
-                domStyle.set(this._zoomBtn.domNode, 'display', 'none');
+                domConstruct.destroy(this.zoomNode);
             }
 
-            if (this.sectionRequired) {
-                domStyle.set(this._optionalMsg, 'display', 'none');
-                this._townshipDD.set('required', true);
-                this._rangeDD.set('required', true);
-                this._sectionDD.set('required', true);
-            }
+            this.setupConnections();
         },
-
-        _wireEvents: function() {
+        setupConnections: function() {
             // summary:
-            //    Wires events.
-            // tags:
-            //    private
-            console.log('agrc.widgets.locate.TRSsearch::_wireEvents', arguments);
+            //      wire events, and such
+            //
+            console.log('agrc.widgets.locate.TrsSearc::setupConnections', arguments);
 
-            this.connect(this._slRB, 'onChange', function(newValue) {
-                if (newValue) {
-                    this._changeMeridian('sl');
-                }
-
-                this._validateForm();
-            });
-
-            this.connect(this._ubRB, 'onChange', function(newValue) {
-                if (newValue) {
-                    this._changeMeridian('ub');
-                }
-
-                this._validateForm();
-            });
-
-            this.connect(this._townshipDD, 'onChange', function() {
-                this._onTownshipChange(this._townshipDD.get('displayedValue'));
-                this._validateForm();
-            });
-
-            this.connect(this._townshipDD, 'onBlur', function() {
-                this._validateForm();
-            });
-
-            this.connect(this._rangeDD, 'onChange', function() {
-                this._onRangeChange(this._rangeDD.get('displayedValue'));
-                this._validateForm();
-            });
-
-            this.connect(this._rangeDD, 'onBlur', function() {
-                this._validateForm();
-            });
-
-            this.connect(this._sectionDD, 'onChange', function(newValue) {
-                this.section = newValue;
-                this._validateForm();
-                this.onSectionChange(newValue);
-                this.onValueChange(this._getAllValues());
-            });
-
-            this.connect(this._sectionDD, 'onBlur', function() {
-                this._validateForm();
-            });
-
-            this.connect(this._zoomBtn, 'onClick', function() {
-                this.zoom();
-            });
+            this.connect(this.townshipNode, 'onchange', lang.hitch(this, '_onTownshipChange'));
+            this.connect(this.rangeNode, 'onchange', lang.hitch(this, '_onRangeChange'));
+            this.connect(this.sectionNode, 'onchange', lang.hitch(this, '_onSectionChange'));
         },
-
-        _changeMeridian: function(meridian) {
+        _cacheTownships: function(townships) {
             // summary:
-            //      sets the available values in the township dropdown based on the meridian
-            // meridian: String
-            //      The id of the meridian. sl or ub
-            // tags:
-            //      private
-            console.log('agrc.widgets.locate.TRSsearch::_changeMeridian', arguments);
+            //      creates the memory store of township items
+            // townships: townships array
+            console.log('agrc.widgets.locate.TrsSearch::_cacheTownships', arguments);
 
-            this.meridian = meridian;
-            this._townshipDD.query.meridian = meridian;
+            this._townshipStore = new MemoryStore({
+                data: townships
+            });
 
-            this._checkCurrentValue(this._townshipDD, {
-                township: this._townshipDD.get('displayedValue'),
+            return this._townshipStore;
+        },
+        _getTownshipsForMeridian: function(store, meridian) {
+            // summary:
+            //      gets the townships specific to that meridian
+            // store: dojo/store implementation
+            // meridian: key value to find townships on
+            console.log('agrc.widgets.locate.TrsSearch::_getTownshipsForMeridian', arguments);
+
+            return store.query({
                 meridian: meridian
-            });
-
-            this.onMeridianChange(meridian);
-            this.onValueChange(this._getAllValues());
-        },
-
-        _checkCurrentValue: function(checkDD, query) {
-            // summary:
-            //      Checks to see if the current value of the checkDD is valid for the
-            //      new value of the one above it.
-            // checkDD: dijit.form.DropDown
-            //      The dropdown that you want to check
-            // query:
-            //      The query string to use for searching for a match
-            // tags:
-            //      private
-            console.log('agrc.widgets.locate.TRSsearch::_checkCurrentValue', arguments);
-
-            var displayedValue = checkDD.get('displayedValue');
-
-            if (displayedValue && displayedValue !== '') {
-                checkDD.store.fetch({
-                    query: query,
-                    onBegin: function(total) {
-                        if (total === 0) {
-                            checkDD.set('displayedValue', '');
-                        }
-                    }
-                });
-            }
-        },
-
-        _updateDDStore: function(queryStr, url, dropDown) {
-            // summary:
-            //      Sets the available values in the dropdown based on the query
-            // queryStr: String
-            //      The query to place in the url
-            // url: String
-            //      The specific url to use
-            // dropDown: dijit.form.FilteringSelect
-            //      The drop down that you want to update
-            // tags:
-            //      private
-            console.log('agrc.widgets.locate.TRSsearch::_updateDDStore', arguments);
-
-            var that = this;
-            var args = {
-                url: lang.replace(url, [queryStr]),
-                callbackParamName: 'callback',
-                load: function(data) {
-                    dropDown.set('store', that._makeStore(data));
-                    that._checkCurrentValue(dropDown, {
-                        value: dropDown.get('displayedValue')
-                    });
-                },
-                error: function() {
-                    console.error('There was an error retrieving ranges.');
-                }
-            };
-
-            script.get(args);
-        },
-
-        _onTownshipChange: function(newTownship) {
-            // summary:
-            //      Fires when the user selects a new township value
-            // newTownship: String
-            // tags:
-            //      private
-            console.log('agrc.widgets.locate.TRSsearch::_onTownshipChange', arguments);
-
-            this.township = newTownship;
-            this._updateDDStore(this.meridian + 'T' + this.township, this._rangeQueryUrl, this._rangeDD);
-            this.onTownshipChange(newTownship);
-            this.onValueChange(this._getAllValues());
-        },
-
-        _onRangeChange: function(newRange) {
-            // summary:
-            //      Fires when the user changes the range value in the drop down
-            // newRange: String
-            //      The new range
-            // tags:
-            //      private
-            console.log('agrc.widgets.locate.TRSsearch::_onRangeChange', arguments);
-
-            this.range = newRange;
-            this._updateDDStore(this.meridian + 'T' + this.township + 'R' + this.range, this._sectionQueryUrl, this._sectionDD);
-            this.onRangeChange(newRange);
-            this.onValueChange(this._getAllValues());
-        },
-
-        _makeStore: function(data) {
-            // summary:
-            //      Converts the data returned from the GetFeatureAttributes web service into
-            //      a dojo.data.ItemFileReadStore for use with the drop downs
-            // data: Object
-            //      The data object returned from the web service.
-            // tags:
-            //      private
-            console.log('agrc.widgets.locate.TRSsearch::_makeStore', arguments);
-
-            var newData = {
-                identifier: 'value',
-                label: 'value',
-                items: []
-            };
-
-            if (data.items[0]) {
-                var values = data.items[0].Value.split('|');
-                values = array.map(values, function(v) {
-                    return v.replace('R', '');
-                });
-                this._sort(values);
-                array.forEach(values, function(v) {
-                    newData.items.push({
-                        value: v
-                    });
-                });
-            }
-
-            return new ItemFileReadStore({
-                data: newData
+            }, {
+                sort: this._sortFunction
             });
         },
-
-        _sort: function(sortArray) {
+        _sortFunction: function(one, two) {
             // summary:
-            //      Sorts the values from north to south or west to east.
-            // tags:
-            //      private
-            console.log('agrc.widgets.locate.TRSsearch::_sort', arguments);
+            //      sorts trs items including direction
+            // a,b an object with a text property
+            // console.log('agrc.widgets.locate.TrsSearch::_sortFunction', arguments);
 
-            var sortFunction = function(a, b) {
-                var aDir = a.charAt(a.length - 1);
-                var bDir = b.charAt(b.length - 1);
+            var a = one.text,
+                b = two.text;
 
-                if (aDir === 'N' || aDir === 'S' || aDir === 'E' || aDir === 'W') {
-                    if (aDir === bDir) {
-                        return (a.split(aDir)[0] - b.split(bDir)[0]);
-                    } else {
-                        if (aDir === 'N' || aDir === 'W') {
-                            return -1;
-                        } else {
-                            return 1;
-                        }
-                    }
+            var aDir = a.charAt(a.length - 1);
+            var bDir = b.charAt(b.length - 1);
+
+            if (aDir === 'N' || aDir === 'S' || aDir === 'E' || aDir === 'W') {
+                if (aDir === bDir) {
+                    return (a.split(aDir)[0] - b.split(bDir)[0]);
                 } else {
-                    return parseInt(a, 10) - parseInt(b, 10);
+                    if (aDir === 'N' || aDir === 'W') {
+                        return -1;
+                    } else {
+                        return 1;
+                    }
                 }
-            };
-
-            try {
-                sortArray.sort(sortFunction);
-            } catch (e) {
-                // swallow
+            } else {
+                return parseInt(a, 10) - parseInt(b, 10);
             }
         },
+        _getOptionsFor: function(prop, urlTemplate, targetNode, evt) {
+            // summary:
+            //      queries teh api and gets the available ranges
+            // townships
+            console.log('agrc.widgets.locate.TrsSearch::_getOptionsFor', arguments);
 
-        getFormattedTRSstring: function() {
+            if (evt && evt.target) {
+                this.set(prop, evt.target.value);
+            }
+
+            if (this.inflight && !this.inflight.isFulfilled()) {
+                this.inflight.cancel('new reqeust in action');
+            }
+
+            var url = lang.replace(urlTemplate, [this._buildTrsLabel(prop), this.apiKey]);
+
+            this.inflight = script.get(url, {
+                jsonp: 'callback'
+            });
+
+            var self = this;
+
+            this.inflight.then(
+                function(response) {
+                    var items = self._formatResponse(response);
+                    self._buildSelect(targetNode, items);
+                },
+                function(e) {
+                    alert('error function', e);
+                });
+        },
+        _formatResponse: function(response) {
+            // summary:
+            //      response comes back as one string. needs to be ETL'd
+            // response
+            console.log('agrc.widgets.locate.TrsSearch::_formatResponse', arguments);
+
+            if (!response || response.status !== 200) {
+                //error function
+                return;
+            }
+
+            if (!response.result || response.result.length < 1) {
+                return null;
+            }
+
+            var itemString = response.result[0].attributes.pairswith;
+            var items = itemString.split('|');
+            items = array.map(items, function(item) {
+                return {
+                    text: item.replace('R', '')
+                };
+            });
+
+            items.sort(this._sortFunction);
+
+            return items;
+        },
+        _buildSelect: function(node, options) {
+            // summary:
+            //      adds options to a select dom node
+            // node: select dom node
+            // options: items to be added
+            console.log('agrc.widgets.locate.TrsSearch::_buildSelect', arguments);
+
+            query('option', node).forEach(domConstruct.destroy);
+
+            array.forEach(options, function(item) {
+                var args = {
+                    innerHTML: item.text
+                };
+
+                domConstruct.create('option', args, node, 'last');
+            });
+
+            this._resetLinkedSelects(node);
+
+            var placeholder = domConstruct.toDom("<option value='' disabled selected style='display:none;'>Choose an option</option>");
+            domConstruct.place(placeholder, node, 'first');
+        },
+        _resetLinkedSelects: function(parentNode) {
+            // summary:
+            //      resets the selects below the parent node
+            // parentNode
+            console.log('agrc.widgets.locate.TrsSearch::_resetLinkedSelects', arguments);
+
+            var selectTree = {
+                township: {
+                    nodes: [this.rangeNode, this.sectionNode],
+                    props: ['township', 'range', 'section']
+                },
+                range: {
+                    nodes: [this.sectionNode],
+                    props: ['range', 'section']
+                },
+                section: {
+                    nodes: [],
+                    props: ['section']
+                }
+            },
+                container = null,
+                self = this;
+
+            if (parentNode === this.townshipNode) {
+                container = selectTree.township;
+            }
+
+            if (parentNode === this.rangeNode) {
+                container = selectTree.range;
+            }
+
+            if (parentNode === this.sectionNode) {
+                container = selectTree.section;
+            }
+
+            if (container === null) {
+                return;
+            }
+
+            array.forEach(container.nodes, function(node) {
+                query('option', node).forEach(domConstruct.destroy);
+            });
+
+            array.forEach(container.props, function(prop) {
+                this._set(prop, '');
+                console.log('setting ' + prop + ' to empty');
+            }, this);
+        },
+        meridianId: function() {
+            // summary:
+            //      Returns the number of the selected meridian
+            console.log('agrc.widgets.locate.TrsSearch::meridianId', arguments);
+
+            return (this.get('meridian') === 'SL') ? 26 : 30;
+        },
+        formattedTrsString: function() {
             // summary:
             //      Formats a string from the current widget values to match
             //      this pattern: "26T1NR3WSec30"
             // returns: String | null
             //      Returns null if there is not enough data.
-            console.log('agrc.widgets.locate.TRSsearch::getFormattedTRSstring', arguments);
+            console.log('agrc.widgets.locate.TrsSearch::formattedTrsString', arguments);
 
-            if (this.township === '' || this.range === '') {
+            if (!this.get('meridian') || !this.get('township') || !this.get('range')) {
                 return null;
             }
 
-            var section = (this.section !== '') ? 'Sec' + this.section : '';
+            var template = '{0}T{1}R{2}';
+            if (this.get('section')) {
+                template += 'Sec{3}';
+            }
 
-            return this.getMeridianNumber() + 'T' + this.township + 'R' + this.range + section;
+            return lang.replace(template, [this.meridianId(), this.get('township'), this.get('range'), this.get('section')]);
         },
-
-        getMeridianNumber: function() {
+        _buildTrsLabel: function(prop) {
             // summary:
-            //      Returns the number of the selected meridian
-            console.log('agrc.widgets.locate.TRSsearch::getMeridianNumber', arguments);
+            //      builds the TRS label from all the parts
+            // prop: string - the depth to build the label
+            console.log('agrc.widgets.locate.TrsSearch::_buildTrsLabel', arguments);
 
-            return (this.meridian === 'sl') ? 26 : 30;
+            if (!this.get('meridian')) {
+                return '';
+            }
+
+            var label = this.get('meridian');
+
+            if (!this.get('township')) {
+                return label;
+            }
+
+            label += 'T' + this.get('township');
+
+            if (!this.get('range') || prop === 'township') {
+                return label;
+            }
+
+            label += 'R' + this.get('range');
+
+            return label;
         },
-
-        zoom: function() {
-            // summary:
-            //      Zooms to the selected section or range.
-            console.log('agrc.widgets.locate.TRSsearch::zoom', arguments);
-
-            var that = this;
-
-            function showBusy(busy) {
-                if (busy) {
-                    that.map.showLoader();
-                } else {
-                    that.map.hideLoader();
-                    that._zoomBtn.cancel();
-                }
-            }
-
-            if (!this.map) {
-                throw 'no map object found!';
-            }
-
-            showBusy(true);
-
-            var url = this._getEnvelopeUrl;
-
-            if (this.section) {
-                url = url.replace('*queryLayer*', this._sectionsFCName);
-            } else {
-                url = url.replace('*queryLayer*', this._townshipsFCName);
-            }
-
-            url = url.replace('*queryString*', this._getStringForGetEnvelope());
-
-            var params = {
-                url: url,
-                callbackParamName: 'callback',
-                load: function(data) {
-                    var result = data.Results[0];
-                    var zoomExtent = new Extent({
-                        xmin: result.MinX,
-                        xmax: result.MaxX,
-                        ymin: result.MinY,
-                        ymax: result.MaxY,
-                        spatialReference: that.map.spatialReference
-                    });
-                    that.map.setExtent(zoomExtent, true);
-                    showBusy(false);
-                },
-                error: function() {
-                    showBusy(false);
-                }
-            };
-
-            script.get(params);
-        },
-
-        _getStringForGetEnvelope: function() {
+        _buildPredicateForQuery: function() {
             // summary:
             //      Formats the widget values for the get envelope web service request.
             // returns: String
             // tags:
             //      private
-            console.log('agrc.widgets.locate.TRSsearch::_getStringForGetEnvelope', arguments);
+            console.log('agrc.widgets.locate.TrsSearch::_buildPredicateForQuery', arguments);
 
-            var value = "'T" + this.township + ' R' + this.range;
-            if (this.section) {
-                var s = (parseInt(this.section, 10) < 10) ? '0' + this.section : this.section;
-                value += "' AND " + this._firstDivFld + " = '" + s;
+            function pad(n, paddingLength, paddingValue) {
+                paddingValue = paddingValue || '0';
+                n = n + '';
+                return n.length >= paddingLength ? n : new Array(paddingLength - n.length + 1).join(paddingValue) + n;
             }
 
-            value += "' AND " + this._baseMeridianFld + " = '" + this.getMeridianNumber() + "'";
+            if (!this.get('meridian') || !this.get('township') || !this.get('range')) {
+                return '';
+            }
 
-            return value;
-        },
+            var meridian = lang.replace('{0}=\'{1}\' AND ', [this.fields.meridian, this.meridianId()]);
+            var townshipRange = lang.replace('LABEL=\'T{0} R{1}\'', [this.get('township'), this.get('range')]);
 
-        _validateForm: function() {
-            // summary:
-            //      Checks to make sure that there are enough valid values in the form
-            //      to enable a successful zoom.
-            //      Enables the zoom button if appropriate.
-            // tags:
-            //      private
-            console.log('agrc.widgets.locate.TRSsearch::_validateForm', arguments);
+            if (this.get('section')) {
+                var sectionNumber = pad(this.get('section'), 2, '0');
+                var section = lang.replace(' AND {0}=\'{1}\'', [this.fields.section, sectionNumber]);
 
-            var value = (this.township && this.range && this._sectionDD.isValid());
-            this._zoomBtn.set('disabled', !value);
+                return meridian + townshipRange + section;
+            }
+
+            return meridian + townshipRange;
         },
 
         _getAllValues: function() {
@@ -520,79 +459,219 @@ define([
             console.log('agrc.widgets.locate.TRSsearch::_getAllValues', arguments);
 
             return {
-                meridian: this.meridian,
-                township: this.township,
-                range: this.range,
-                section: this.section
+                meridian: this.get('meridian'),
+                township: this.get('township'),
+                range: this.get('range'),
+                section: this.get('section')
             };
         },
+        zoom: function() {
+            // summary:
+            //      Zooms to the selected section or range.
+            console.log('agrc.widgets.locate.TrsSearch::zoom', arguments);
 
+            if (this.inflight && !this.inflight.isFulfilled()) {
+                return;
+            }
+
+            var self = this;
+
+            function showBusy(busy) {
+                if (busy) {
+                    self.map.showLoader();
+                } else {
+                    self.map.hideLoader();
+                }
+            }
+
+            showBusy(true);
+
+            var layer = null;
+
+            if (this.section) {
+                layer = this.featureClasses.section;
+            } else {
+                layer = this.featureClasses.township;
+            }
+
+            var url = lang.replace(this.urls.envelope, [layer, this._buildPredicateForQuery(), this.apiKey]);
+
+            this.inflight = script.get(url, {
+                jsonp: 'callback'
+            });
+
+            this.inflight.then(function(response) {
+                    console.log(response);
+                    var geometry = response.result[0];
+                    var graphic = new Graphic(geometry);
+                    graphic.geometry.spatialReference = self.map.spatialReference;
+
+                    console.log(graphic);
+
+                    self.map.setExtent(graphic.geometry.getExtent(), true);
+                    console.log('setting extent');
+                    showBusy(false);
+                },
+                function() {
+                    showBusy(false);
+                });
+        },
         // setter methods - see _WidgetBase:set
-        _setMeridianAttr: function(value) {
-            console.log('agrc.widgets.locate.TRSsearch::_setMeridianAttr', arguments);
+        _setMeridian: function(meridian) {
+            // summary:
+            //      sets the available values in the township dropdown based on the meridian
+            // meridian: String
+            //      The id of the meridian. sl or ub
+            // tags:
+            //      private
+            console.log('agrc.widgets.locate.TrsSearch::_setMeridian', arguments);
 
-            this.meridian = value;
-            this['_' + value + 'RB'].set('checked', true);
-            this.onMeridianChange(value);
-            this.onValueChange(this._getAllValues());
+            var value = meridian || this.meridian;
+
+            domClass.remove(this.slNode, 'btn-primary');
+            domClass.remove(this.ubNode, 'btn-primary');
+
+            if (value.toUpperCase() === 'SL') {
+                domClass.add(this.slNode, 'btn-primary');
+
+            } else {
+                domClass.add(this.ubNode, 'btn-primary');
+            }
+
+            var townshipsInMeridian = this._getTownshipsForMeridian(this._townshipStore, value);
+
+            this._buildSelect(this.townshipNode, townshipsInMeridian);
         },
 
-        _setTownshipAttr: function(value) {
-            console.log('agrc.widgets.locate.TRSsearch::_setTownshipAttr', arguments);
+        _setMeridianAttr: function(newValue) {
+            console.log('agrc.widgets.locate.TrsSearch::_setMeridianAttr', arguments);
 
-            this.township = value;
-            this._townshipDD.set('displayedValue', value);
-            this.onTownshipChange(value);
-            this.onValueChange(this._getAllValues());
+            if (newValue === this.meridian) {
+                return;
+            }
+
+            this._set('meridian', newValue.toUpperCase());
+
+            this._setMeridian(this.get('meridian'));
+            this.onMeridianChange(this.get('meridian'));
+            this._onValueChange(this._getAllValues());
         },
+        _setTownshipAttr: function(newValue) {
+            console.log('agrc.widgets.locate.TrsSearch::_setTownshipAttr', arguments);
 
-        _setRangeAttr: function(value) {
-            console.log('agrc.widgets.locate.TRSsearch::_setRangeAttr', arguments);
+            if (newValue === this.meridian) {
+                return;
+            }
 
-            this.range = value;
-            this._rangeDD.set('displayedValue', value);
-            this.onRangeChange(value);
-            this.onValueChange(this._getAllValues());
+            this._set('township', newValue.toUpperCase());
+
+            this.onTownshipChange(this.get('township'));
+            this._onValueChange(this._getAllValues());
         },
+        _setRangeAttr: function(newValue) {
+            console.log('agrc.widgets.locate.TrsSearch::_setRangeAttr', arguments);
 
-        _setSectionAttr: function(value) {
-            console.log('agrc.widgets.locate.TRSsearch::_setSectionAttr', arguments);
+            if (newValue === this.range) {
+                return;
+            }
 
-            this.section = value;
-            this._sectionDD.set('displayedValue', value);
-            this.onSectionChange(value);
-            this.onValueChange(this._getAllValues());
+            this._set('range', newValue.toUpperCase());
+
+            this.onRangeChange(this.get('range'));
+            this._onValueChange(this._getAllValues());
+        },
+        _setSectionAttr: function(newValue) {
+            console.log('agrc.widgets.locate.TrsSearch::_setSectionAttr', arguments);
+
+            if (newValue === this.section) {
+                return;
+            }
+
+            this._set('section', newValue);
+
+            this.onSectionChange(this.get('section'));
+            this._onValueChange(this._getAllValues());
         },
 
         // events
+        _onMeridianChange: function(evt) {
+            // summary:
+            //      handles the click event of the meridian buttons
+            // evt
+            console.log('agrc.widgets.locate.TrsSearch::_onMeridianChange', arguments);
+
+            this.set('meridian', domAttr.get(evt.target, 'data-meridian'));
+        },
+        _onTownshipChange: function(evt) {
+            // summary:
+            //      Fires when the user selects a new township value
+            // evt: Event
+            // tags:
+            //      private
+            console.log('agrc.widgets.locate.TRSsearch::_onTownshipChange', arguments);
+
+            this.set('township', evt.target.value);
+
+            this._getOptionsFor('township', this.urls.range, this.rangeNode);
+        },
+        _onRangeChange: function(evt) {
+            // summary:
+            //      Fires when the user changes the range value in the drop down
+            // evt: Event
+            //      The new range
+            // tags:
+            //      private
+            console.log('agrc.widgets.locate.TrsSearch::_onRangeChange', arguments);
+
+            this.set('range', evt.target.value);
+            this._getOptionsFor('range', this.urls.section, this.sectionNode);
+        },
+        _onSectionChange: function(evt) {
+            // summary:
+            //      Fires when the user changes the range value in the drop down
+            // evt: Event
+            //      The new range
+            // tags:
+            //      private
+            console.log('agrc.widgets.locate.TrsSearch::_onSectionChange', arguments);
+
+            this.set('section', evt.target.value);
+        },
+        _onValueChange: function(data) {
+            // summary:
+            //      sets the hidden value with the data and calls public method
+            // data
+            console.log('agrc.widgets.location.TrsSearch::_onValueChange', arguments);
+         
+            this.hiddenNode.value = this.formattedTrsString();
+            this.onValueChange(data);
+        },
+
         onMeridianChange: function(newValue) {
             // summary:
             //      Fires whenever the meridian changes.
             // newValue: String
             //      The new value.
+            console.log('agrc.widgets.locate.TrsSearch::onMeridianChange', arguments);
         },
-
         onTownshipChange: function(newValue) {
             // summary:
             //      Fires whenever the township changes.
             // newValue: String
             //      The new value.
         },
-
         onRangeChange: function(newValue) {
             // summary:
             //      Fires whenever the range changes.
             // newValue: String
             //      The new value.
         },
-
         onSectionChange: function(newValue) {
             // summary:
             //      Fires whenever the section changes.
             // newValue: String
             //      The new value.
         },
-
         onValueChange: function(newValues) {
             // summary:
             //      Fires whenever any value (meridian, township, range, or section)
