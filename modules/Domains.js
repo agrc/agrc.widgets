@@ -104,7 +104,7 @@ define([
                 return fieldData.domain.codedValues;
             }
 
-            request(featureServiceUrl + '?f=json').then(
+            request(featureServiceUrl, {query: {f: 'json'}}).then(
                 function (response) {
                     def.resolve(getValues(response));
                 }, function (error) {
