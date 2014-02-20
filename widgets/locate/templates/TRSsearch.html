@@ -1,71 +1,26 @@
 <div class="trssearch">
-	<table>
-		<tr>
-			<td colspan="2">
-				<table style="width: 100%;">
-					<tr>
-						<td colspan="2">Meridian</td>
-					</tr>
-					<tr>
-						<td>
-							<input data-dojo-attach-point="_slRB" type="radio" data-dojo-type="dijit/form/RadioButton" 
-								data-dojo-props="name:'meridian${id}',id:'sl${id}',checked:true">
-							<label for="sl${id}">SL</label>
-						</td>
-						<td>
-							<input data-dojo-attach-point="_ubRB" type="radio" data-dojo-type="dijit/form/RadioButton" 
-								data-dojo-props="name:'meridian${id}',id:'ub${id}'">
-							<label for="ub${id}">UB</label>
-						</td>
-					</tr>
-				</table>
-			</td>
-		</tr>
-		<tr>
-			<td>T</td>
-			<td>
-				<select data-dojo-attach-point="_townshipDD" data-dojo-type="dijit/form/FilteringSelect" 
-					data-dojo-props="
-						style:'width:80px',
-						searchAttr:'township',
-						maxHeight:200,
-						required:false"></select>
-			</td>
-		</tr>
-		<tr>
-			<td>R</td>
-			<td>
-				<select data-dojo-attach-point="_rangeDD" data-dojo-type="dijit/form/FilteringSelect" 
-					data-dojo-props="
-						style:'width:80px',
-						searchAttr:'value',
-						maxHeight:200,
-						required:false"></select>
-			</td>
-		</tr>
-		<tr>
-			<td>S</td>
-			<td>
-				<select data-dojo-attach-point="_sectionDD" data-dojo-type="dijit/form/FilteringSelect" 
-					data-dojo-props="
-						style:'width:80px',
-						searchAttr:'value',
-						maxHeight:200,
-						required:false"></select>
-			</td>
-		</tr>
-		<tr>
-			<td colspan="2">
-				<span data-dojo-attach-point="_optionalMsg" class="optional-msg">optional</span>
-			</td>
-		</tr>
-		<tr>
-			<td colspan="3">
-				<div data-dojo-attach-point="_zoomBtn" data-dojo-type="dojox/form/BusyButton"
-					data-dojo-props="disabled: true, busyLabel:'Zooming...'">
-					<div class="zoom-button-sizer">Zoom</div>
-				</div>
-			</td>
-		</tr>
-	</table>
+   <div class="form-group">
+    <label style="display:block">Meridian</label>
+    <div class="btn-group">
+        <button type="button" data-meridian="SL" class="btn btn-default" data-dojo-attach-point="slNode" data-dojo-attach-event="click: _onMeridianChange">Salt Lake
+        </button>
+        <button type="button" data-meridian="UB" class="btn btn-default" data-dojo-attach-point="ubNode" data-dojo-attach-event="click: _onMeridianChange">Uinta Basin
+        </button>
+    </div>
+</div>
+<div class="form-group">
+    <label >Township</label>
+    <select data-dojo-attach-point="townshipNode" class="form-control" data-required="true">
+    </select>
+</div>
+<div class="form-group">
+    <label >Range</label>
+    <select data-dojo-attach-point="rangeNode" class="form-control" data-required="true"></select>
+</div>
+<div class="form-group">
+    <label>Section</label>
+    <select data-dojo-attach-point="sectionNode" class="form-control" data-required="${requireSection}"></select>
+</div>
+<button type="button" class="btn btn-success" data-dojo-attach-event="click: zoom" data-dojo-attach-point="zoomNode">Zoom</button>
+<input type="hidden" name="${formName}" data-dojo-attach-point="hiddenNode"/>
 </div>
