@@ -137,8 +137,7 @@ define([
         },
         zoom: function() {
             // summary:
-            //      zooms the map to the geometry
-            // geometry: esri/Geometry
+            //      zooms the map to the point created by _getPoint
             //  summary:
             //      the point created by the user input or returned by
             //      the geometry service
@@ -176,12 +175,15 @@ define([
             //
             console.log('agrc.widgets.locate.ZoomToCoords::_setupConnections', arguments);
 
-            on(this.domNode, 'input:change', lang.hitch(this, '_validate'));
-            on(this.domNode, 'input:input', lang.hitch(this, '_validate'));
-            on(this.formNode, 'submit', function(evt) {
-                events.stop(evt);
-            });
-            on(this._geometryService, 'project-complete', lang.hitch(this, '_projectionComplete'), lang.hitch(this, '_displayError'));
+            this.own(
+                on(this.domNode, 'input:change', lang.hitch(this, '_validate')),
+                on(this.domNode, 'input:input', lang.hitch(this, '_validate')),
+                on(this.formNode, 'submit', function(evt) {
+                    events.stop(evt);
+                }),
+                on(this._geometryService, 'project-complete', lang.hitch(this, '_projectionComplete'), lang.hitch(this, '_displayError'))
+            );
+           
             this.watch('valid', lang.hitch(this, '_enableZoom'));
             aspect.after(this, '_updateView', lang.hitch(this, '_validate'));
         },
