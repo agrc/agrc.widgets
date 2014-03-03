@@ -22,7 +22,7 @@ define([
 
     'esri/graphic',
 
-    'agrc/widgets/locate/resources/townships'
+    'agrc/widgets/locate/data/townships'
 ], function(
     template,
 
