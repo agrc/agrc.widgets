@@ -18,7 +18,6 @@ define([
 
     'dijit/_WidgetBase',
     'dijit/_TemplatedMixin',
-    'dijit/_WidgetsInTemplateMixin',
 
     'esri/graphic',
 
@@ -43,13 +42,12 @@ define([
 
     _WidgetBase,
     _TemplatedMixin,
-    _WidgetsInTemplateMixin,
 
     Graphic,
 
     townships
 ) {
-    return declare([_WidgetBase, _TemplatedMixin, _WidgetsInTemplateMixin], {
+    return declare([_WidgetBase, _TemplatedMixin], {
         // description:
         //      **Summary**: Allows the user to quickly zoom to a specific township, range, and optionally section.
         //      <p>
@@ -73,10 +71,6 @@ define([
         // |    var demoWidget = new agrc.widgets.locate.TRSsearch({
         // |        map: map
         // |    }, "demo-widget");
-
-        // widgetsInTemplate: [private] Boolean
-        //      Specific to dijit._Templated.
-        widgetsInTemplate: true,
 
         templateString: template,
 
@@ -142,7 +136,7 @@ define([
 
         // apiKey: string
         //      Your http://developer.mapserv.utah.gov api key
-        apiKey: '',
+        apiKey: null,
 
         // hideSection: Boolean
         //      Determines whether or not the section number is used.
@@ -160,6 +154,13 @@ define([
         //      defaults to 'trs'
         formName: 'trs',
 
+        constructor: function() {
+            // summary:
+            //      description
+            console.log('agrc.widgets.locate.TrsSeearch::constructor', arguments);
+         
+            this.inherited(arguments);
+        },
         postCreate: function() {
             // summary:
             //    Overrides method of same name in dijit._Widget.
@@ -451,7 +452,6 @@ define([
 
             return meridian + townshipRange;
         },
-
         _getAllValues: function() {
             // summary:
             //      Gets all of the current values for the form.
@@ -516,6 +516,7 @@ define([
                     showBusy(false);
                 });
         },
+
         // setter methods - see _WidgetBase:set
         _setMeridian: function(meridian) {
             // summary:
@@ -542,7 +543,6 @@ define([
 
             this._buildSelect(this.townshipNode, townshipsInMeridian);
         },
-
         _setMeridianAttr: function(newValue) {
             console.log('agrc.widgets.locate.TrsSearch::_setMeridianAttr', arguments);
 
