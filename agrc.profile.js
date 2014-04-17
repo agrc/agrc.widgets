@@ -18,7 +18,7 @@ var profile = (function() {
     var nonAMDs = {
         // for some reason this breaks the build if it's
         // tagged as AMD
-        'agrc/resources/libs/spin': true
+        'spin': true
     };
 
     return {
