@@ -1,5 +1,5 @@
 define([
-    'dojo/text!agrc/widgets/locate/templates/FindGeneric.html',
+    'dojo/text!./templates/FindGeneric.html',
 
     'dojo/_base/declare',
     'dojo/_base/event',
@@ -66,13 +66,14 @@ define([
         //      load all features at initialization.
         //      </p>
         //      <p>
-        //      **Published Topics**: (See the [Dojo Topic System](http://dojotoolkit.org/reference-guide/quickstart/topics.html))
+        //      **Published Topics**: 
         //      </p>
         //      <ul><li>agrc.widgets.locate.FindGeneric.OnZoom[none]</li>
         //      <p>
         //      **Exceptions**:
         //      </p>
-        //      <ul><li>agrc.widgets.locate.FindGeneric NullReferenceException: map. Pass the map in the constructor.</li></ul>
+        //      <ul><li>agrc.widgets.locate.FindGeneric NullReferenceException: map. 
+        //      Pass the map in the constructor.</li></ul>
         //      <p>
         //      **Required Files**:
         //      </p>
@@ -111,7 +112,8 @@ define([
 
         // _searchUrlTemplate: [private] String
         //      the template url to the agrc map service that the validation text box points at;
-        _searchUrlTemplate: 'http://mapserv.utah.gov/WSUT/GetFeatureAttributes.svc/find-generic-widget/layer({layerName})returnAttributes({searchFieldName})where({searchFieldName})(=)( )?dojo',
+        _searchUrlTemplate: 'http://mapserv.utah.gov/WSUT/GetFeatureAttributes.svc/find-generic-widget/layer' +
+            '({layerName})returnAttributes({searchFieldName})where({searchFieldName})(=)( )?dojo',
 
         // _envelopeUrl: [private] String
         //      The url to the agrc map service that returns the feature envelope.
@@ -119,7 +121,8 @@ define([
 
         // _envelopeUrlTemplate: [private] String
         //      The template url to the agrc map service that returns the feature envelope.
-        _envelopeUrlTemplate: 'http://mapserv.utah.gov/WSUT/FeatureGeometry.svc/GetEnvelope/find-generic-widget/layer({layerName})where({searchFieldName})(=)([searchValue])quotes=true',
+        _envelopeUrlTemplate: 'http://mapserv.utah.gov/WSUT/FeatureGeometry.svc/GetEnvelope/find-generic-widget/layer' +
+            '({layerName})where({searchFieldName})(=)([searchValue])quotes=true',
 
         // _store: dojo.data.Store
         //      the autocomeplete store
@@ -176,7 +179,8 @@ define([
 
             // check for map
             if (!this.map) {
-                throw new Error('agrc.widgets.locate.FindGeneric NullReferenceException: map.  Pass the map in the constructor.');
+                throw new Error('agrc.widgets.locate.FindGeneric NullReferenceException: map. ' +
+                    'Pass the map in the constructor.');
             }
 
             if (!this.label) {
@@ -236,7 +240,7 @@ define([
             //      private
             console.info('agrc.widgets.locate.FindGeneric::_wireEvents', arguments);
 
-            this.connect(this.txt_box, 'onKeyUp', this._checkEnter);
+            this.connect(this.txtBox, 'onKeyUp', this._checkEnter);
         },
 
         _checkEnter: function(event) {
@@ -265,12 +269,12 @@ define([
                 event.stop(args);
             }
 
-            if (this.txt_box.isValid()) {
+            if (this.txtBox.isValid()) {
                 // hide error message
                 domStyle.set(this.errorMsg, 'display', 'none');
                 // this.btn_find.makeBusy();
 
-                var value = (args && args.value) ? args.value : this.txt_box.get('displayedValue');
+                var value = (args && args.value) ? args.value : this.txtBox.get('displayedValue');
 
                 var url = this._envelopeUrl.replace('[searchValue]', value);
 
@@ -324,7 +328,7 @@ define([
             console.log('agrc.widgets.locate.FindGeneric::_onFind', arguments);
 
             var query = {
-                query: this.txt_box.get('displayedValue')
+                query: this.txtBox.get('displayedValue')
             };
 
             this.onFind(lang.mixin(result, query));
@@ -377,7 +381,7 @@ define([
                         data: result
                     });
 
-                    this.txt_box.set('store', this._store);
+                    this.txtBox.set('store', this._store);
                 }),
                 lang.hitch(this, function(error) {
                     this._onError('There has been an error with ArcGIS Server.\n' + error.message);
@@ -406,7 +410,8 @@ define([
             // summary:
             //      updates the layer and field being found
             // description:
-            //      take a property bag of layerName and searchFieldName, label, or fieldLabel to update widget to search other layer and fields
+            //      take a property bag of layerName and searchFieldName, label, 
+            //      or fieldLabel to update widget to search other layer and fields
             // tags:
             //      public
             console.info('agrc.widgets.locate.FindGeneric::updateFindItemsWith', arguments);

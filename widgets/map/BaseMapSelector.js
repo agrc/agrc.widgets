@@ -38,12 +38,12 @@ define([
         //      **Owner(s)**: Steve Gourley
         //      </p>
         //      <p>
-        //      **Test Page**: <a href='/tests/dojo/agrc/1.0/agrc/widgets/tests/BaseMapSelectorTests.html' target='_blank'>agrc.widgets.map.BaseMapSelector.Test</a>
-        //      </p>
         //      <p>
         //      **Description**:
-        //      A widget that when clicked on will shuffle through agrc.widgets.map.ThemeInfos.  There is also a drop down box for selecting specific ThemeInfos
-        //      This widget positions itself inside the esri.Map control and can be placed in any corner and has 2 themes.  The themese are controlled by the id property: tundra or claro.
+        //      A widget that when clicked on will shuffle through agrc.widgets.map.ThemeInfos.  
+        //      There is also a drop down box for selecting specific ThemeInfos
+        //      This widget positions itself inside the esri.Map control and can be placed in any 
+        //      corner and has 2 themes.  The themese are controlled by the id property: tundra or claro.
         //      </p>
         //      <p>
         //      **Published Topics**:
@@ -52,7 +52,8 @@ define([
         //      <p>
         //          **Exceptions**:
         //      </p>
-        //      <ul><li>agrc.widgets.map.BaseMapSelector NullReferenceException: map.  Pass the map in the constructor.</li></ul>
+        //      <ul><li>agrc.widgets.map.BaseMapSelector NullReferenceException: map.  
+        //      Pass the map in the constructor.</li></ul>
         //      <p>
         //      **Required Files**:
         //      </p>
@@ -113,7 +114,8 @@ define([
             // summary:
             //      Constructor function for object.
             // args: Object?
-            //      The parameters that you want to pass into the object. Includes: map: agrc.widgets.map.BaseMap || esri.Map || anything that inherits from esri.Map
+            //      The parameters that you want to pass into the object. 
+            //      Includes: map: agrc.widgets.map.BaseMap || esri.Map || anything that inherits from esri.Map
             //      The esri.Map object for switching the base map on, id,
             //      position.
             console.info('agrc.widgets.map.BaseMapSelector::constructor', arguments);
@@ -132,7 +134,8 @@ define([
 
             // check for map
             if (!this.map) {
-                throw new Error('agrc.widgets.map.BaseMapSelector NullReferenceException: map.  Pass the map in the constructor.');
+                throw new Error('agrc.widgets.map.BaseMapSelector NullReferenceException: map. ' +
+                    'Pass the map in the constructor.');
             }
 
             domConstruct.place(this.domNode, this.map.id + '_root', 'last');

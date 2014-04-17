@@ -114,16 +114,19 @@ define([
                 },
                 hideAllBut: function(showMe) {
                     for (var prop in this.panels) {
-                        if (!this.panels.hasOwnProperty(prop))
-                            continue;
+                        if (this.panels.hasOwnProperty(prop)) {
+                            if (!this.panels.hasOwnProperty(prop)) {
+                                continue;
+                            }
 
-                        if (showMe && prop === showMe) {
-                            domClass.replace(this.panels[prop], 'show', 'hide');
-                            this.visible = this.panels[prop];
-                            continue;
+                            if (showMe && prop === showMe) {
+                                domClass.replace(this.panels[prop], 'show', 'hide');
+                                this.visible = this.panels[prop];
+                                continue;
+                            }
+
+                            domClass.replace(this.panels[prop], 'hide', 'show');
                         }
-
-                        domClass.replace(this.panels[prop], 'hide', 'show');
                     }
                 },
                 visible: this.utmNode
@@ -154,7 +157,7 @@ define([
             // reset errors
             domClass.remove(this.errorNode, ['alert','alert-danger','text-center']);
             this.errorNode.innerHTML = '';
-            
+
             var point = this._getPoint();
 
             if (point.spatialReference.wkid === this.map.spatialReference.wkid) {
@@ -181,9 +184,13 @@ define([
                 on(this.formNode, 'submit', function(evt) {
                     events.stop(evt);
                 }),
-                on(this._geometryService, 'project-complete', lang.hitch(this, '_projectionComplete'), lang.hitch(this, '_displayError'))
+                on(this._geometryService,
+                    'project-complete',
+                    lang.hitch(this, '_projectionComplete'),
+                    lang.hitch(this, '_displayError')
+                )
             );
-           
+
             this.watch('valid', lang.hitch(this, '_enableZoom'));
             aspect.after(this, '_updateView', lang.hitch(this, '_validate'));
         },

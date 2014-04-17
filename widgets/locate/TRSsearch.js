@@ -1,5 +1,5 @@
 define([
-    'dojo/text!agrc/widgets/locate/templates/TRSsearch.html',
+    'dojo/text!./templates/TRSsearch.html',
 
     'dojo/_base/declare',
     'dojo/_base/lang',
@@ -21,7 +21,7 @@ define([
 
     'esri/graphic',
 
-    'agrc/widgets/locate/data/townships'
+    './data/townships'
 ], function(
     template,
 
@@ -54,7 +54,7 @@ define([
         //      **Owner(s)**: Scott Davis
         //      </p>
         //      <p>
-        //      **Test Page**: <a href="/tests/dojo/agrc/1.0/agrc/widgets/tests/TRSsearchTests.html" target="_blank">
+        //      **Test Page**: <a href='/tests/dojo/agrc/1.0/agrc/widgets/tests/TRSsearchTests.html' target='_blank'>
         //        agrc.widgets.map.TRSsearch.Test</a>
         //      </p>
         //      <p>
@@ -70,7 +70,7 @@ define([
         // example:
         // |    var demoWidget = new agrc.widgets.locate.TRSsearch({
         // |        map: map
-        // |    }, "demo-widget");
+        // |    }, 'demo-widget');
 
         templateString: template,
 
@@ -88,8 +88,10 @@ define([
         //      The url for the get envelope web service
 
         urls: {
-            range: '//api.mapserv.utah.gov/api/v1/search/SGID10.CADASTRE.PLSS_TR_Lookup/PairsWith?predicate=TorRNAME=\'{0}\'&apikey={1}',
-            section: '//api.mapserv.utah.gov/api/v1/search/SGID10.CADASTRE.PLSS_Sec_Lookup/PairsWith?predicate=TRNAME=\'{0}\'&apikey={1}',
+            range: '//api.mapserv.utah.gov/api/v1/search/SGID10.CADASTRE.PLSS_TR_Lookup/' +
+                'PairsWith?predicate=TorRNAME=\'{0}\'&apikey={1}',
+            section: '//api.mapserv.utah.gov/api/v1/search/SGID10.CADASTRE.PLSS_Sec_Lookup/' +
+                'PairsWith?predicate=TRNAME=\'{0}\'&apikey={1}',
             envelope: '//api.mapserv.utah.gov/api/v1/search/{0}/shape@?predicate={1}&apikey={2}'
         },
 
@@ -158,7 +160,7 @@ define([
             // summary:
             //      description
             console.log('agrc.widgets.locate.TrsSeearch::constructor', arguments);
-         
+
             this.inherited(arguments);
         },
         postCreate: function() {
@@ -319,7 +321,9 @@ define([
 
             this._resetLinkedSelects(node);
 
-            var placeholder = domConstruct.toDom("<option value='' disabled selected style='display:none;'>Choose an option</option>");
+            var placeholder = domConstruct.toDom(
+                '<option value="" disabled selected style="display:none;">Choose an option</option>'
+            );
             domConstruct.place(placeholder, node, 'first');
         },
         _resetLinkedSelects: function(parentNode) {
@@ -342,8 +346,7 @@ define([
                     props: ['section']
                 }
             },
-                container = null,
-                self = this;
+                container = null;
 
             if (parentNode === this.townshipNode) {
                 container = selectTree.township;
@@ -380,7 +383,7 @@ define([
         formattedTrsString: function() {
             // summary:
             //      Formats a string from the current widget values to match
-            //      this pattern: "26T1NR3WSec30"
+            //      this pattern: '26T1NR3WSec30'
             // returns: String | null
             //      Returns null if there is not enough data.
             console.log('agrc.widgets.locate.TrsSearch::formattedTrsString', arguments);
@@ -394,7 +397,9 @@ define([
                 template += 'Sec{3}';
             }
 
-            return lang.replace(template, [this.meridianId(), this.get('township'), this.get('range'), this.get('section')]);
+            return lang.replace(template,
+                [this.meridianId(), this.get('township'), this.get('range'), this.get('section')]
+            );
         },
         _buildTrsLabel: function(prop) {
             // summary:
@@ -642,37 +647,37 @@ define([
             //      sets the hidden value with the data and calls public method
             // data
             console.log('agrc.widgets.location.TrsSearch::_onValueChange', arguments);
-         
+
             this.hiddenNode.value = this.formattedTrsString();
             this.onValueChange(data);
         },
 
-        onMeridianChange: function(newValue) {
+        onMeridianChange: function(/*newValue*/) {
             // summary:
             //      Fires whenever the meridian changes.
             // newValue: String
             //      The new value.
             console.log('agrc.widgets.locate.TrsSearch::onMeridianChange', arguments);
         },
-        onTownshipChange: function(newValue) {
+        onTownshipChange: function(/*newValue*/) {
             // summary:
             //      Fires whenever the township changes.
             // newValue: String
             //      The new value.
         },
-        onRangeChange: function(newValue) {
+        onRangeChange: function(/*newValue*/) {
             // summary:
             //      Fires whenever the range changes.
             // newValue: String
             //      The new value.
         },
-        onSectionChange: function(newValue) {
+        onSectionChange: function(/*newValue*/) {
             // summary:
             //      Fires whenever the section changes.
             // newValue: String
             //      The new value.
         },
-        onValueChange: function(newValues) {
+        onValueChange: function(/*newValue*/) {
             // summary:
             //      Fires whenever any value (meridian, township, range, or section)
             //      changes.

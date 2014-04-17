@@ -3,20 +3,12 @@ require([
 
     'dojo/_base/window',
 
-    'dojo/dom-construct',
-    'dojo/dom-style',
-    'dojo/dom-class',
-
-    'dojo/query'
+    'dojo/dom-construct'
 ], function(
     TrsSearch,
     win,
 
-    domConstruct,
-    domStyle,
-    domClass,
-
-    query
+    domConstruct
 ) {
 
     var widget, select;
@@ -90,8 +82,8 @@ require([
             });
 
             it('should change the dropdown values when the meridian changes', function() {
-                spyOn(widget, '_setMeridian').andCallThrough();
-                var store = widget._cacheTownships(
+                spyOn(widget, '_setMeridian').and.callThrough();
+                widget._cacheTownships(
                     [{
                         id: 1,
                         text: '1N',
@@ -135,7 +127,8 @@ require([
                 };
 
                 widget._getOptionsFor('township',
-                    '//api.mapserv.utah.gov/api/v1/search/SGID10.CADASTRE.PLSS_TR_Lookup/PairsWith?predicate=TRNAME=\'{0}\'&apikey={1}',
+                    '//api.mapserv.utah.gov/api/v1/search/' +
+                    'SGID10.CADASTRE.PLSS_TR_Lookup/PairsWith?predicate=TRNAME=\'{0}\'&apikey={1}',
                     widget.rangeNode,
                     evt);
 
@@ -229,7 +222,8 @@ require([
                     var response = {
                         'result': [{
                             'attributes': {
-                                'pairswith': 'R1E|R1W|R2E|R2W|R3E|R3W|R4E|R4W|R5E|R5W|R6E|R6W|R7E|R8E|R9W|R10W|R11W|R12W|R13W|R14W|R15W|R16W|R17W|R18W|R19W'
+                                'pairswith': 'R1E|R1W|R2E|R2W|R3E|R3W|R4E|R4W|R5E|R5W|R6E|R6W|R7E|' +
+                                'R8E|R9W|R10W|R11W|R12W|R13W|R14W|R15W|R16W|R17W|R18W|R19W'
                             }
                         }],
                         'status': 200
@@ -278,10 +272,11 @@ require([
                     expect(widget._buildPredicateForQuery()).toEqual('');
 
                     widget.range = '10W';
-                    expect(widget._buildPredicateForQuery()).toEqual("BASEMERIDIAN='26' AND LABEL='T19S R10W'");
+                    expect(widget._buildPredicateForQuery()).toEqual('BASEMERIDIAN=\'26\' AND LABEL=\'T19S R10W\'');
 
                     widget.section = '1';
-                    expect(widget._buildPredicateForQuery()).toEqual("BASEMERIDIAN='26' AND LABEL='T19S R10W' AND SECTION='01'");
+                    expect(widget._buildPredicateForQuery())
+                        .toEqual('BASEMERIDIAN=\'26\' AND LABEL=\'T19S R10W\' AND SECTION=\'01\'');
                 });
             });
             describe('formattedTrsString', function() {
@@ -299,10 +294,10 @@ require([
                     expect(widget.formattedTrsString()).toEqual(null);
 
                     widget.range = '10W';
-                    expect(widget.formattedTrsString()).toEqual("26T19SR10W");
+                    expect(widget.formattedTrsString()).toEqual('26T19SR10W');
 
                     widget.section = '1';
-                    expect(widget.formattedTrsString()).toEqual("26T19SR10WSec1");
+                    expect(widget.formattedTrsString()).toEqual('26T19SR10WSec1');
                 });
             });
             describe('_sortFunction', function() {

@@ -1,5 +1,5 @@
 define([
-    'dojo/text!agrc/widgets/locate/templates/FindAddress.html',
+    'dojo/text!./templates/FindAddress.html',
 
     'dojo/_base/declare',
     'dojo/_base/Color',
@@ -27,7 +27,7 @@ define([
     template,
 
     declare,
-    color,
+    Color,
     lang,
     array,
 
@@ -40,15 +40,15 @@ define([
     on,
     dojoString,
 
-    widgetBase,
-    templatedMixin,
+    _WidgetBase,
+    _TemplatedMixin,
 
     SimpleMarkerSymbol,
     Point,
     scaleUtils,
     Graphic,
     esriRequest
-) {
+    ) {
     // description:
     //      **Summary**: A simple form tied to the map allowing a user to quickly zoom to an address.
     //      <p>
@@ -63,7 +63,7 @@ define([
     //      This widget hits the [agrc geocoding web service](http://gis.utah.gov/web-services/address-geolocator-2).
     //      </p>
     //      <p>
-    //      **Published Topics**: (See the [Dojo Topic System](http://dojotoolkit.org/reference-guide/quickstart/topics.html))
+    //      **Published Topics**:
     //      </p>
     //      <ul>
     //          <li>agrc.widgets.locate.FindAddress.OnFindStart[none]</li>
@@ -81,7 +81,7 @@ define([
     // example:
     // |    new FindAddress({map: map}, 'test1');
 
-    return declare([widgetBase, templatedMixin], {
+    return declare([_WidgetBase, _TemplatedMixin], {
         templateString: template,
         baseClass: 'find-address',
         map: null,
@@ -118,20 +118,19 @@ define([
             if (!this.symbol && !! this.map) {
                 this.symbol = new SimpleMarkerSymbol();
                 this.symbol.setStyle(SimpleMarkerSymbol.STYLE_DIAMOND);
-                this.symbol.setColor(new color([255, 0, 0, 0.5]));
+                this.symbol.setColor(new Color([255, 0, 0, 0.5]));
             }
         },
 
         postCreate: function() {
             console.info('agrc.widgets.locate.FindAddress::postCreate', arguments);
 
-            this.form_geocode.onsubmit = function() {
+            this.formGeocode.onsubmit = function() {
                 return false;
             };
 
-            on(this.btn_geocode, 'click', lang.hitch(this, 'geocodeAddress'));
+            on(this.btnGeocode, 'click', lang.hitch(this, 'geocodeAddress'));
         },
-
         geocodeAddress: function() {
             // summary:
             //      Geocodes the address if the text boxes validate.
@@ -150,8 +149,8 @@ define([
                 this.graphicsLayer.remove(this._graphic);
             }
 
-            var address = this.txt_address.value;
-            var zone = this.txt_zone.value;
+            var address = this.txtAddress.value;
+            var zone = this.txtZone.value;
 
             if (this.request) {
                 this.request.cancel('duplicate in flight');
@@ -213,8 +212,8 @@ define([
             query('.form-group', this.domNode).removeClass('has-error');
 
             return array.every([
-                    this.txt_address,
-                    this.txt_zone
+                    this.txtAddress,
+                    this.txtZone
                 ],
                 function(tb) {
                     return that._isValid(tb);
@@ -261,12 +260,23 @@ define([
                 this.onFind(response.result);
 
                 if (this.map) {
-                    var point = new Point(response.result.location.x, response.result.location.y, this.map.spatialReference);
+                    var point = new Point(
+                        response.result.location.x,
+                        response.result.location.y,
+                        this.map.spatialReference
+                    );
 
                     if (this.map.getLevel() > -1) {
                         this.map.centerAndZoom(point, this.zoomLevel);
                     } else {
-                        this.map.centerAndZoom(point, scaleUtils.getScale(this.map.extent, this.map.width, this.map.spatialReference.wkid) / this.zoomLevel);
+                        this.map.centerAndZoom(
+                            point,
+                            scaleUtils.getScale(
+                                this.map.extent,
+                                this.map.width,
+                                this.map.spatialReference.wkid
+                            ) / this.zoomLevel
+                        );
                     }
 
                     this._graphic = new Graphic(point, this.symbol, response.result);

@@ -1,10 +1,10 @@
-/*global profile:true*/
-profile = (function() {
+/* jshint unused:false */
+var profile = (function() {
     var testResourceRe = /.*\/tests\//;
     var copyOnly = function(filename, mid) {
         var list = {
-            "agrc/agrc.profile": true,
-            "agrc/package.json": true
+            'agrc/agrc.profile': true,
+            'agrc/package.json': true
         };
         return (mid in list) ||
             (/^resources\//.test(mid) && !/\.css$/.test(filename)) ||
@@ -13,12 +13,12 @@ profile = (function() {
         // resource (but not CSS) or is an image
     };
     var ignores = {
-        "agrc/Gruntfile": true
+        'agrc/Gruntfile': true
     };
     var nonAMDs = {
         // for some reason this breaks the build if it's
         // tagged as AMD
-        "agrc/resources/libs/spin": true
+        'agrc/resources/libs/spin': true
     };
 
     return {

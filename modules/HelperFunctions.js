@@ -11,7 +11,7 @@ define([
             // btnGroupName: String
             //      The name of the radio button group
             // returns: String
-            //      Returns "" if no button is selected
+            //      Returns ' if no button is selected
             console.log('agrc/modules/HelperFunctions:getSelectedRadioValue', arguments);
 
             function getSelectedRadio(buttonGroup) {
@@ -31,11 +31,11 @@ define([
                 return -1;
             }
 
-            var buttonGroup = query("input[name=" + btnGroupName + "]");
+            var buttonGroup = query('input[name=' + btnGroupName + ']');
 
-            // returns the value of the selected radio button or "" if no button is selected
+            // returns the value of the selected radio button or ' if no button is selected
             var i = getSelectedRadio(buttonGroup);
-            if (i == -1) {
+            if (i === -1) {
                 return undefined;
             } else {
                 if (buttonGroup[i]) { // Make sure the button group is an array (not just one button)
@@ -53,11 +53,11 @@ define([
             //      The url to the css file that you want to load
             console.log('agrc/modules/HelperFunctions:loadCss', arguments);
 
-            var head = document.getElementsByTagName("head").item(0);
+            var head = document.getElementsByTagName('head').item(0);
 
-            var link = document.createElement("link");
-            link.rel = "stylesheet";
-            link.type = "text/css";
+            var link = document.createElement('link');
+            link.rel = 'stylesheet';
+            link.type = 'text/css';
             link.href = href;
             head.appendChild(link);
         },
@@ -69,10 +69,10 @@ define([
             //      The url to the JavaScript file that you want to load
             console.log('agrc/modules/HelperFunctions:loadJavaScript', arguments);
 
-            var head = document.getElementsByTagName("head").item(0);
+            var head = document.getElementsByTagName('head').item(0);
 
-            var script = document.createElement("script");
-            script.type = "text/javascript";
+            var script = document.createElement('script');
+            script.type = 'text/javascript';
             script.src = src;
             head.appendChild(script);
         }

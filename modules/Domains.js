@@ -17,7 +17,8 @@ define([
         // _errMsgs: {}
         //      Error messages
         _errMsgs: {
-            getCodedValues: 'There was an error getting the coded values from the Feature Service. Please check your url'
+            getCodedValues:
+                'There was an error getting the coded values from the Feature Service. Please check your url'
         },
 
         populateSelectWithDomainValues: function (select, featureServiceUrl, fieldName) {
@@ -28,13 +29,13 @@ define([
             //      The url to the feature service (i.e. /arcgis/rest/services/ServiceName/FeatureServer/1)
             // fieldName: String
             // returns: dojo/Deferred
-            console.log(this.declaredClass + "::populateSelectWithDomainValues", arguments);
+            console.log(this.declaredClass + '::populateSelectWithDomainValues', arguments);
 
             var def = new Deferred();
             var namespace = 'agrc/modules/Domains_codedValues';
             var prop = featureServiceUrl + '_' + fieldName;
             var that = this;
-            
+
             if (!window.AGRC) {
                 window.AGRC = {};
             }
@@ -65,7 +66,7 @@ define([
             //      description
             // param: type or return: type
             console.log('module/id:buildOptions', arguments);
-        
+
             // add empty option
             domConstruct.create('option', null, select);
             array.forEach(values, function (v) {
@@ -82,8 +83,8 @@ define([
             //      The url to the feature service (i.e. /arcgis/rest/services/ServiceName/FeatureServer/1)
             // fieldName: String
             // returns: dojo/Deferred
-            console.log(this.declaredClass + "::getCodedValues", arguments);
-        
+            console.log(this.declaredClass + '::getCodedValues', arguments);
+
             var def = new Deferred();
             var that = this;
             var data;
