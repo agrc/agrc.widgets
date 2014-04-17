@@ -46,6 +46,13 @@ module.exports = function(grunt) {
         },
         connect: {
             uses_defaults: {}
+        },
+        bump: {
+            options: {
+                files: ['package.json', 'bower.json'],
+                commitFiles: ['-a'],
+                push: false
+            }
         }
     });
 
@@ -54,7 +61,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-jshint');
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-connect');
+    grunt.loadNpmTasks('grunt-bump');
 
     // Default task.
     grunt.registerTask('default', ['jasmine:default:build', 'jshint', 'connect', 'watch']);
+
+    grunt.registerTask('travis', ['jshint', 'connect', 'jasmine:default']);
 };
