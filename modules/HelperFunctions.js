@@ -11,7 +11,7 @@ define([
             // btnGroupName: String
             //      The name of the radio button group
             // returns: String
-            //      Returns ' if no button is selected
+            //      Returns '' if no button is selected
             console.log('agrc/modules/HelperFunctions:getSelectedRadioValue', arguments);
 
             function getSelectedRadio(buttonGroup) {
