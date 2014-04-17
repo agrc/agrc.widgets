@@ -115,10 +115,6 @@ define([
                 hideAllBut: function(showMe) {
                     for (var prop in this.panels) {
                         if (this.panels.hasOwnProperty(prop)) {
-                            if (!this.panels.hasOwnProperty(prop)) {
-                                continue;
-                            }
-
                             if (showMe && prop === showMe) {
                                 domClass.replace(this.panels[prop], 'show', 'hide');
                                 this.visible = this.panels[prop];
