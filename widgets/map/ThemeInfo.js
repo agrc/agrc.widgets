@@ -12,11 +12,9 @@
         //      **Owner(s)**: Steve Gourley, Scott Davis
         //      </p>
         //      <p>
-        //      **Test Page**: <a href='/tests/dojo/agrc/1.0/agrc/widgets/tests/BaseMapSelectorTests.html' target='_blank'>agrc.widgets.map.BaseMapSelector.Test</a>
-        //      </p>
-        //      <p>
         //      **Description**:
-        //      Contains a label for the unique name of the base map theme and the layers of type esri.layers.layer that are contained in that theme.
+        //      Contains a label for the unique name of the base map theme and the 
+        //      layers of type esri.layers.layer that are contained in that theme.
         //      </p>
         //      <p>
         //      **Published Channels/Events**:

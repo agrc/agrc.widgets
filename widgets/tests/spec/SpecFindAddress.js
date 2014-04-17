@@ -29,17 +29,17 @@ require([
         var address = '123 S Main St';
         var zip = '84101';
         var result = {
-            "result": {
-                "location": {
-                    "x": 424808.49945603119,
-                    "y": 4513232.5811240105
+            'result': {
+                'location': {
+                    'x': 424808.49945603119,
+                    'y': 4513232.5811240105
                 },
-                "score": 100.0,
-                "locator": "Centerlines.StatewideRoads",
-                "matchAddress": "123 S MAIN ST, 84101",
-                "inputAddress": "123 S Main St, 84101"
+                'score': 100.0,
+                'locator': 'Centerlines.StatewideRoads',
+                'matchAddress': '123 S MAIN ST, 84101',
+                'inputAddress': '123 S Main St, 84101'
             },
-            "status": 200
+            'status': 200
         };
 
         afterEach(function() {
@@ -63,35 +63,35 @@ require([
                 });
 
                 it('should validate when there is data in textboxes', function() {
-                    widget.txt_address.value = 'x';
-                    widget.txt_zone.value = 'x';
+                    widget.txtAddress.value = 'x';
+                    widget.txtZone.value = 'x';
 
                     expect(widget._validate()).toBeTruthy();
                 });
 
                 it('should not validate when there is not data in textboxes', function() {
-                    widget.txt_address.value = 'x';
+                    widget.txtAddress.value = 'x';
 
                     expect(widget._validate()).toBeFalsy();
                 });
 
                 it('should successfully find a valid address', function() {
-                    widget.txt_address.value = address;
-                    widget.txt_zone.value = zip;
+                    widget.txtAddress.value = address;
+                    widget.txtZone.value = zip;
 
                     //fake that error has already happened
                     domClass.add(widget.errorMsg.parentElement, 'has-error');
 
-                    spyOn(widget, '_invokeWebService').andCallFake(function() {
+                    spyOn(widget, '_invokeWebService').and.callFake(function() {
                         var d = new Deferred();
                         d.resolve(result);
 
                         return d;
                     });
 
-                    spyOn(widget, '_onFind').andCallThrough();
-                    spyOn(widget, 'onFind').andCallThrough();
-                    spyOn(widget, '_onError').andCallThrough();
+                    spyOn(widget, '_onFind').and.callThrough();
+                    spyOn(widget, 'onFind').and.callThrough();
+                    spyOn(widget, '_onError').and.callThrough();
 
                     widget.geocodeAddress();
 
@@ -111,18 +111,18 @@ require([
                 });
 
                 it('should display a not found message for a nonvalid address', function() {
-                    widget.txt_address.value = 'x';
-                    widget.txt_zone.value = 'x';
+                    widget.txtAddress.value = 'x';
+                    widget.txtZone.value = 'x';
 
-                    spyOn(widget, '_invokeWebService').andCallFake(function() {
+                    spyOn(widget, '_invokeWebService').and.callFake(function() {
                         var d = new Deferred();
                         d.reject({});
 
                         return d;
                     });
 
-                    spyOn(widget, '_onFind').andCallThrough();
-                    spyOn(widget, '_onError').andCallThrough();
+                    spyOn(widget, '_onFind').and.callThrough();
+                    spyOn(widget, '_onError').and.callThrough();
 
                     widget.geocodeAddress();
 
@@ -139,7 +139,7 @@ require([
                 beforeEach(function() {
                     map = {
                         graphicsLayer: {
-                            id: "default",
+                            id: 'default',
                             clear: function() {},
                             add: function() {}
                         },
@@ -175,7 +175,7 @@ require([
                     widget.map.onLoad();
 
                     expect(widget.graphicsLayer).not.toBeNull();
-                    expect(widget.graphicsLayer).toNotBe("default");
+                    expect(widget.graphicsLayer).not.toBe('default');
                 });
 
                 it('should use my graphics layer if provided', function() {
@@ -185,7 +185,7 @@ require([
                     }).placeAt(win.body());
                     widget.map.onLoad();
 
-                    expect(widget.graphicsLayer.id).toEqual("default");
+                    expect(widget.graphicsLayer.id).toEqual('default');
                 });
 
                 it('should zoom to a point after finding a valid address on a cached map', function() {
@@ -195,17 +195,17 @@ require([
                         map: map,
                         graphicsLayer: map.graphicsLayer
                     }).placeAt(win.body());
-                    widget.txt_address.value = address;
-                    widget.txt_zone.value = zip;
+                    widget.txtAddress.value = address;
+                    widget.txtZone.value = zip;
 
-                    spyOn(widget, '_invokeWebService').andCallFake(function() {
+                    spyOn(widget, '_invokeWebService').and.callFake(function() {
                         var d = new Deferred();
                         d.resolve(result);
 
                         return d;
                     });
 
-                    spyOn(widget.map, 'centerAndZoom').andCallThrough();
+                    spyOn(widget.map, 'centerAndZoom').and.callThrough();
 
                     widget.geocodeAddress();
 
@@ -225,17 +225,17 @@ require([
                         graphicsLayer: map.graphicsLayer,
                         zoomLevel: 1
                     }).placeAt(win.body());
-                    widget.txt_address.value = address;
-                    widget.txt_zone.value = zip;
+                    widget.txtAddress.value = address;
+                    widget.txtZone.value = zip;
 
-                    spyOn(widget, '_invokeWebService').andCallFake(function() {
+                    spyOn(widget, '_invokeWebService').and.callFake(function() {
                         var d = new Deferred();
                         d.resolve(result);
 
                         return d;
                     });
 
-                    spyOn(widget.map, 'centerAndZoom').andCallThrough();
+                    spyOn(widget.map, 'centerAndZoom').and.callThrough();
 
                     widget.geocodeAddress();
 
@@ -247,10 +247,10 @@ require([
                 beforeEach(function() {
                     widget = new FindAddress(null, domConstruct.create('div', null, win.body()));
                 });
-                it("hides all error messages", function() {
+                it('hides all error messages', function() {
                     query('.help-inline.error', widget.domNode).style('display', 'visible');
-                    widget.txt_address.value = address;
-                    widget.txt_zone.value = zip;
+                    widget.txtAddress.value = address;
+                    widget.txtZone.value = zip;
 
                     widget._validate();
 
@@ -258,10 +258,10 @@ require([
                         return domStyle.get(node, 'display') === 'none';
                     })).toBe(true);
                 });
-                it("removes all error classes on control-groups", function() {
+                it('removes all error classes on control-groups', function() {
                     query('.control-group', widget.domNode).addClass('error');
-                    widget.txt_address.value = address;
-                    widget.txt_zone.value = zip;
+                    widget.txtAddress.value = address;
+                    widget.txtZone.value = zip;
 
                     widget._validate();
 

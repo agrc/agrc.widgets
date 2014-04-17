@@ -3,7 +3,7 @@ require([
     'dojo/dom-construct',
     'dojo/Deferred',
     'dojo/request',
-    'stubmodule/StubModule'
+    'stubmodule'
 ],
 
 function (
@@ -11,7 +11,7 @@ function (
     domConstruct,
     Deferred,
     request,
-    StubModule
+    stubModule
     ) {
     describe('agrc/modules/Domains', function () {
         var select;
@@ -32,19 +32,19 @@ function (
             expect(Domains).toEqual(jasmine.any(Object));
         });
         describe('populateSelectWithDomainValues', function () {
-            it("clears out any existing options within the select", function () {
+            it('clears out any existing options within the select', function () {
                 Domains.populateSelectWithDomainValues(select);
 
                 expect(select.children.length).toEqual(0);
             });
-            it("gets the domain values", function () {
-                spyOn(Domains, 'getCodedValues').andReturn(new Deferred());
+            it('gets the domain values', function () {
+                spyOn(Domains, 'getCodedValues').and.returnValue(new Deferred());
 
                 Domains.populateSelectWithDomainValues(select, fakeUrl, fieldName);
 
                 expect(Domains.getCodedValues).toHaveBeenCalledWith(fakeUrl, fieldName);
             });
-            it("returns a Deferred", function () {
+            it('returns a Deferred', function () {
                 var returned = Domains.populateSelectWithDomainValues(select, fakeUrl, fieldName);
 
                 expect(returned).toEqual(jasmine.any(Deferred));
@@ -53,26 +53,22 @@ function (
                 var getDef;
                 var popDef;
                 var codedValues;
-                beforeEach(function () {
-                    runs(function () {
-                        getDef = new Deferred();
-                        spyOn(Domains, 'getCodedValues').andReturn(getDef);
-                        popDef = Domains.populateSelectWithDomainValues(select, fakeUrl, fieldName);
-                        request('modules/tests/data/featureServiceResponse.json').then(
-                            function (response) {
-                                codedValues = JSON.parse(response).fields[3].domain.codedValues;
-                                getDef.resolve(codedValues);
-                            }
-                        );
-                    });
-                    waitsFor(function () {
-                        return popDef.isFulfilled();
-                    }, 'popDef to be fulfilled');
+                beforeEach(function (done) {
+                    getDef = new Deferred();
+                    spyOn(Domains, 'getCodedValues').and.returnValue(getDef);
+                    popDef = Domains.populateSelectWithDomainValues(select, fakeUrl, fieldName);
+                    request('modules/tests/data/featureServiceResponse.json').then(
+                        function (response) {
+                            codedValues = JSON.parse(response).fields[3].domain.codedValues;
+                            getDef.resolve(codedValues);
+                            done();
+                        }
+                    );
                 });
-                it("creates the correct number of options", function () {
+                it('creates the correct number of options', function () {
                     expect(select.children.length).toEqual(10);
                 });
-                it("populates the correct value and innerHTML", function () {
+                it('populates the correct value and innerHTML', function () {
                     var option = select.children[1];
 
                     expect(option.value).toEqual('cr');
@@ -83,12 +79,12 @@ function (
                         .toEqual(codedValues);
                 });
                 it('doesnt call getCodedValues if there is an existing cache', function () {
-                    AGRC['agrc/modules/Domains_codedValues'][fakeUrl + '_' + fieldName] = 
+                    AGRC['agrc/modules/Domains_codedValues'][fakeUrl + '_' + fieldName] =
                         [{code: 'blah', name: 'blah'}];
 
                     Domains.populateSelectWithDomainValues(select, fakeUrl, fieldName);
 
-                    expect(Domains.getCodedValues.callCount).toBe(1);
+                    expect(Domains.getCodedValues.calls.count()).toBe(1);
                 });
             });
         });
@@ -97,49 +93,42 @@ function (
             var response;
             var StubbedDomains;
             var xhrDef;
-            beforeEach(function () {
+            beforeEach(function (done) {
                 xhrDef = new Deferred();
-                StubbedDomains = StubModule('agrc/modules/Domains', {
+                stubModule('agrc/modules/Domains', {
                     'dojo/request': function () {
                         return xhrDef;
                     }
-                });
-                def = StubbedDomains.getCodedValues(fakeUrl, fieldName);
-                def.then(function (result) {
-                    response = result;
-                }, function (error) {
-                    response = error;
+                }).then(function (Stubbed) {
+                    StubbedDomains = Stubbed;
+                    def = StubbedDomains.getCodedValues(fakeUrl, fieldName);
+                    def.then(function (result) {
+                        response = result;
+                    }, function (error) {
+                        response = error;
+                    });
+                    done();
                 });
             });
-            it("returns a dojo/Deferred object", function () {
+            it('returns a dojo/Deferred object', function () {
                 expect(Domains.getCodedValues(fakeUrl)).toEqual(jasmine.any(Deferred));
             });
-            it("rejects the deferred with an error message if the xhr errors", function () {
-                runs(function () {
-                    xhrDef.reject(StubbedDomains._errMsgs.getCodedValues);
-                });
-                waitsFor(function () {
-                    return def.isFulfilled();
-                }, 'Deferred to be fulfilled');
-                runs(function () {
-                    expect(response).toEqual(StubbedDomains._errMsgs.getCodedValues);
-                });
+            it('rejects the deferred with an error message if the xhr errors', function () {
+                xhrDef.reject(StubbedDomains._errMsgs.getCodedValues);
+
+                expect(response).toEqual(StubbedDomains._errMsgs.getCodedValues);
             });
-            it("resolves the deferred with the appropriate array of values", function () {
+            it('resolves the deferred with the appropriate array of values', function (done) {
                 var requestDef;
                 var jsonData;
-                runs(function () {
-                    requestDef = request('modules/tests/data/featureServiceResponse.json');
-                    requestDef.then(function (response) {
-                        jsonData = JSON.parse(response);
-                        xhrDef.resolve(response);
-                    });
+                requestDef = request('modules/tests/data/featureServiceResponse.json');
+                requestDef.then(function (response) {
+                    jsonData = JSON.parse(response);
+                    xhrDef.resolve(response);
                 });
-                waitsFor(function () {
-                    return def.isFulfilled();
-                }, 'Deferred to be fulfilled');
-                runs(function () {
+                xhrDef.then(function () {
                     expect(response).toEqual(jsonData.fields[3].domain.codedValues);
+                    done();
                 });
             });
         });

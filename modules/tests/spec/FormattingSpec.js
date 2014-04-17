@@ -16,16 +16,16 @@ function (
                 expect(Formatting.round(4.1, 2)).toEqual(4.10);
             });
         });
-        describe("addCommas", function(){
-            it("should add commas", function(){
-                expect(Formatting.addCommas(1000)).toEqual("1,000");
-                expect(Formatting.addCommas(1000000)).toEqual("1,000,000");
-                expect(Formatting.addCommas(1234.123)).toEqual("1,234.123");
-                expect(Formatting.addCommas(-1000000)).toEqual("-1,000,000");
+        describe('addCommas', function(){
+            it('should add commas', function(){
+                expect(Formatting.addCommas(1000)).toEqual('1,000');
+                expect(Formatting.addCommas(1000000)).toEqual('1,000,000');
+                expect(Formatting.addCommas(1234.123)).toEqual('1,234.123');
+                expect(Formatting.addCommas(-1000000)).toEqual('-1,000,000');
             });
         });
         describe('formatPhoneNumber', function () {
-            it("formats a string as a phone number", function () {
+            it('formats a string as a phone number', function () {
                 expect(Formatting.formatPhoneNumber(' 8011234567')).toEqual('(801) 123-4567');
             });
         });

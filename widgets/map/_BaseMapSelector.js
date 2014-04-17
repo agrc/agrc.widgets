@@ -74,7 +74,8 @@ define([
             // summary:
             //      Constructor function for object
             // args: Object?
-            //      The parameters that you want to pass into the object. Includes: map: agrc.widgets.map.BaseMap || esri.Map || anything that inherits from esri.Map
+            //      The parameters that you want to pass into the object. 
+            //      Includes: map: agrc.widgets.map.BaseMap || esri.Map || anything that inherits from esri.Map
             //      The esri.Map object for switching the base map on, defaultThemeLabel and themeInfos
             console.info('agrc.widgets.map._BaseMapSelector::constructor', arguments);
 
@@ -121,7 +122,8 @@ define([
             // summary:
             //      Takes the data in the data property and calls addTheme on them.
             // description:
-            //      Parses the data object into theme info's and sets up the current theme.  Also adds the first theme to the map.
+            //      Parses the data object into theme info's and sets up the current theme.  
+            //      Also adds the first theme to the map.
             // example:
             // |    data = [{
             // |        "label": "label",
@@ -245,7 +247,8 @@ define([
             }, this);
 
             if (!themeArgs) {
-                throw new Error('agrc.widgets.map._BaseMapSelector NullReferenceException: theme.  Theme name not found ' + label + '.');
+                throw new Error('agrc.widgets.map._BaseMapSelector NullReferenceException: theme. ' +
+                    'Theme name not found ' + label + '.');
             }
             return themeArgs;
         }

@@ -2,3 +2,5 @@ node_modules/
 *.sublime-workspace
 .DS_Store
 .grunt/
+bower_components/
+vendor/

@@ -1,44 +1,44 @@
 define([], function() {
         return [{
-            label: "Terrain",
+            label: 'Terrain',
             layers: [{
-                url: "http://mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Terrain/MapServer",
+                url: 'http://mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Terrain/MapServer',
                 opacity: 1
             }]
         }, {
-            label: "Hybrid",
+            label: 'Hybrid',
             layers: [{
-                url: "http://mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Hybrid/MapServer",
+                url: 'http://mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Hybrid/MapServer',
                 opacity: 1
             }]
         }, {
-            label: "Streets",
+            label: 'Streets',
             layers: [{
-                url: "http://mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Vector/MapServer",
+                url: 'http://mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Vector/MapServer',
                 opacity: 1
             }]
         }, {
-            label: "Imagery",
+            label: 'Imagery',
             layers: [{
-                url: "http://mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Imagery/MapServer",
+                url: 'http://mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Imagery/MapServer',
                 opacity: 1
             }]
         }, {
-            label: "Topo",
+            label: 'Topo',
             layers: [{
-                url: "http://mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Topo/MapServer",
+                url: 'http://mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Topo/MapServer',
                 opacity: 1
             }]
         }, {
-            label: "Lite",
+            label: 'Lite',
             layers: [{
-                url: "http://mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Lite/MapServer",
+                url: 'http://mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Lite/MapServer',
                 opacity: 1
             }]
         }, {
-            label: "Hillshade",
+            label: 'Hillshade',
             layers: [{
-                url: "http://mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Hillshade/MapServer",
+                url: 'http://mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Hillshade/MapServer',
                 opacity: 1
             }]
         }];

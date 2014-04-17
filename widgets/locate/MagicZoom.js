@@ -1,5 +1,5 @@
 define([
-    'dojo/text!agrc/widgets/locate/templates/MagicZoom.html',
+    'dojo/text!./templates/MagicZoom.html',
 
     'dojo/_base/declare',
     'dojo/_base/lang',
@@ -410,7 +410,7 @@ define([
             this._spinTimer = setTimeout(lang.hitch(this, this.showSpinner), 250);
 
             // update query where clause
-            this.query.where = 'UPPER(' + this.searchField + ") LIKE UPPER('" + searchString + "%')";
+            this.query.where = 'UPPER(' + this.searchField + ') LIKE UPPER(\'' + searchString + '%\')';
 
             // execute query / canceling any previous query
             if (this._deferred) {
@@ -430,7 +430,7 @@ define([
                         this._deleteAllTableRows(this.matchesTable);
 
                         // swallow errors from cancels
-                        if (err.message != 'undefined') {
+                        if (err.message !== 'undefined') {
                             throw new Error('agrc.widgets.locate.MagicZoom ArcGISServerError: ' + err.message);
                         }
 
@@ -586,17 +586,17 @@ define([
             // set textbox to full value
             if (!this.contextField) {
                 this.textBox.value = (has('ie') < 9) ? row.innerText : row.textContent;
-                this.query.where = this.searchField + " = '" + this.textBox.value + "'";
+                this.query.where = this.searchField + ' = \'' + this.textBox.value + '\'';
             } else {
                 // dig deeper when context values are present
                 this.textBox.value = (has('ie') < 9) ? row.children[0].innerText : row.children[0].textContent;
                 var contextValue = row.children[1].innerHTML;
                 if (contextValue.length > 0) {
-                    this.query.where = this.searchField + " = '" + this.textBox.value +
-                        "' AND " + this.contextField + " = '" + contextValue + "'";
+                    this.query.where = this.searchField + ' = \'' + this.textBox.value +
+                        '\' AND ' + this.contextField + ' = \'' + contextValue + '\'';
                 } else {
-                    this.query.where = this.searchField + " = '" + this.textBox.value +
-                        "' AND " + this.contextField + ' IS NULL';
+                    this.query.where = this.searchField + ' = \'' + this.textBox.value +
+                        '\' AND ' + this.contextField + ' IS NULL';
                 }
             }
 

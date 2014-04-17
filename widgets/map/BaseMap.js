@@ -21,7 +21,7 @@ define([
     'esri/map',
     'esri/toolbars/navigation',
 
-    '../../resources/libs/spin'
+    'spin'
 
 ], function(
     array,
@@ -201,7 +201,7 @@ define([
             //      Sets the extent to the State of Utah
             console.log('agrc.widgets.map.BaseMap::setDefaultExtent', arguments);
 
-            this.setExtent(this._defaultExtent);
+            return this.setExtent(this._defaultExtent);
         },
         showDefaultBaseMap: function() {
             // summary:
@@ -373,7 +373,7 @@ define([
             //      description
             console.log('agrc.widgets.map.BaseMap::onFullExtentButtonClicked', arguments);
 
-            this.setDefaultExtent();
+            return this.setDefaultExtent();
         },
         onBackButtonClicked: function() {
             // summary:

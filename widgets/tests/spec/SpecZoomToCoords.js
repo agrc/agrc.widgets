@@ -20,7 +20,7 @@ require([
     query
 ) {
 
-    var widget, select;
+    var widget;
 
     afterEach(function() {
         if (widget) {
@@ -34,7 +34,7 @@ require([
             beforeEach(function() {
                 widget = new WidgetUnderTest({
                     map: {
-                        centerAndZoom: function(geom) {
+                        centerAndZoom: function() {
 
                         }
                     }
@@ -49,7 +49,7 @@ require([
             beforeEach(function() {
                 widget = new WidgetUnderTest({
                     map: {
-                        centerAndZoom: function(geom) {
+                        centerAndZoom: function() {
 
                         }
                     }
@@ -88,7 +88,7 @@ require([
             beforeEach(function() {
                 widget = new WidgetUnderTest({
                     map: {
-                        centerAndZoom: function(geom) {
+                        centerAndZoom: function() {
 
                         }
                     }
@@ -122,13 +122,13 @@ require([
             beforeEach(function() {
                 widget = new WidgetUnderTest({
                     map: {
-                        centerAndZoom: function(geom) {},
+                        centerAndZoom: function() {},
                         spatialReference: {}
                     }
                 }, domConstruct.create('div', null, win.body()));
             });
             it('does not call projection service if wkids match', function () {
-                spyOn(widget, '_getPoint').andCallFake(function(){
+                spyOn(widget, '_getPoint').and.callFake(function(){
                     return {
                         spatialReference:{
                             wkid: 0
@@ -144,7 +144,7 @@ require([
                 expect(widget._geometryService.project).not.toHaveBeenCalled();
             });
             it('reprojects point if wkids do not match', function () {
-                spyOn(widget, '_getPoint').andCallFake(function(){
+                spyOn(widget, '_getPoint').and.callFake(function(){
                     return {
                         spatialReference:{
                             wkid: 1

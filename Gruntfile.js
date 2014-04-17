@@ -1,15 +1,14 @@
-/*global module:false*/
+/* jshint camelcase:false */
 module.exports = function(grunt) {
-    // Project configuration.
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         jasmine: {
-            app: {
+            'default': {
                 src: [],
                 options: {
                     vendor: [
                         'widgets/tests/SetUpTests.js',
-                        'http://js.arcgis.com/3.7/'
+                        'bower_components/dojo/dojo.js'
                     ],
                     specs: [
                         'widgets/tests/spec/*.js',
@@ -29,26 +28,18 @@ module.exports = function(grunt) {
             options: {
                 jshintrc: '.jshintrc',
                 ignores: [
-                    'resources/libs/*.js',
-                    'widgets/tests/stubmodule/**/*.js'
+                    'bower_components/**'
                 ]
             }
         },
         watch: {
             files: [
-                'modules/**/*.js',
-                'resources/**/*.js',
-                'widgets/**/*.js',
-                'modules/**/*.html',
-                'resources/**/*.html',
-                'widgets/**/*.html',
-                'modules/**/*.css',
-                'resources/**/*.css',
-                'widgets/**/*.css',
+                '**',
+                '!_SpecRunner.html',
                 '!**/node_modules/**',
-                '!**/stubmodule/**'
+                '!**/bower_components/**'
             ],
-            tasks: ['jasmine:app:build', 'jshint'],
+            tasks: ['jasmine:default:build', 'jshint'],
             options: {
                 livereload: true
             }
@@ -65,5 +56,5 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-connect');
 
     // Default task.
-    grunt.registerTask('default', ['jasmine:app:build', 'jshint', 'connect', 'watch']);
+    grunt.registerTask('default', ['jasmine:default:build', 'jshint', 'connect', 'watch']);
 };
