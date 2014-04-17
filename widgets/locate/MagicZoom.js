@@ -27,7 +27,7 @@ define([
     'esri/symbols/SimpleMarkerSymbol',
     'esri/geometry/Multipoint',
 
-    '../../resources/libs/spin',
+    'spin',
 
 
     'dojo/_base/sniff'

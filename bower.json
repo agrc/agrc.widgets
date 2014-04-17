@@ -19,7 +19,6 @@
     "tests"
   ],
   "devDependencies": {
-    "spinjs": "~2.0",
     "stubmodule": "~0.4",
     "dojo": "1.9.1",
     "dijit": "1.9.1",
