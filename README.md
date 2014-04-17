@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/agrc/agrc.widgets.svg?branch=master)](https://travis-ci.org/agrc/agrc.widgets)
 # AGRC Dojo Widgets
 ### Using Our Widgets
 You can use our widgets just like any other [Dojo widget](http://dojotoolkit.org/reference-guide/dijit/info.html#dijit-info). Just be sure to set your [packages loader config](http://dojotoolkit.org/documentation/tutorials/1.9/cdn/) property so that Dojo knows where to look. Since most of our widgets are built on [ESRI's ArcGIS API for JavaScript](https://developers.arcgis.com/en/javascript/index.html), you'll have to load their API as well. See below for an example:
