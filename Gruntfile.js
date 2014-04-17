@@ -13,7 +13,8 @@ module.exports = function(grunt) {
                     specs: [
                         'widgets/tests/spec/*.js',
                         'modules/tests/spec/*.js'
-                    ]
+                    ],
+                    host: 'http://localhost:8000'
                 }
             }
         },
