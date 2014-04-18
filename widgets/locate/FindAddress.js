@@ -283,7 +283,7 @@ define([
                     this.graphicsLayer.add(this._graphic);
                 }
 
-                this.done();
+                this._done();
 
                 topic.publish('agrc.widgets.locate.FindAddress.OnFind', [response.result]);
             } else {
