@@ -73,17 +73,6 @@ define([
         //      switch to prevent a new graphic from being cleared
         _addingGraphic: true,
 
-        // symbolFill: esri.symbol
-        //      esri.symbol zoom graphic symbol for polygons.
-        symbolFill: null,
-
-        // symbolLine: esri.symbol
-        //     esri.symbol zoom graphic symbol for polylines.
-        symbolLine: null,
-
-        // symbolPoint: esri.symbol
-        //      esri.symbol zoom graphic symbol for points.
-        symbolPoint: null,
 
         // _graphicsLayer: [private] esri.layers.GraphicsLayer
         //      esri.layers.GraphicsLayer to hold graphics.
@@ -155,6 +144,18 @@ define([
         //      A second field to display in the results table to
         //      give context to the results in case of duplicate results.
         contextField: null,
+
+        // symbolFill: esri.symbol (optional)
+        //      esri.symbol zoom graphic symbol for polygons.
+        symbolFill: null,
+
+        // symbolLine: esri.symbol (optional)
+        //     esri.symbol zoom graphic symbol for polylines.
+        symbolLine: null,
+
+        // symbolPoint: esri.symbol (optional)
+        //      esri.symbol zoom graphic symbol for points.
+        symbolPoint: null,
 
         postCreate: function() {
             // summary:
@@ -269,18 +270,28 @@ define([
                 this.map.on('load', afterMapLoaded);
             }
 
-            // set up new symbols
-            this.symbolFill = new SimpleFillSymbol(SimpleFillSymbol.STYLE_NULL,
-                new SimpleLineSymbol(SimpleLineSymbol.STYLE_DASHDOT,
-                    new Color([255, 255, 0]), 1.5), null);
+            // set up new symbols, if needed
+            if (!this.symbolFill) {
+                this.symbolFill = new SimpleFillSymbol(
+                    SimpleFillSymbol.STYLE_NULL,
+                    new SimpleLineSymbol(
+                        SimpleLineSymbol.STYLE_DASHDOT,
+                        new Color([255, 255, 0]),
+                        1.5),
+                    null);
+            }
 
-            this.symbolLine = new SimpleLineSymbol()
-                .setColor(new Color([255, 255, 0]))
-                .setWidth(5);
+            if (!this.symbolLine) {
+                this.symbolLine = new SimpleLineSymbol()
+                    .setColor(new Color([255, 255, 0]))
+                    .setWidth(5);
+            }
 
-            this.symbolPoint = new SimpleMarkerSymbol()
-                .setColor([255, 255, 0, 0.5])
-                .setSize(10);
+            if (!this.symbolPoint) {
+                this.symbolPoint = new SimpleMarkerSymbol()
+                    .setColor([255, 255, 0, 0.5])
+                    .setSize(10);
+            }
         },
         _wireEvents: function() {
             // summary:
