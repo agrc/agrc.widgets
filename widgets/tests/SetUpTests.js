@@ -1,5 +1,5 @@
 window.dojoConfig = {
-    baseUrl: '/',
+    baseUrl: './',
     packages: [
         {
             name: 'agrc',
