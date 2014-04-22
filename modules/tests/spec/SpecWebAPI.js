@@ -14,7 +14,7 @@ require([
 ) {
     describe('modules/WebAPI', function() {
         var testObject;
-        var apiKey = 'AGRC-A94B063C533889';
+        var apiKey = 'someKey';
 
         afterEach(function() {
             if (testObject) {

@@ -72,6 +72,8 @@ define([
                 query: options,
                 handleAs: 'json',
                 headers: {
+                    // remove the pre-flight request which breaks the request
+                    // ref: http://www.sitepen.com/blog/2014/01/15/faq-cors-with-dojo/
                     'X-Requested-With': null
                 }
             };
