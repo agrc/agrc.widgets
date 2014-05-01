@@ -160,8 +160,6 @@ define([
             // summary:
             //      description
             console.log('agrc.widgets.locate.TrsSeearch::constructor', arguments);
-
-            this.inherited(arguments);
         },
         postCreate: function() {
             // summary:
