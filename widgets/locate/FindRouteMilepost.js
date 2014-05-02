@@ -6,10 +6,12 @@ define([
         'dojo/_base/Color',
 
         'dojo/dom-style',
+        'dojo/dom-class',
 
         'dojo/string',
         'dojo/io/script',
         'dojo/when',
+        'dojo/query',
 
         'dijit/_WidgetBase',
         'dijit/_TemplatedMixin',
@@ -30,10 +32,12 @@ define([
         Color,
 
         domStyle,
+        domClass,
 
         string,
         dojoScript,
         when,
+        query,
 
         _WidgetBase,
         _TemplatedMixin,
@@ -80,6 +84,10 @@ define([
             //      Register for your api key at developer.mapserv.utah.gov
             apiKey: null,
 
+            // inline: Boolean (optional)
+            //      Controls if the form is inline or normal (default) layout
+            inline: null,
+
             constructor: function() {
                 console.log('agrc.widgets.locate.FindRouteMilepost::constructor', arguments);
             },
@@ -106,6 +114,12 @@ define([
                 console.log('agrc.widgets.locate.FindRouteMilepost::postCreate', arguments);
 
                 this.wireEvents();
+
+                this.form.onsubmit = function () { return false; };
+
+                if (this.inline) {
+                    domClass.add(this.form, 'form-inline');
+                }
             },
             wireEvents: function() {
                 // summary:
@@ -133,22 +147,21 @@ define([
                 // returns: Boolean
                 console.log('agrc.widgets.locate.FindRouteMilepost::_validate', arguments);
 
-                function validate(textBox, invalidSpan) {
+                // hide error messages
+                query('.form-group', this.domNode).removeClass('has-error');
+
+                function validate(textBox) {
                     if (lang.trim(textBox.value) === '') {
-                        domStyle.set(invalidSpan, 'display', 'inline');
+                        domClass.add(textBox.parentElement, 'has-error');
                         return false;
                     } else {
-                        domStyle.set(invalidSpan, 'display', 'none');
                         return true;
                     }
                 }
 
-                // hide error message
-                domStyle.set(this.errorMsg, 'display', 'none');
-
-                if (!validate(this.routeTxt, this.routeInvalid)) {
+                if (!validate(this.routeTxt)) {
                     return false;
-                } else if (!validate(this.milepostTxt, this.milepostInvalid)) {
+                } else if (!validate(this.milepostTxt)) {
                     return false;
                 } else {
                     return true;
@@ -221,7 +234,7 @@ define([
                 //      description
                 console.log('agrc.widgets.locate.FindRouteMilepost::_onXHRFailure', arguments);
 
-                domStyle.set(this.errorMsg, 'display', 'inline');
+                domClass.add(this.errorMsg.parentElement, 'has-error');
             },
             onFind: function( /*result*/ ) {
                 // summary:

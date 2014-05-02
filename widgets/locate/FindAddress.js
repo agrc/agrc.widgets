@@ -92,6 +92,10 @@ define([
         zoomLevel: 12,
         apiKey: null,
 
+        // inline: Boolean (optional)
+        //      Controls if form is inline or normal (default) layout
+        inline: null,
+
         constructor: function() {
             // summary:
             //      first function to fire after page loads
@@ -128,6 +132,10 @@ define([
             this.formGeocode.onsubmit = function() {
                 return false;
             };
+
+            if (this.inline) {
+                domClass.add(this.formGeocode, 'form-inline');
+            }
 
             on(this.btnGeocode, 'click', lang.hitch(this, 'geocodeAddress'));
         },
