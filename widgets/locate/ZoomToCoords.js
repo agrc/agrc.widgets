@@ -188,7 +188,7 @@ define([
             );
 
             this.watch('valid', lang.hitch(this, '_enableZoom'));
-            aspect.after(this, '_updateView', lang.hitch(this, '_validate'));
+            // aspect.after(this, '_updateView', lang.hitch(this, '_validate'));
         },
         _updateView: function(evt) {
             // summary:
