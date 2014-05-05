@@ -2,7 +2,7 @@
 	display: none;
 }
 .find-address .has-error .help-block {
-    display: block;
+    display: inline;
 }
 .find-address .has-error [data-dojo-attach-point='errorMsg'] {
     display: inline-block;

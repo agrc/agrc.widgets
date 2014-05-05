@@ -1,4 +1,9 @@
-.find-route-milepost .hidden {
+.find-route-milepost .help-block {
     display: none;
-    color: red;
+}
+.find-route-milepost .has-error .help-block {
+    display: inline;
+}
+.find-route-milepost .has-error [data-dojo-attach-point='errorMsg'] {
+    display: inline-block;
 }
