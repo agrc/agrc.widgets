@@ -15,7 +15,7 @@ define([
         //      A convenience class for using [AGRC's web api](http://api.mapserv.utah.gov).
 
         // baseUrl: String
-        baseUrl: 'http://api.mapserv.utah.gov/api/v1/',
+        baseUrl: '//api.mapserv.utah.gov/api/v1/',
 
 
         // Properties to be sent into constructor

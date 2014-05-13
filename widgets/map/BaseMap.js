@@ -191,7 +191,7 @@ define([
             }
 
             // replace default link on logo
-            esriConfig.defaults.map.logoLink = 'http://gis.utah.gov/';
+            esriConfig.defaults.map.logoLink = '//gis.utah.gov/';
 
             // not sure if this is needed?
             domClass.add(mapDiv, 'mapContainer');
@@ -290,7 +290,7 @@ define([
             console.log('agrc.widgets.map.BaseMap::addAGRCBaseMap', arguments);
 
             // build basemap url
-            var url = 'http://mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/' + cacheName + '/MapServer';
+            var url = '//mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/' + cacheName + '/MapServer';
             var lyr = new ArcGISTiledMapServiceLayer(url, {
                 id: cacheName
             });
