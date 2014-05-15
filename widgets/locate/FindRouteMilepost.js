@@ -174,7 +174,7 @@ define([
                 console.log('agrc.widgets.locate.FindRouteMilepost::_invokeWebService', arguments);
                 var that = this;
 
-                var url = 'http://api.mapserv.utah.gov/api/v1/geocode/milepost/${route}/${milepost}?apiKey=${key}';
+                var url = '//api.mapserv.utah.gov/api/v1/geocode/milepost/${route}/${milepost}?apiKey=${key}';
                 var params = {
                     url: string.substitute(url, {
                         milepost: this.milepostTxt.value,

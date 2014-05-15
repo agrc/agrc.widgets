@@ -66,7 +66,7 @@ function (
 
                 var lyrId = map.layerIds[0];
                 var lyr = map.getLayer(lyrId);
-                expect(lyr.url).toEqual('http://mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Vector/MapServer');
+                expect(lyr.url).toEqual('//mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Vector/MapServer');
             });
         });
 

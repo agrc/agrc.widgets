@@ -8,8 +8,8 @@
     <meta name="keywords" content="agrc.widgets.map.BaseMap, esri.map, basemap, map, tests, test, javascript" />
 
     <!-- CSS -->
-    <link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.4/js/dojo/dijit/themes/claro/claro.css">
-    <link rel="stylesheet" href="http://serverapi.arcgisonline.com/jsapi/arcgis/3.4/js/esri/css/esri.css">
+    <link rel="stylesheet" href="//js.arcgis.com/3.9/js/dojo/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="//js.arcgis.com/3.9/js/esri/css/esri.css">
     <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
     <style type='text/css'>
         @import '../../resources/map/BaseMap.css';
@@ -21,40 +21,52 @@
     </style>
 
     <!-- JAVASCRIPT -->
-    <script type="text/javascript" src="http://serverapi.arcgisonline.com/jsapi/arcgis/3.4/"></script>
+    <script type="text/javascript" src="//js.arcgis.com/3.9"></script>
     <script type="text/javascript">
-        var projectUrl = location.pathname.replace(/\/[^\/]+$/, "") + '/';
+        var projectUrl = location.pathname.replace(/\/[^\/]+$/, '') + '/';
         var baseMap;
 
         require({
             packages: [{
                 name: 'agrc',
                 location: projectUrl + '../..'
+            },{
+                name: 'spin',
+                location: projectUrl + '../../bower_components/spinjs',
+                main: 'spin'
             }]
         },
         [
             'agrc/widgets/map/BaseMap',
 
+            'esri/layers/ArcGISDynamicMapServiceLayer',
+            'esri/geometry/Extent',
+            'esri/SpatialReference',
             'dojo/domReady!'
         ],
 
         function (
-            BaseMap
+            BaseMap,
+
+            ArcGISDynamicMapServiceLayer,
+            Extent,
+            SpatialReference
             ) {
             // take all defaults
             baseMap = new BaseMap('basemap-div');
 
             // add overlay layer
             var overlayBaseMap = new BaseMap('basemap-div-overlay');
-            var lyr = new esri.layers.ArcGISDynamicMapServiceLayer('http://mapserv.utah.gov/ArcGIS/rest/services/Broadband/ProviderCoverage/MapServer', {
+            var lyr = new ArcGISDynamicMapServiceLayer('http://mapserv.utah.gov/ArcGIS/rest/services/' +
+                'Broadband/ProviderCoverage/MapServer', {
                 opacity: 0.75
             });
             overlayBaseMap.addLayer(lyr);
             overlayBaseMap.addLoaderToLayer(lyr);
 
             // custom start extent and base map
-            var startExtent = new esri.geometry.Extent(430481, 4495027, 432392, 4497415,
-                new esri.SpatialReference({
+            var startExtent = new Extent(430481, 4495027, 432392, 4497415,
+                new SpatialReference({
                     wkid: 26912
                 }));
             var options = {
@@ -81,13 +93,13 @@
             loaderBaseMapAerials = new BaseMap('basemap-div-loader-aerials', {
                 'defaultBaseMap': 'Hybrid',
                 'useDefaultExtent': false,
-                'extent': new esri.geometry.Extent({
-                        "xmin": 435525.2820766177,
-                        "ymin": 4503112.014830209,
-                        "xmax": 450812.6877336324,
-                        "ymax": 4522221.271901477,
-                        "spatialReference": {
-                            "wkid": 26912
+                'extent': new Extent({
+                        'xmin': 435525.2820766177,
+                        'ymin': 4503112.014830209,
+                        'xmax': 450812.6877336324,
+                        'ymax': 4522221.271901477,
+                        'spatialReference': {
+                            'wkid': 26912
                         }
                 })
             });
