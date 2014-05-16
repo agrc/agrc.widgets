@@ -28,7 +28,6 @@
     "es3": true,
     "forin": true,
     "freeze": true,
-    "gcl": true,
     "immed": true,
     "indent": 4,
     "jquery": true,
@@ -41,7 +40,6 @@
     "noempty": true,
     "nonbsp": true,
     "quotmark": "single",
-    "trailing": true,
     "undef": true,
     "unused": true
 }
