@@ -6,11 +6,9 @@ define([
     'dojo/_base/lang',
     'dojo/_base/array',
 
-    'dojo/dom-style',
     'dojo/dom-class',
 
     'dojo/query',
-    'dojo/when',
     'dojo/topic',
     'dojo/on',
     'dojo/string',
@@ -31,11 +29,9 @@ define([
     lang,
     array,
 
-    style,
     domClass,
 
     query,
-    when,
     topic,
     on,
     dojoString,

@@ -5,7 +5,6 @@ define([
     'dojo/_base/lang',
     'dojo/_base/array',
 
-    'dojo/dom-style',
     'dojo/dom-construct',
     'dojo/dom-class',
     'dojo/dom-attr',
@@ -29,7 +28,6 @@ define([
     lang,
     array,
 
-    domStyle,
     domConstruct,
     domClass,
     domAttr,

@@ -15,7 +15,6 @@ define([
     'dijit/form/Button',
 
     'esri/config',
-    'esri/domUtils',
     'esri/geometry/Extent',
     'esri/layers/ArcGISTiledMapServiceLayer',
     'esri/map',
@@ -40,7 +39,6 @@ define([
     Button,
 
     esriConfig,
-    domUtils,
     Extent,
     ArcGISTiledMapServiceLayer,
     esriMap,

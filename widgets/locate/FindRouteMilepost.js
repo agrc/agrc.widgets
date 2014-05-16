@@ -5,7 +5,6 @@ define([
         'dojo/_base/lang',
         'dojo/_base/Color',
 
-        'dojo/dom-style',
         'dojo/dom-class',
 
         'dojo/string',
@@ -31,7 +30,6 @@ define([
         lang,
         Color,
 
-        domStyle,
         domClass,
 
         string,
