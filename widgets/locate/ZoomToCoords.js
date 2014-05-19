@@ -18,10 +18,7 @@ define([
     'dijit/_TemplatedMixin',
 
     'esri/tasks/GeometryService',
-    'esri/layers/GraphicsLayer',
     'esri/geometry/Point',
-    'esri/graphic',
-    'esri/symbols/SimpleMarkerSymbol',
     'esri/SpatialReference',
 
 
@@ -46,10 +43,7 @@ define([
     _TemplatedMixin,
 
     GeometryService,
-    GraphicsLayer,
     Point,
-    Graphic,
-    SimpleMarkerSymbol,
     SpatialReference
 ) {
     return declare([_WidgetBase, _TemplatedMixin], {
@@ -151,7 +145,7 @@ define([
             domAttr.set(this.zoomNode, 'disabled', true);
 
             // reset errors
-            domClass.remove(this.errorNode, ['alert','alert-danger','text-center']);
+            domClass.remove(this.errorNode, ['alert', 'alert-danger', 'text-center']);
             this.errorNode.innerHTML = '';
 
             var point = this._getPoint();
@@ -343,7 +337,7 @@ define([
             domClass.remove(this.zoomNode, 'disabled');
             domAttr.remove(this.zoomNode, 'disabled');
 
-            domClass.add(this.errorNode, ['alert','alert-danger','text-center']);
+            domClass.add(this.errorNode, ['alert', 'alert-danger', 'text-center']);
 
             this.errorNode.innerHTML = value;
         }

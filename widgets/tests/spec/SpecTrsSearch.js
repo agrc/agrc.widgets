@@ -1,5 +1,5 @@
 require([
-    'agrc/widgets/locate/TrsSearch',
+    'agrc/widgets/locate/TRSsearch',
 
     'dojo/_base/window',
 

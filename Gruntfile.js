@@ -1,4 +1,3 @@
-/* jshint camelcase:false */
 module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -20,9 +19,9 @@ module.exports = function(grunt) {
         },
         jshint: {
             files: [
+                'widgets/**/*.js',
                 'modules/**/*.js',
                 'resources/**/*.js',
-                'widgets/**/*.js',
                 'Gruntfile.js',
                 'agrc.profile.js'
             ],
@@ -40,19 +39,41 @@ module.exports = function(grunt) {
                 '!**/node_modules/**',
                 '!**/bower_components/**'
             ],
-            tasks: ['jasmine:default:build', 'jshint'],
+            tasks: [
+                'jasmine:default:build',
+                'jshint',
+                'amdcheck'
+            ],
             options: {
                 livereload: true
             }
         },
         connect: {
+            /* jshint -W106 */
             uses_defaults: {}
+            /* jshint +W106 */
         },
         bump: {
             options: {
-                files: ['package.json', 'bower.json'],
+                files: [
+                    'package.json',
+                    'bower.json'
+                ],
                 commitFiles: ['-a'],
                 push: false
+            }
+        },
+        amdcheck: {
+            dev: {
+                options: {
+                    removeUnusedDependencies: false
+                },
+                files: [{
+                    src: [
+                        'widgets/**/*.js',
+                        'modules/**/*.js'
+                    ]
+                }]
             }
         }
     });
@@ -63,9 +84,10 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-contrib-watch');
     grunt.loadNpmTasks('grunt-contrib-connect');
     grunt.loadNpmTasks('grunt-bump');
+    grunt.loadNpmTasks('grunt-amdcheck');
 
     // Default task.
-    grunt.registerTask('default', ['jasmine:default:build', 'jshint', 'connect', 'watch']);
+    grunt.registerTask('default', ['jshint', 'amdcheck', 'connect', 'watch', 'jasmine:default:build']);
 
     grunt.registerTask('travis', ['jshint', 'connect', 'jasmine:default']);
 };

@@ -5,7 +5,6 @@ define([
     'dojo/_base/lang',
     'dojo/_base/array',
 
-    'dojo/dom-style',
     'dojo/dom-construct',
     'dojo/dom-class',
     'dojo/dom-attr',
@@ -29,7 +28,6 @@ define([
     lang,
     array,
 
-    domStyle,
     domConstruct,
     domClass,
     domAttr,
@@ -191,14 +189,14 @@ define([
             this.connect(this.rangeNode, 'onchange', lang.hitch(this, '_onRangeChange'));
             this.connect(this.sectionNode, 'onchange', lang.hitch(this, '_onSectionChange'));
         },
-        _cacheTownships: function(townships) {
+        _cacheTownships: function(data) {
             // summary:
             //      creates the memory store of township items
             // townships: townships array
             console.log('agrc.widgets.locate.TrsSearch::_cacheTownships', arguments);
 
             this._townshipStore = new MemoryStore({
-                data: townships
+                data: data
             });
 
             return this._townshipStore;

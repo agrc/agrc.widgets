@@ -3,7 +3,8 @@
   "version": "2.2.2",
   "homepage": "https://github.com/agrc/agrc.widgets",
   "authors": [
-    "Scott Davis <stdavis@utah.gov>"
+    "Scott Davis <stdavis@utah.gov>",
+    "Steve Gourley <sgourley@utah.gov>"
   ],
   "description": "AGRC Widget Library",
   "main": "?",
