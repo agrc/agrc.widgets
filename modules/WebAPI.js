@@ -39,7 +39,7 @@ define([
             // featureClass: String
             //      Fully qualified feature class name eg: SGID10.Boundaries.Counties
             // returnValues: String[]
-            //      A comma separated string of attributes to return eg: NAME,FIPS. 
+            //      A list of attributes to return eg: ['NAME', 'FIPS']. 
             //      To include the geometry use the shape@ token or if you want the 
             //      envelope use the shape@envelope token.
             // options.predicate: String
