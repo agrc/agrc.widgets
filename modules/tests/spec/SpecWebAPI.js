@@ -102,6 +102,23 @@ require([
 
                 expect(requestSpy.calls.mostRecent().args[1].query.apiKey).toEqual(apiKey);
             });
+            it('sets a default for attributeStyle', function () {
+                // default
+                def = testObject2.search(name, rValues, {geometry: geo});
+
+                expect(requestSpy.calls.mostRecent().args[1].query.attributeStyle)
+                    .toEqual(testObject2.defaultAttributeStyle);
+
+                // explicit
+                var value = 'blah';
+                def = testObject2.search(name, rValues, {
+                    geometry: geo,
+                    attributeStyle: value
+                });
+
+                expect(requestSpy.calls.mostRecent().args[1].query.attributeStyle)
+                    .toEqual(value);
+            });
         });
     });
 });

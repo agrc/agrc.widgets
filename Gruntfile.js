@@ -87,7 +87,7 @@ module.exports = function(grunt) {
     grunt.loadNpmTasks('grunt-amdcheck');
 
     // Default task.
-    grunt.registerTask('default', ['jshint', 'amdcheck', 'connect', 'watch', 'jasmine:default:build']);
+    grunt.registerTask('default', ['jshint', 'amdcheck', 'connect', 'jasmine:default:build', 'watch']);
 
     grunt.registerTask('travis', ['jshint', 'connect', 'jasmine:default']);
 };
