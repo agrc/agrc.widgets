@@ -17,6 +17,9 @@ define([
         // baseUrl: String
         baseUrl: '//api.mapserv.utah.gov/api/v1/',
 
+        // defaultAttributeStyle: String
+        defaultAttributeStyle: 'identical',
+
 
         // Properties to be sent into constructor
 
@@ -55,8 +58,16 @@ define([
             // options.buffer: Number
             //      A distance in meters to buffer the input geometry. 
             //      2000 meters is the maximum buffer.
-            // pageSize: Number (not implemented)
-            // skip: Number (not implemented)
+            // options.pageSize: Number (not implemented)
+            // options.skip: Number (not implemented)
+            // options.attributeStyle: String (defaults to 'identical')
+            //      Controls the casing of the attributes that are returned. 
+            //      Options:
+            //
+            //      'identical': as is in data. 
+            //      'upper': upper cases all attribute names. 
+            //      'lower': lowercases all attribute names. 
+            //      'camel': camel cases all attribute names
             //
             // returns: Promise
             console.log('agrc/modules/WebAPI::search', arguments);
@@ -68,6 +79,9 @@ define([
                 options = {};
             }
             options.apiKey = this.apiKey;
+            if (!options.attributeStyle) {
+                options.attributeStyle = this.defaultAttributeStyle;
+            }
             var params = {
                 query: options,
                 handleAs: 'json',
