@@ -73,7 +73,7 @@ define([
             console.log('agrc/modules/WebAPI::search', arguments);
         
             var def = new Deferred();
-            var url = this.baseUrl + 'search/' + featureClass + '/' + returnValues.join(',');
+            var url = this.baseUrl + 'search/' + featureClass + '/' + encodeURIComponent(returnValues.join(','));
 
             if (!options) {
                 options = {};
