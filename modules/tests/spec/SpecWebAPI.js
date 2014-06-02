@@ -64,7 +64,7 @@ require([
                 var args = requestSpy.calls.mostRecent().args;
 
                 // url
-                expect(args[0]).toEqual(testObject2.baseUrl + 'search/' + name + '/one,two');
+                expect(args[0]).toEqual(testObject2.baseUrl + 'search/' + name + '/one%2Ctwo');
 
                 // data
                 expect(args[1].query.geometry).toEqual(geo);
@@ -118,6 +118,13 @@ require([
 
                 expect(requestSpy.calls.mostRecent().args[1].query.attributeStyle)
                     .toEqual(value);
+            });
+            it('encodes the url to take care of the "@" symbol', function () {
+                def = testObject2.search(name, ['shape@envelope'], {geometry: geo});
+                var args = requestSpy.calls.mostRecent().args;
+
+                // url
+                expect(args[0]).toEqual(testObject2.baseUrl + 'search/' + name + '/shape%40envelope');
             });
         });
     });
