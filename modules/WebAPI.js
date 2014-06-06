@@ -2,13 +2,17 @@ define([
     'dojo/_base/declare',
     'dojo/_base/lang',
     'dojo/request',
-    'dojo/Deferred'
+    'dojo/request/script',
+    'dojo/Deferred',
+    'dojo/sniff'
 
 ], function(
     declare,
     lang,
-    request,
-    Deferred
+    xhr,
+    script,
+    Deferred,
+    sniff
 ) {
     return declare(null, {
         // description:
@@ -19,6 +23,10 @@ define([
 
         // defaultAttributeStyle: String
         defaultAttributeStyle: 'identical',
+
+        // xhrProvider: dojo/request/* provider
+        //      The current provider as determined by the search function
+        xhrProvider: null,
 
 
         // Properties to be sent into constructor
@@ -89,10 +97,16 @@ define([
                     // remove the pre-flight request which breaks the request
                     // ref: http://www.sitepen.com/blog/2014/01/15/faq-cors-with-dojo/
                     'X-Requested-With': null
-                }
+                },
+                // required for JSONP requests and doesn't hurt CORS requests
+                jsonp: 'callback'
             };
 
-            request(url, params).then(function (response) {
+            if (!this.xhrProvider) {
+                this.xhrProvider = (sniff('ie') < 10) ? script : xhr;
+            }
+
+            this.xhrProvider(url, params).then(function (response) {
                 if (response.status === 200) {
                     def.resolve(response.result);
                 } else {
