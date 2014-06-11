@@ -44,15 +44,23 @@ require([
             var geo;
             var testObject2;
             var def;
+            var isIE;
+            var scriptSpy;
 
             beforeEach(function (done) {
+                isIE = 10;
                 xhrDef = new Deferred();
                 requestSpy = jasmine.createSpy('requestSpy').and.returnValue(xhrDef);
+                scriptSpy = jasmine.createSpy('scriptSpy').and.returnValue(xhrDef);
                 name = 'name';
                 rValues = ['one', 'two'];
                 geo = 'point:[x,y]';
                 stubmodule('agrc/modules/WebAPI', {
-                    'dojo/request': requestSpy
+                    'dojo/request': requestSpy,
+                    'dojo/request/script': scriptSpy,
+                    'dojo/sniff': function () {
+                        return isIE;
+                    }
                 }).then(function (StubbedModule) {
                     testObject2 = new StubbedModule({apiKey: apiKey});
 
@@ -125,6 +133,18 @@ require([
 
                 // url
                 expect(args[0]).toEqual(testObject2.baseUrl + 'search/' + name + '/shape%40envelope');
+            });
+            it('switches to jsonp for IE < 10', function () {
+                isIE = 9;
+                testObject2.search(name, rValues, {geometry: geo});
+
+                expect(requestSpy).not.toHaveBeenCalled();
+                expect(scriptSpy).toHaveBeenCalled();
+
+                var args = scriptSpy.calls.mostRecent().args;
+
+                expect(args[1].jsonp).toEqual('callback');
+
             });
         });
     });
