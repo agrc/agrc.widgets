@@ -3,16 +3,14 @@ define([
     'dojo/_base/lang',
     'dojo/request',
     'dojo/request/script',
-    'dojo/Deferred',
-    'dojo/sniff'
+    'dojo/Deferred'
 
 ], function(
     declare,
     lang,
     xhr,
     script,
-    Deferred,
-    sniff
+    Deferred
 ) {
     return declare(null, {
         // description:
@@ -103,7 +101,7 @@ define([
             };
 
             if (!this.xhrProvider) {
-                this.xhrProvider = (sniff('ie') < 10) ? script : xhr;
+                this.xhrProvider = (this.supportsCORS()) ? xhr : script;
             }
 
             this.xhrProvider(url, params).then(function (response) {
@@ -121,6 +119,14 @@ define([
             });
 
             return def.promise;
+        },
+        supportsCORS: function () {
+            // summary:
+            //      Tests for CORS support. Code is from Modernizer
+            // returns: Boolean
+            console.log('agrc/modules/WebAPI:supportsCORS', arguments);
+        
+            return 'XMLHttpRequest' in window && 'withCredentials' in new XMLHttpRequest();
         }
     });
 });
