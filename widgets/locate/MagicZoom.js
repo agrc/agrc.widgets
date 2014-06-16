@@ -73,11 +73,6 @@ define([
         //      switch to prevent a new graphic from being cleared
         _addingGraphic: true,
 
-
-        // _graphicsLayer: [private] esri.layers.GraphicsLayer
-        //      esri.layers.GraphicsLayer to hold graphics.
-        _graphicsLayer: null,
-
         // _isOverTable: Boolean
         //      A switch to help with onBlur callback on search box.
         _isOverTable: false,
@@ -156,6 +151,17 @@ define([
         // symbolPoint: esri.symbol (optional)
         //      esri.symbol zoom graphic symbol for points.
         symbolPoint: null,
+
+        // graphicsLayer: esri/layers/GraphicsLayer (optional)
+        //      If provided, this is the graphics layer that this widget will use.
+        //      The widget assumes that if you provide your own graphics layer then
+        //      it is already added to the map.
+        //      If not, then it will create it's own layer and add it to the map.
+        graphicsLayer: null,
+
+        // preserveGraphics: Boolean (optional)
+        //      Set to true if you want the graphics to persist after map navigation.
+        preserveGraphics: false,
 
         postCreate: function() {
             // summary:
@@ -248,19 +254,23 @@ define([
 
             var afterMapLoaded = lang.hitch(this,
                 function() {
-                    this._graphicsLayer = new GraphicsLayer();
-                    this.map.addLayer(this._graphicsLayer);
+                    if (!this.graphicsLayer) {
+                        this.graphicsLayer = new GraphicsLayer();
+                        this.map.addLayer(this.graphicsLayer);
+                    }
 
-                    // wire clear graphics event
-                    this.map.on('extent-change', lang.hitch(this,
-                        function() {
-                            if (this._addingGraphic === false) {
-                                this._graphicsLayer.clear();
+                    if (!this.preserveGraphics) {
+                        // wire clear graphics event
+                        this.map.on('extent-change', lang.hitch(this,
+                            function() {
+                                if (this._addingGraphic === false) {
+                                    this.graphicsLayer.clear();
+                                }
+
+                                this._addingGraphic = false;
                             }
-
-                            this._addingGraphic = false;
-                        }
-                    ));
+                        ));
+                    }
                 });
 
             // create new graphics layer and add to map
@@ -586,7 +596,7 @@ define([
             console.log('agrc.widgets.locate.MagicZoom::_setMatch', arguments);
 
             // clear any old graphics
-            this._graphicsLayer.clear();
+            this.graphicsLayer.clear();
 
             // clear table
             this._toggleTable(false);
@@ -674,7 +684,7 @@ define([
             }
             // add graphic
             graphic.setSymbol(sym);
-            this._graphicsLayer.add(graphic);
+            this.graphicsLayer.add(graphic);
 
             this.onZoomed(graphic);
         },
@@ -792,17 +802,17 @@ define([
             this.map.setExtent(extent, true);
 
             array.forEach(graphics, function(g) {
-                that._graphicsLayer.add(g);
+                that.graphicsLayer.add(g);
             });
-            console.log('this._graphicsLayer.graphics', this._graphicsLayer.graphics);
+            console.log('this.graphicsLayer.graphics', this.graphicsLayer.graphics);
         },
         destroyRecursive: function() {
             // summary:
             //     Overridden from dijit._Widget. Removes graphics layer from map.
             console.log('agrc.widgets.locate.MagicZoom::detroyRecursive', arguments);
 
-            if (this._graphicsLayer) {
-                this.map.removeLayer(this._graphicsLayer);
+            if (this.graphicsLayer) {
+                this.map.removeLayer(this.graphicsLayer);
             }
 
             this.inherited(arguments);
