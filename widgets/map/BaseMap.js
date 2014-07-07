@@ -20,7 +20,7 @@ define([
     'esri/map',
     'esri/toolbars/navigation',
 
-    'spin'
+    '../../resources/libs/spin'
 
 ], function(
     array,
