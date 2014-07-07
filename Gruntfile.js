@@ -28,7 +28,8 @@ module.exports = function(grunt) {
             options: {
                 jshintrc: '.jshintrc',
                 ignores: [
-                    'bower_components/**'
+                    'bower_components/**',
+                    'resources/libs/**'
                 ]
             }
         },
@@ -59,8 +60,8 @@ module.exports = function(grunt) {
                     'package.json',
                     'bower.json'
                 ],
-                commitFiles: ['-a'],
-                push: false
+                commit: true,
+                pushTo: 'origin'
             }
         },
         amdcheck: {
