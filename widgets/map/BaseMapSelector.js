@@ -181,7 +181,7 @@ define([
             //      private
             console.info('agrc.widgets.map.BaseMapSelector::initDefaultThemes', arguments);
 
-            this.mapLabel.set('value', this.currentTheme.label);
+            this.mapLabel.set('value', this.currentTheme.label + ' ▼');
 
             domClass.add(this.mapIcon, this.currentTheme.label);
         },
