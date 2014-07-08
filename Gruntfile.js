@@ -1,4 +1,9 @@
 module.exports = function(grunt) {
+    var bumpFiles = [
+        'package.json',
+        'bower.json'
+    ];
+
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         jasmine: {
@@ -56,11 +61,8 @@ module.exports = function(grunt) {
         },
         bump: {
             options: {
-                files: [
-                    'package.json',
-                    'bower.json'
-                ],
-                commit: true,
+                files: bumpFiles,
+                commitFiles: bumpFiles,
                 pushTo: 'origin'
             }
         },
