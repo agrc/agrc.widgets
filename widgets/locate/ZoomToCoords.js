@@ -153,6 +153,12 @@ define([
             if (point.spatialReference.wkid === this.map.spatialReference.wkid) {
                 this.map.centerAndZoom(point, this.zoomLevel);
 
+                this.emit('zoom', {
+                    bubbles: true,
+                    cancelable: true,
+                    point: point
+                });
+
                 // enable zoom button
                 domClass.remove(this.zoomNode, 'disabled');
                 domAttr.remove(this.zoomNode, 'disabled');
@@ -328,6 +334,12 @@ define([
             }
 
             this.map.centerAndZoom(point, this.zoomLevel);
+
+            this.emit('zoom', {
+                bubbles: true,
+                cancelable: true,
+                point: point
+            });
         },
         _displayError: function(value) {
             // summary:
