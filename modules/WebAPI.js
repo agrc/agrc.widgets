@@ -39,7 +39,7 @@ define([
             //      description
             // params: {}
             console.log('agrc/modules/WebAPI::constructor', arguments);
-        
+
             lang.mixin(this, params);
         },
         search: function (featureClass, returnValues, options) {
@@ -48,36 +48,36 @@ define([
             // featureClass: String
             //      Fully qualified feature class name eg: SGID10.Boundaries.Counties
             // returnValues: String[]
-            //      A list of attributes to return eg: ['NAME', 'FIPS']. 
-            //      To include the geometry use the shape@ token or if you want the 
+            //      A list of attributes to return eg: ['NAME', 'FIPS'].
+            //      To include the geometry use the shape@ token or if you want the
             //      envelope use the shape@envelope token.
             // options.predicate: String
-            //      Search criteria for finding specific features in featureClass. 
-            //      Any valid ArcObjects where clause will work. If omitted, a TSQL * 
+            //      Search criteria for finding specific features in featureClass.
+            //      Any valid ArcObjects where clause will work. If omitted, a TSQL *
             //      will be used instead. eg: NAME LIKE 'K%'
             // options.geometry: String (not fully implemented)
-            //      The point geometry used for spatial queries. Points are denoted as 
+            //      The point geometry used for spatial queries. Points are denoted as
             //      'point:[x,y]'.
             // options.spatialReference: String (not implemented)
             // options.tolerance: Number (not implemented)
             // options.spatialRelation: String (default: 'intersect') (not fully implemented)
             // options.buffer: Number
-            //      A distance in meters to buffer the input geometry. 
+            //      A distance in meters to buffer the input geometry.
             //      2000 meters is the maximum buffer.
             // options.pageSize: Number (not implemented)
             // options.skip: Number (not implemented)
             // options.attributeStyle: String (defaults to 'identical')
-            //      Controls the casing of the attributes that are returned. 
+            //      Controls the casing of the attributes that are returned.
             //      Options:
             //
-            //      'identical': as is in data. 
-            //      'upper': upper cases all attribute names. 
-            //      'lower': lowercases all attribute names. 
+            //      'identical': as is in data.
+            //      'upper': upper cases all attribute names.
+            //      'lower': lowercases all attribute names.
             //      'camel': camel cases all attribute names
             //
             // returns: Promise
             console.log('agrc/modules/WebAPI::search', arguments);
-        
+
             var def = new Deferred();
             var url = this.baseUrl + 'search/' + featureClass + '/' + encodeURIComponent(returnValues.join(','));
 
@@ -88,6 +88,41 @@ define([
             if (!options.attributeStyle) {
                 options.attributeStyle = this.defaultAttributeStyle;
             }
+
+            this._buildRequest(url, options, def, 'Error with search request');
+
+            return def.promise;
+        },
+        reverseGeocode: function (x, y, options) {
+            // summary:
+            //      reverse geocode service wrapper (http://api.mapserv.utah.gov/#geocoding)
+            // x: Number
+            //      An x coordinate.
+            // y: Number
+            //      A y coordinate.
+            // options.spatialReference: Number
+            //      The spatial reference of the input geographic coordinate pair.
+            //      Defaults to 26912.
+            // options.distance: Number
+            //      Sets the distance in meters from the geographic coordinate to find a street address.
+            //      Default is 5 meters.
+            // options.callback: String (not fully implemented)
+            //      The callback function to call for cross domain javascript calls (jsonp).
+            console.log('agrc/modules/WebAPI::reverseGeocode', arguments);
+
+            var def = new Deferred();
+            var url = this.baseUrl + 'geocode/reverse/' + x + '/' + y;
+
+            this._buildRequest(url, options, def, 'Error with geocode request');
+
+            return def.promise;
+        },
+        _buildRequest: function (url, options, def, rejectMessage) {
+            // summary:
+            //      description
+            // params
+            console.log('agrc/modules/WebAPI::_buildRequest', arguments);
+
             var params = {
                 query: options,
                 handleAs: 'json',
@@ -114,18 +149,16 @@ define([
                 if (err.message) {
                     def.reject(err.message);
                 } else {
-                    def.reject('Error with search request');
+                    def.reject(rejectMessage);
                 }
             });
-
-            return def.promise;
         },
         supportsCORS: function () {
             // summary:
             //      Tests for CORS support. Code is from Modernizer
             // returns: Boolean
             console.log('agrc/modules/WebAPI:supportsCORS', arguments);
-        
+
             return 'XMLHttpRequest' in window && 'withCredentials' in new XMLHttpRequest();
         }
     });
