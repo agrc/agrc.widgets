@@ -113,6 +113,11 @@ define([
             var def = new Deferred();
             var url = this.baseUrl + 'geocode/reverse/' + x + '/' + y;
 
+            if (!options) {
+                options = {};
+            }
+            options.apiKey = this.apiKey;
+
             this._buildRequest(url, options, def, 'Error with geocode request');
 
             return def.promise;
