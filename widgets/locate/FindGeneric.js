@@ -112,7 +112,8 @@ define([
 
         // _searchUrlTemplate: [private] String
         //      the template url to the agrc map service that the validation text box points at;
-        _searchUrlTemplate: '//mapserv.utah.gov/WSUT/GetFeatureAttributes.svc/find-generic-widget/layer' +
+        _searchUrlTemplate: window.location.protocol +
+            '//mapserv.utah.gov/WSUT/GetFeatureAttributes.svc/find-generic-widget/layer' +
             '({layerName})returnAttributes({searchFieldName})where({searchFieldName})(=)( )?dojo',
 
         // _envelopeUrl: [private] String
@@ -121,7 +122,8 @@ define([
 
         // _envelopeUrlTemplate: [private] String
         //      The template url to the agrc map service that returns the feature envelope.
-        _envelopeUrlTemplate: '//mapserv.utah.gov/WSUT/FeatureGeometry.svc/GetEnvelope/find-generic-widget/layer' +
+        _envelopeUrlTemplate: window.location.protocol +
+            '//mapserv.utah.gov/WSUT/FeatureGeometry.svc/GetEnvelope/find-generic-widget/layer' +
             '({layerName})where({searchFieldName})(=)([searchValue])quotes=true',
 
         // _store: dojo.data.Store

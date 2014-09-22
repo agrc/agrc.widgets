@@ -288,7 +288,8 @@ define([
             console.log('agrc.widgets.map.BaseMap::addAGRCBaseMap', arguments);
 
             // build basemap url
-            var url = '//mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/' + cacheName + '/MapServer';
+            var url = window.location.protocol +
+                '//mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/' + cacheName + '/MapServer';
             var lyr = new ArcGISTiledMapServiceLayer(url, {
                 id: cacheName
             });
