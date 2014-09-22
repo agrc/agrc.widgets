@@ -66,10 +66,10 @@
             var map = new MapDependency('basemap-div', options);
             var map2 = new MapDependency('basemap-div2', options);
 
-            var bbLayer = new LayerDependency('//mapserv.utah.gov/ArcGIS/rest/services/PoliticalDistricts/MapServer', {
+            var bbLayer = new LayerDependency(window.location.protocol + '//mapserv.utah.gov/ArcGIS/rest/services/PoliticalDistricts/MapServer', {
                 opacity: 0.50
             });
-            var hLayer = new TileDependency('//mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Hillshade/MapServer');
+            var hLayer = new TileDependency(window.location.protocol + '//mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Hillshade/MapServer');
 
             //TR, BR, TL, BL
             var selector = new Module({

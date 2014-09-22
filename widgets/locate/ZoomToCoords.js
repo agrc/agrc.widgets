@@ -80,7 +80,8 @@ define([
         // summary:
         //      holds urls that are important to this class
         urls: {
-            geometryService: '//mapserv.utah.gov/arcgis/rest/services/Geometry/GeometryServer'
+            geometryService: window.location.protocol +
+                '//mapserv.utah.gov/arcgis/rest/services/Geometry/GeometryServer'
         },
 
         // Properties to be sent into constructor
