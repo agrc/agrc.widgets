@@ -1,3 +1,4 @@
+/* jshint camelcase:false */
 module.exports = function(grunt) {
     var bumpFiles = [
         'package.json',
@@ -7,7 +8,7 @@ module.exports = function(grunt) {
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
         jasmine: {
-            'default': {
+            main: {
                 src: [],
                 options: {
                     vendor: [
@@ -43,21 +44,20 @@ module.exports = function(grunt) {
                 '**',
                 '!_SpecRunner.html',
                 '!**/node_modules/**',
-                '!**/bower_components/**'
+                '!**/bower_components/**',
+                '!**/vendor/**'
             ],
             tasks: [
                 'jasmine:default:build',
-                'jshint',
-                'amdcheck'
+                'amdcheck',
+                'jshint'
             ],
             options: {
                 livereload: true
             }
         },
         connect: {
-            /* jshint -W106 */
             uses_defaults: {}
-            /* jshint +W106 */
         },
         bump: {
             options: {
@@ -78,19 +78,44 @@ module.exports = function(grunt) {
                     ]
                 }]
             }
+        },
+        esri_slurp: {
+            options: {
+                version: '3.10'
+            },
+            dev: {
+                options: {
+                    beautify: true
+                },
+                dest: 'vendor/esri'
+            },
+            travis: {
+                dest: 'vendor/esri'
+            }
         }
     });
 
     // Register tasks.
-    grunt.loadNpmTasks('grunt-contrib-jasmine');
-    grunt.loadNpmTasks('grunt-contrib-jshint');
-    grunt.loadNpmTasks('grunt-contrib-watch');
-    grunt.loadNpmTasks('grunt-contrib-connect');
-    grunt.loadNpmTasks('grunt-bump');
-    grunt.loadNpmTasks('grunt-amdcheck');
+    for (var key in grunt.file.readJSON('package.json').devDependencies) {
+        if (key !== 'grunt' && key.indexOf('grunt') === 0) {
+            grunt.loadNpmTasks(key);
+        }
+    }
 
     // Default task.
-    grunt.registerTask('default', ['jshint', 'amdcheck', 'connect', 'jasmine:default:build', 'watch']);
+    grunt.registerTask('default', [
+        'if-missing:esri_slurp:dev',
+        'amdcheck',
+        'jshint',
+        'connect',
+        'jasmine:main:build',
+        'watch'
+    ]);
 
-    grunt.registerTask('travis', ['jshint', 'connect', 'jasmine:default']);
+    grunt.registerTask('travis', [
+        'esri_slurp:travis',
+        'jshint',
+        'connect',
+        'jasmine:main'
+    ]);
 };
