@@ -13,7 +13,8 @@ module.exports = function(grunt) {
                 options: {
                     vendor: [
                         'widgets/tests/SetUpTests.js',
-                        'bower_components/dojo/dojo.js'
+                        'bower_components/dojo/dojo.js',
+                        'widgets/tests/jasmineAMDErrorChecking.js'
                     ],
                     specs: [
                         'widgets/tests/spec/*.js',
