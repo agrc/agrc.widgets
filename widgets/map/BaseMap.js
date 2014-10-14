@@ -7,6 +7,8 @@ define([
     'dojo/dom-construct',
     'dojo/dom-geometry',
     'dojo/dom-style',
+    'dojo/hash',
+    'dojo/io-query',
 
     'dojo/aspect',
     'dojo/dom',
@@ -16,6 +18,7 @@ define([
 
     'esri/config',
     'esri/geometry/Extent',
+    'esri/geometry/Point',
     'esri/layers/ArcGISTiledMapServiceLayer',
     'esri/map',
     'esri/toolbars/navigation',
@@ -31,6 +34,8 @@ define([
     domConstruct,
     domGeometry,
     domStyle,
+    hash,
+    ioQuery,
 
     aspect,
     dom,
@@ -40,6 +45,7 @@ define([
 
     esriConfig,
     Extent,
+    Point,
     ArcGISTiledMapServiceLayer,
     esriMap,
     Navigation,
@@ -128,25 +134,33 @@ define([
 
         // useDefaultBaseMap: Boolean
         //      If true, the map will automatically load the Vector map service
+        //      Default: true
         useDefaultBaseMap: true,
 
         // defaultBaseMap: String
         //      The name of the AGRC base map cache that you want to add. (ie. Vector)
+        //      Default: 'Vector'
         defaultBaseMap: 'Vector',
 
         // useDefaultExtent: Boolean
         //      If true, the map will automatically zoom to the state of Utah extent.
+        //      Default: 'Vector'
         useDefaultExtent: true,
 
         // includeFullExtentButton: Boolean
         //      Controls the visibility of the full extent button below the zoom slider.
-        //      Defaults to false.
+        //      Default: false.
         includeFullExtentButton: false,
 
         // includeBackButton: Boolean
         //      Controls the visibility of the back button below the zoom slider.
-        //      Defaults to false.
+        //      Default: false.
         includeBackButton: false,
+
+        // router: Boolean
+        //      Toggles functionality to persist the map extent in the url.
+        //      Default: false
+        router: false,
 
         constructor: function(mapDiv, options) {
             // summary:
@@ -160,6 +174,10 @@ define([
 
             if (!options) {
                 options = {};
+            }
+
+            if (options.router) {
+                this.initRouter();
             }
 
             this._defaultExtent = new Extent({
@@ -380,6 +398,34 @@ define([
             console.log('agrc.widgets.map.BaseMap::onBackButtonClicked', arguments);
 
             this.navBar.zoomToPrevExtent();
+        },
+        initRouter: function () {
+            // summary:
+            //      sets up the url router for persisting the map extent
+            console.log('agrc.widgets.map.BaseMap::initRouter', arguments);
+
+            var urlObj = ioQuery.queryToObject(hash());
+            if (urlObj.x && urlObj.y && urlObj.scale) {
+                this.setScale(urlObj.scale);
+                this.centerAt(new Point(urlObj.x, urlObj.y, this.spatialReference));
+            }
+
+            this.on('extent-change', lang.hitch(this, 'updateExtentHash'));
+        },
+        updateExtentHash: function () {
+            // summary:
+            //      sets the extent props in the url hash
+            console.log('agrc.widgets.map.BaseMap::updateExtentHash', arguments);
+        
+            var center = this.extent.getCenter();
+            // mixin any existing url props to allow for other routers
+            var newProps = lang.mixin(ioQuery.queryToObject(hash()), {
+                x: Math.round(center.x),
+                y: Math.round(center.y),
+                scale: Math.round(this.getScale())
+            });
+
+            return hash(ioQuery.objectToQuery(newProps), true);
         }
     });
 });

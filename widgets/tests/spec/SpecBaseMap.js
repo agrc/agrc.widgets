@@ -3,6 +3,7 @@ require([
     'dojo/_base/window',
     'dojo/dom-construct',
     'dojo/aspect',
+    'dojo/hash',
 
     'dijit/registry',
 
@@ -16,6 +17,7 @@ function (
     win,
     domConstruct,
     aspect,
+    hash,
 
     dijitRegistry,
 
@@ -116,6 +118,53 @@ function (
                         });
                     });
                 });
+            });
+        });
+        describe('router', function () {
+            var x = 1.3;
+            var y = 2;
+            var scale = 3.3;
+            var expectedHash = 'x=1&y=' + y + '&scale=3';
+
+            beforeEach(function () {
+                map = new BaseMap(testDiv, {router: true});
+
+                spyOn(map.extent, 'getCenter').and.returnValue({x: x, y: y});
+                spyOn(map, 'getScale').and.returnValue(scale);
+            });
+            afterEach(function () {
+                hash('');
+            });
+            it('sets the correct hash', function () {
+                expect(map.updateExtentHash()).toEqual(expectedHash);
+            });
+            it('doesn\'t overwrite any existing hashes', function () {
+                hash('test=param', true);
+
+                expect(map.updateExtentHash()).toEqual('test=param&' + expectedHash);
+            });
+            it('doesn\'t duplicate routes', function () {
+                expect(map.updateExtentHash()).toEqual(expectedHash);
+                expect(map.updateExtentHash()).toEqual(expectedHash);
+
+                hash('test=param', true);
+
+                expect(map.updateExtentHash()).toEqual('test=param&' + expectedHash);
+                expect(map.updateExtentHash()).toEqual('test=param&' + expectedHash);
+            });
+            it('updates the extent on init if it exists', function () {
+                hash(expectedHash);
+
+                spyOn(map, 'centerAt');
+                spyOn(map, 'setScale');
+
+                map.initRouter();
+
+                expect(map.centerAt).toHaveBeenCalledWith(jasmine.objectContaining({
+                    x: '1',
+                    y: '2'
+                }));
+                expect(map.setScale).toHaveBeenCalledWith('3');
             });
         });
     });
