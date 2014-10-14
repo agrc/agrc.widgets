@@ -18,6 +18,9 @@
             width: 400px;
             height: 500px;
         }
+        body {
+            padding: 50px;
+        }
     </style>
 
     <!-- JAVASCRIPT -->
@@ -74,23 +77,23 @@
                 'defaultBaseMap': 'Terrain',
                 'extent': startExtent
             };
-            var extentBaseMap = new BaseMap('basemap-div-extent', options);
+            window.extentBaseMap = new BaseMap('basemap-div-extent', options);
 
-            var fullExtentBaseMap = new BaseMap('basemap-div-full-extent', {
+            window.fullExtentBaseMap = new BaseMap('basemap-div-full-extent', {
                 includeFullExtentButton: true,
                 sliderStyle: 'large'
             });
 
-            var backButtonBaseMap = new BaseMap('basemap-div-back', {
+            window.backButtonBaseMap = new BaseMap('basemap-div-back', {
                 includeFullExtentButton: true,
                 includeBackButton: true,
                 sliderStyle: 'large'
             });
 
-            var loaderBaseMap = new BaseMap('basemap-div-loader');
-            loaderBaseMap.showLoader();
+            window.loaderBaseMap = new BaseMap('basemap-div-loader');
+            window.loaderBaseMap.showLoader();
 
-            loaderBaseMapAerials = new BaseMap('basemap-div-loader-aerials', {
+            window.loaderBaseMapAerials = new BaseMap('basemap-div-loader-aerials', {
                 'defaultBaseMap': 'Hybrid',
                 'useDefaultExtent': false,
                 'extent': new Extent({
@@ -103,7 +106,9 @@
                         }
                 })
             });
-            loaderBaseMapAerials.showLoader();
+            window.loaderBaseMapAerials.showLoader();
+
+            window.router = new BaseMap('basemap-div-router', {router: true});
         });
     </script>
 </head>
@@ -131,6 +136,8 @@
     <br>
     Loader on Aerials
     <div id="basemap-div-loader-aerials" class="claro basemap"></div>
-    <div style='height: 200px'></div>
+    <br>
+    Router to persist extent via URL
+    <div id="basemap-div-router" class='basemap'></div>
 </body>
 </html>

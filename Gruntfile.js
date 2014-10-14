@@ -49,7 +49,7 @@ module.exports = function(grunt) {
                 '!**/vendor/**'
             ],
             tasks: [
-                'jasmine:default:build',
+                'jasmine:main:build',
                 'amdcheck',
                 'jshint'
             ],
@@ -82,7 +82,7 @@ module.exports = function(grunt) {
         },
         esri_slurp: {
             options: {
-                version: '3.10'
+                version: '3.11'
             },
             dev: {
                 options: {
