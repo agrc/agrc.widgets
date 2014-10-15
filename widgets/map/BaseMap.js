@@ -181,10 +181,10 @@ define([
             }
 
             this._defaultExtent = new Extent({
-                xmax: 696328.4225855614,
-                xmin: 207131.4415605635,
-                ymax: 4679605.113140624,
-                ymin: 4068108.8868593764,
+                xmax: 696328,
+                xmin: 207131,
+                ymax: 4785283,
+                ymin: 3962431,
                 spatialReference: {
                     wkid: 26912
                 }
