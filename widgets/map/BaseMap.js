@@ -405,20 +405,22 @@ define([
             console.log('agrc.widgets.map.BaseMap::initRouter', arguments);
 
             var that = this;
-            this.on('load', function () {
-                that.on('extent-change', lang.hitch(that, 'updateExtentHash'));
-            });
-
             var urlObj = ioQuery.queryToObject(hash());
-            var options = {};
-            if (urlObj.x && urlObj.y && urlObj.scale) {
-                options.scale = parseInt(urlObj.scale, 10);
-                options.center = new Point({
+            var options = {
+                scale: parseInt(urlObj.scale, 10),
+                center: new Point({
                     x: parseInt(urlObj.x, 10),
                     y: parseInt(urlObj.y, 10),
                     spatialReference: {wkid: 26912}
-                });
-            }
+                })
+            };
+            this.on('load', function () {
+                if (urlObj.x && urlObj.y && urlObj.scale) {
+                    that.setScale(options.scale);
+                    that.centerAt(options.center);
+                }
+                that.on('extent-change', lang.hitch(that, 'updateExtentHash'));
+            });
 
             return options;
         },

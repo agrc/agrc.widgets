@@ -43,6 +43,7 @@
         },
         [
             'agrc/widgets/map/BaseMap',
+            'agrc/widgets/map/BaseMapSelector',
 
             'esri/layers/ArcGISDynamicMapServiceLayer',
             'esri/geometry/Extent',
@@ -52,6 +53,7 @@
 
         function (
             BaseMap,
+            BaseMapSelector,
 
             ArcGISDynamicMapServiceLayer,
             Extent,
@@ -111,6 +113,18 @@
             window.loaderBaseMapAerials.showLoader();
 
             window.router = new BaseMap('basemap-div-router', {router: true});
+
+            window.routerWithSelector = new BaseMap('basemap-div-router2', {
+                router: true,
+                useDefaultBaseMap: false,
+                showAttribution: false
+            });
+            var bms = new BaseMapSelector({
+                map: window.routerWithSelector,
+                id: 'claro',
+                position: 'TR'
+            });
+            bms.startup();
         });
     </script>
 </head>
@@ -141,5 +155,8 @@
     <br>
     Router to persist extent via URL
     <div id="basemap-div-router" class='basemap'></div>
+    <br>
+    Router with base map selector
+    <div id="basemap-div-router2" class='basemap'></div>
 </body>
 </html>
