@@ -177,20 +177,20 @@ define([
             }
 
             if (options.router) {
-                this.initRouter();
+                lang.mixin(this._params, this.initRouter());
             }
 
             this._defaultExtent = new Extent({
-                xmin: 81350,
-                ymin: 3962431,
-                xmax: 800096,
-                ymax: 4785283,
+                xmax: 696328.4225855614,
+                xmin: 207131.4415605635,
+                ymax: 4679605.113140624,
+                ymin: 4068108.8868593764,
                 spatialReference: {
                     wkid: 26912
                 }
             });
 
-            // set default extent
+            // set default extent if no router was set
             if (!options.extent) {
                 options.extent = this._defaultExtent;
                 options.fitExtent = true;
@@ -404,13 +404,23 @@ define([
             //      sets up the url router for persisting the map extent
             console.log('agrc.widgets.map.BaseMap::initRouter', arguments);
 
+            var that = this;
+            this.on('load', function () {
+                that.on('extent-change', lang.hitch(that, 'updateExtentHash'));
+            });
+
             var urlObj = ioQuery.queryToObject(hash());
+            var options = {};
             if (urlObj.x && urlObj.y && urlObj.scale) {
-                this.setScale(urlObj.scale);
-                this.centerAt(new Point(urlObj.x, urlObj.y, this.spatialReference));
+                options.scale = parseInt(urlObj.scale, 10);
+                options.center = new Point({
+                    x: parseInt(urlObj.x, 10),
+                    y: parseInt(urlObj.y, 10),
+                    spatialReference: {wkid: 26912}
+                });
             }
 
-            this.on('extent-change', lang.hitch(this, 'updateExtentHash'));
+            return options;
         },
         updateExtentHash: function () {
             // summary:
