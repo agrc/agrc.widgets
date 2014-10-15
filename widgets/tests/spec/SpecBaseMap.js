@@ -50,10 +50,10 @@ function (
 
             it('should set the initial extent and spatial reference', function() {
                 var expectedExtent = new Extent({
-                    xmin: 121350,
-                    ymin: 4002431,
-                    xmax: 770096,
-                    ymax: 4745283,
+                    xmax: 586328,
+                    xmin: 317131,
+                    ymax: 4269605,
+                    ymin: 4178108,
                     spatialReference: {
                         wkid: 26912
                     }
@@ -155,16 +155,9 @@ function (
             it('updates the extent on init if it exists', function () {
                 hash(expectedHash);
 
-                spyOn(map, 'centerAt');
-                spyOn(map, 'setScale');
-
-                map.initRouter();
-
-                expect(map.centerAt).toHaveBeenCalledWith(jasmine.objectContaining({
-                    x: '1',
-                    y: '2'
-                }));
-                expect(map.setScale).toHaveBeenCalledWith('3');
+                expect(map.initRouter().scale).toBe(3);
+                expect(map.initRouter().center.x).toEqual(1);
+                expect(map.initRouter().center.y).toEqual(2);
             });
         });
     });

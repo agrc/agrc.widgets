@@ -8,9 +8,8 @@
     <meta name="keywords" content="agrc.widgets.map.BaseMap, esri.map, basemap, map, tests, test, javascript" />
 
     <!-- CSS -->
-    <link rel="stylesheet" href="//js.arcgis.com/3.9/js/dojo/dijit/themes/claro/claro.css">
-    <link rel="stylesheet" href="//js.arcgis.com/3.9/js/esri/css/esri.css">
-    <link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../bower_components/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="../../vendor/esri/css/esri.css">
     <style type='text/css'>
         @import '../../resources/map/BaseMap.css';
         .basemap {
@@ -24,7 +23,7 @@
     </style>
 
     <!-- JAVASCRIPT -->
-    <script type="text/javascript" src="//js.arcgis.com/3.9"></script>
+    <script type="text/javascript" src="../../bower_components/dojo/dojo.js"></script>
     <script type="text/javascript">
         var projectUrl = location.pathname.replace(/\/[^\/]+$/, '') + '/';
         var baseMap;
@@ -37,6 +36,9 @@
                 name: 'spin',
                 location: projectUrl + '../../bower_components/spinjs',
                 main: 'spin'
+            },{
+                name: 'esri',
+                location: projectUrl + '../../vendor/esri'
             }]
         },
         [
