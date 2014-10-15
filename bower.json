@@ -20,10 +20,10 @@
     "tests"
   ],
   "devDependencies": {
-    "stubmodule": "~0.4",
-    "dojo": "1.9.1",
-    "dijit": "1.9.1",
-    "dojox": "1.9.1"
+    "stubmodule": "~0.6",
+    "dojo": "~1.10",
+    "dijit": "~1.10",
+    "dojox": "~1.10"
   },
   "dependencies": {
     "spinjs": "~2.0"
