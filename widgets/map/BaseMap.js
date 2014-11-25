@@ -181,10 +181,10 @@ define([
             }
 
             this._defaultExtent = new Extent({
-                xmax: 696328,
-                xmin: 207131,
-                ymax: 4785283,
-                ymin: 3962431,
+                xmax: 673944,
+                xmin: 228583,
+                ymax: 4653571,
+                ymin: 4094743,
                 spatialReference: {
                     wkid: 26912
                 }
@@ -192,13 +192,13 @@ define([
 
             // set default extent if no router was set
             if (!options.extent) {
-                options.extent = this._defaultExtent;
-                options.fitExtent = true;
+                this.extent = this._defaultExtent;
+                this._params.fitExtent = true;
             } else {
                 this._defaultExtent = options.extent;
             }
 
-            // mixin options
+            // mixin custom options
             lang.mixin(this, options);
 
             // load basemap
@@ -217,7 +217,7 @@ define([
             //      Sets the extent to the State of Utah
             console.log('agrc.widgets.map.BaseMap::setDefaultExtent', arguments);
 
-            return this.setExtent(this._defaultExtent);
+            return this.setExtent(this._defaultExtent, true);
         },
         showDefaultBaseMap: function() {
             // summary:
@@ -350,7 +350,7 @@ define([
         onLoad: function() {
             console.log('agrc.widgets.map.BaseMap::onLoad', arguments);
 
-            if (this.includeFullExtentButton) {
+            if (this.includeBackButton) {
                 this.navBar = new Navigation(this);
             }
 
