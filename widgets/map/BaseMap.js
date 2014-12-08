@@ -88,7 +88,6 @@ define([
         //
         // example:
         // |    var options = {
-        // |        useDefaultExtent: false,
         // |        useDefaultBaseMap: false,
         // |        defaultBaseMap: 'Terrain'
         // |    };
@@ -142,11 +141,6 @@ define([
         //      Default: 'Vector'
         defaultBaseMap: 'Vector',
 
-        // useDefaultExtent: Boolean
-        //      If true, the map will automatically zoom to the state of Utah extent.
-        //      Default: 'Vector'
-        useDefaultExtent: true,
-
         // includeFullExtentButton: Boolean
         //      Controls the visibility of the full extent button below the zoom slider.
         //      Default: false.
@@ -169,7 +163,7 @@ define([
             //      The div that you want to put the map in.
             // options: Object?
             //      The parameters that you want to pass into the widget. Includes useDefaultBaseMap,
-            //      useDefaultExtent, defaultBaseMap, and includeFullExtentButton. All are optional.
+            //      defaultBaseMap, and includeFullExtentButton. All are optional.
             console.log('agrc.widgets.map.BaseMap::constructor', arguments);
 
             if (!options) {
@@ -180,25 +174,28 @@ define([
                 lang.mixin(this._params, this.initRouter());
             }
 
-            this._defaultExtent = new Extent({
-                xmax: 673944,
-                xmin: 228583,
-                ymax: 4653571,
-                ymin: 4094743,
-                spatialReference: {
-                    wkid: 26912
-                }
-            });
-
-            // set default extent if no router was set
-            if (!options.extent) {
-                this.extent = this._defaultExtent;
-                this._params.fitExtent = true;
-            } else {
+            if (options.extent) {
                 this._defaultExtent = options.extent;
+            } else if (options.scale && options.center) {
+                this._defaultExtent = {
+                    scale: options.scale,
+                    center: options.center
+                };
+            } else {
+                this._defaultExtent = new Extent({
+                    xmax: 696328,
+                    xmin: 207131,
+                    ymax: 4785283,
+                    ymin: 3962431,
+                    spatialReference: {
+                        wkid: 26912
+                    }
+                });
+                options.extent = this._defaultExtent;
+                options.fitExtent = true;
             }
 
-            // mixin custom options
+            // mixin options
             lang.mixin(this, options);
 
             // load basemap
@@ -217,7 +214,11 @@ define([
             //      Sets the extent to the State of Utah
             console.log('agrc.widgets.map.BaseMap::setDefaultExtent', arguments);
 
-            return this.setExtent(this._defaultExtent, true);
+            if (this._defaultExtent.center) {
+               this.setScale(this._defaultExtent.scale);
+               return this.centerAt(this._defaultExtent.center); 
+            }
+            return this.setExtent(this._defaultExtent);
         },
         showDefaultBaseMap: function() {
             // summary:
@@ -350,7 +351,7 @@ define([
         onLoad: function() {
             console.log('agrc.widgets.map.BaseMap::onLoad', arguments);
 
-            if (this.includeBackButton) {
+            if (this.includeFullExtentButton) {
                 this.navBar = new Navigation(this);
             }
 
