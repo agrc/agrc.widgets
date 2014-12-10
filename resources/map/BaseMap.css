@@ -29,14 +29,14 @@
 
 /* agrc logo on map */
 .map .logo-med, .map .logo-sm {
-	background-image: url("../images/agrc_map_logo_small.png") !important;/*your logo */
+	background-image: url("../images/agrc_logo.svg") !important;/*your logo */
 	border:0;
     bottom: 5px;
     cursor: pointer;
-    height: 25px !important; /* size of your image */
+    height: 23px !important; /* size of your image */
     position: absolute;
     right: 5px;
-    width: 48px !important;/* size of your image */
+    width: 60px !important;/* size of your image */
     z-index: 49;
 }
 
