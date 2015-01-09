@@ -29,5 +29,13 @@ function (
                 expect(Formatting.formatPhoneNumber(' 8011234567')).toEqual('(801) 123-4567');
             });
         });
+        describe('titlize', function () {
+            it('capitalizes the first letter or each word in a string', function () {
+                expect(Formatting.titlize('SALT LAKE')).toEqual('Salt Lake');
+                expect(Formatting.titlize('ONEWORD')).toEqual('Oneword');
+                expect(Formatting.titlize('lower case words')).toEqual('Lower Case Words');
+                expect(Formatting.titlize('word with 34 numbers')).toEqual('Word With 34 Numbers');
+            });
+        });
     });
 });
