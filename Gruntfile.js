@@ -7,6 +7,43 @@ module.exports = function(grunt) {
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
+        amdcheck: {
+            dev: {
+                options: {
+                    removeUnusedDependencies: false
+                },
+                files: [{
+                    src: [
+                        'widgets/**/*.js',
+                        'modules/**/*.js'
+                    ]
+                }]
+            }
+        },
+        bump: {
+            options: {
+                files: bumpFiles,
+                commitFiles: bumpFiles,
+                pushTo: 'origin'
+            }
+        },
+        connect: {
+            uses_defaults: {}
+        },
+        esri_slurp: {
+            options: {
+                version: '3.11'
+            },
+            dev: {
+                options: {
+                    beautify: true
+                },
+                dest: 'vendor/esri'
+            },
+            travis: {
+                dest: 'vendor/esri'
+            }
+        },
         jasmine: {
             main: {
                 src: [],
@@ -55,43 +92,6 @@ module.exports = function(grunt) {
             ],
             options: {
                 livereload: true
-            }
-        },
-        connect: {
-            uses_defaults: {}
-        },
-        bump: {
-            options: {
-                files: bumpFiles,
-                commitFiles: bumpFiles,
-                pushTo: 'origin'
-            }
-        },
-        amdcheck: {
-            dev: {
-                options: {
-                    removeUnusedDependencies: false
-                },
-                files: [{
-                    src: [
-                        'widgets/**/*.js',
-                        'modules/**/*.js'
-                    ]
-                }]
-            }
-        },
-        esri_slurp: {
-            options: {
-                version: '3.11'
-            },
-            dev: {
-                options: {
-                    beautify: true
-                },
-                dest: 'vendor/esri'
-            },
-            travis: {
-                dest: 'vendor/esri'
             }
         }
     });
