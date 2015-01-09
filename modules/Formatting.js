@@ -14,7 +14,7 @@ function (
     ) {
     return {
         formatDate: function (params) {
-            console.log(this.declaredClass + '::formatDate', arguments);
+            console.log('agrc/modules/Formatting:formatDate', arguments);
 
             if (params !== null) {
                 var myDate = new Date(params);
@@ -26,7 +26,7 @@ function (
         },
 
         formatPhoneNumber: function(value) {
-            console.log(this.declaredClass + '::formatPhoneNumber', arguments);
+            console.log('agrc/modules/Formatting:formatPhoneNumber', arguments);
 
             //first remove all spaces, and special characters
             var phoneNum = dojoString.trim(value);
@@ -45,7 +45,7 @@ function (
         },
 
         USD: function(value) {
-            console.log(this.declaredClass + '::USD', arguments);
+            console.log('agrc/modules/Formatting:USD', arguments);
 
             //returns formatted dollar amounts for all values
             var options = { pattern: '¤##0.00;-¤##0.00' }, parse;
@@ -63,7 +63,7 @@ function (
             ///if value is 0 since ints default to 0 if empty
             ///value is the $ to format
             ///used so databinding isn't updated on submit since nothing has changed
-            console.log(this.declaredClass + '::USDEmptyIfZero', arguments);
+            console.log('agrc/modules/Formatting:USDEmptyIfZero', arguments);
 
             var options = {}, parse;
             console.info('USDEmptyIfZero', arguments);
@@ -86,7 +86,7 @@ function (
             //      The number of decimal places that you want to round to.
             // returns: Number
             //      The number that is returned.
-            console.log(this.declaredClass + '::round', arguments);
+            console.log('agrc/modules/Formatting:round', arguments);
 
             var result = Math.round(value * Math.pow(10, numDecimals)) / Math.pow(10, numDecimals);
             return result;
@@ -98,7 +98,7 @@ function (
             // value: Number
             //      The number that you want to format
             // returns: String
-            console.log(this.declaredClass + '::addCommas', arguments);
+            console.log('agrc/modules/Formatting:addCommas', arguments);
 
             value += ''; // converts to string
             var x = value.split('.'),
@@ -111,6 +111,17 @@ function (
             }
 
             return x1 + x2;
+        },
+
+        titlize: function (str) {
+            // summary:
+            //      Title-cases the string
+            // str: String
+            console.log('agrc/modules/Formatting:titlize', arguments);
+        
+            return str.toLowerCase().replace(/\b(\w)/g, function (firstLetter) {
+                return firstLetter.toUpperCase();
+            });
         }
     };
 });
