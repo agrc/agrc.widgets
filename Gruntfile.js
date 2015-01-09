@@ -1,9 +1,61 @@
 /* jshint camelcase:false */
 module.exports = function(grunt) {
+    var osx = 'OS X 10.10';
+    var windows = 'Windows 8.1';
+    var browsers = [{
+
+        // OSX
+        browserName: 'safari',
+        platform: osx
+    }, {
+
+
+        // Windows
+        browserName: 'firefox',
+        platform: windows
+    }, {
+        browserName: 'chrome',
+        platform: windows
+    }, {
+        browserName: 'internet explorer',
+        platform: windows,
+        version: '11'
+    }, {
+        browserName: 'internet explorer',
+        platform: 'Windows 8',
+        version: '10'
+    }, {
+        browserName: 'internet explorer',
+        platform: 'Windows 7',
+        version: '9'
+    }];
+
+    var sauceConfig = {
+        urls: ['http://127.0.0.1:8000/_SpecRunner.html'],
+        tunnelTimeout: 20,
+        build: process.env.TRAVIS_JOB_ID,
+        browsers: browsers,
+        testname: 'atlas',
+        maxRetries: 10,
+        maxPollRetries: 10,
+        'public': 'public',
+        throttled: 3,
+        sauceConfig: {
+            'max-duration': 10800
+        }
+    };
+    var secrets;
     var bumpFiles = [
         'package.json',
         'bower.json'
     ];
+    try {
+        secrets = grunt.file.readJSON('secrets.json');
+        sauceConfig.username = secrets.sauce_name;
+        sauceConfig.key = secrets.sauce_key;
+    } catch (e) {
+        // swallow for build server
+    }
 
     grunt.initConfig({
         pkg: grunt.file.readJSON('package.json'),
@@ -49,9 +101,13 @@ module.exports = function(grunt) {
                 src: [],
                 options: {
                     vendor: [
+                        'bower_components/jasmine-favicon-reporter/vendor/favico.js',
+                        'bower_components/jasmine-favicon-reporter/jasmine-favicon-reporter.js',
+                        'bower_components/jasmine-jsreporter/jasmine-jsreporter.js',
                         'widgets/tests/SetUpTests.js',
                         'bower_components/dojo/dojo.js',
-                        'widgets/tests/jasmineAMDErrorChecking.js'
+                        'widgets/tests/jasmineAMDErrorChecking.js',
+                        'widgets/tests/jsReporterSanitizer.js'
                     ],
                     specs: [
                         'widgets/tests/spec/*.js',
@@ -75,6 +131,11 @@ module.exports = function(grunt) {
                     'bower_components/**',
                     'resources/libs/**'
                 ]
+            }
+        },
+        'saucelabs-jasmine': {
+            all: {
+                options: sauceConfig
             }
         },
         watch: {
@@ -113,10 +174,15 @@ module.exports = function(grunt) {
         'watch'
     ]);
 
-    grunt.registerTask('travis', [
-        'esri_slurp:travis',
-        'jshint',
+    grunt.registerTask('sauce', [
+        'jasmine:main:build',
         'connect',
-        'jasmine:main'
+        'saucelabs-jasmine'
+    ]);
+
+    grunt.registerTask('travis', [
+        'if-missing:esri_slurp:travis',
+        'jshint',
+        'sauce'
     ]);
 };
