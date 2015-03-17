@@ -70,7 +70,7 @@ function (
                 var lyr = map.getLayer(lyrId);
                 expect(lyr.url).toEqual(
                     window.location.protocol +
-                    '//mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/Vector/MapServer');
+                    '//basemaps.utah.gov/ArcGIS/rest/services/BaseMaps/Vector/MapServer');
             });
         });
 

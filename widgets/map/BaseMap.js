@@ -308,7 +308,7 @@ define([
 
             // build basemap url
             var url = window.location.protocol +
-                '//mapserv.utah.gov/ArcGIS/rest/services/BaseMaps/' + cacheName + '/MapServer';
+                '//basemaps.utah.gov/ArcGIS/rest/services/BaseMaps/' + cacheName + '/MapServer';
             var lyr = new ArcGISTiledMapServiceLayer(url, {
                 id: cacheName
             });
