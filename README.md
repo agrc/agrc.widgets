@@ -1,4 +1,6 @@
-# AGRC Dojo Widgets [![Build Status](https://travis-ci.org/agrc/agrc.widgets.svg?branch=master)](https://travis-ci.org/agrc/agrc.widgets)
+[![Build Status](https://travis-ci.org/agrc/agrc.widgets.svg?branch=master)](https://travis-ci.org/agrc/agrc.widgets)
+[![Sauce Test Status](https://saucelabs.com/browser-matrix/agrc-widgets.svg)](https://saucelabs.com/u/agrc-widgets)
+# AGRC Dojo Widgets 
 ### Getting Started
 
 1. Clone the repo
@@ -6,11 +8,7 @@
 
 You can use our widgets just like any other [Dojo widget](http://dojotoolkit.org/reference-guide/dijit/info.html#dijit-info). Just be sure to set your [packages loader config](http://dojotoolkit.org/documentation/tutorials/1.9/cdn/) property so that Dojo knows where to look.
 
-
-
-
 ### Sample
-
 ```javascript
 require({
   packages: [{

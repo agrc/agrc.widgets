@@ -26,6 +26,8 @@
     "dojox": "~1.10"
   },
   "dependencies": {
-    "spinjs": "~2.0"
+    "spinjs": "~2.0",
+    "jasmine-jsreporter": "~0.1.2",
+    "jasmine-favicon-reporter": "*"
   }
 }
