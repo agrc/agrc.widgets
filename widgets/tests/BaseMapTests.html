@@ -47,6 +47,7 @@
 
             'esri/layers/ArcGISDynamicMapServiceLayer',
             'esri/geometry/Extent',
+            'esri/geometry/Point',
             'esri/SpatialReference',
             'dojo/domReady!'
         ],
@@ -57,6 +58,7 @@
 
             ArcGISDynamicMapServiceLayer,
             Extent,
+            Point,
             SpatialReference
             ) {
             // take all defaults
@@ -125,6 +127,14 @@
                 position: 'TR'
             });
             bms.startup();
+
+            new BaseMap('basemap-div-router3', {
+                center: new Point([425132, 4512466], {
+                    wkid: 26912
+                }),
+                scale: 144447.638572,
+                router: true
+            });
         });
     </script>
 </head>
@@ -158,5 +168,9 @@
     <br>
     Router with base map selector
     <div id="basemap-div-router2" class='basemap'></div>
+    <br>
+    Router with initial scale and center passed
+    <div id="basemap-div-router3" class="basemap"></div>
+    <br>
 </body>
 </html>

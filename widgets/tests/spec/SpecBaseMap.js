@@ -159,6 +159,17 @@ function (
                 expect(map.initRouter().center.x).toEqual(1);
                 expect(map.initRouter().center.y).toEqual(2);
             });
+            it('doesn\'t update hash if NaN coords', function () {
+                map.extent.getCenter.and.returnValue({
+                    x: NaN,
+                    y: NaN
+                });
+
+                expect(map.updateExtentHash()).toBeUndefined();
+            });
+            it('doesn\'t pass NaN', function () {
+                expect(map.initRouter()).toEqual({});
+            });
         });
     });
 });
