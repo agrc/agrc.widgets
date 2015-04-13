@@ -423,7 +423,7 @@ define([
                 that.on('extent-change', lang.hitch(that, 'updateExtentHash'));
             });
 
-            return options;
+            return (options.scale && options.center.x && options.center.y) ? options : {};
         },
         updateExtentHash: function () {
             // summary:
@@ -431,14 +431,16 @@ define([
             console.log('agrc.widgets.map.BaseMap::updateExtentHash', arguments);
         
             var center = this.extent.getCenter();
-            // mixin any existing url props to allow for other routers
-            var newProps = lang.mixin(ioQuery.queryToObject(hash()), {
-                x: Math.round(center.x),
-                y: Math.round(center.y),
-                scale: Math.round(this.getScale())
-            });
+            if (center.x && center.y) {
+                // mixin any existing url props to allow for other routers
+                var newProps = lang.mixin(ioQuery.queryToObject(hash()), {
+                    x: Math.round(center.x),
+                    y: Math.round(center.y),
+                    scale: Math.round(this.getScale())
+                });
 
-            return hash(ioQuery.objectToQuery(newProps), true);
+                return hash(ioQuery.objectToQuery(newProps), true);
+            }
         }
     });
 });
