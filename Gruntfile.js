@@ -35,7 +35,7 @@ module.exports = function(grunt) {
         tunnelTimeout: 120,
         build: process.env.TRAVIS_JOB_ID,
         browsers: browsers,
-        testname: 'atlas',
+        testname: 'agrc-widgets',
         maxRetries: 10,
         maxPollRetries: 10,
         'public': 'public',
@@ -107,8 +107,8 @@ module.exports = function(grunt) {
                         'bower_components/jasmine-jsreporter/jasmine-jsreporter.js',
                         'widgets/tests/SetUpTests.js',
                         'bower_components/dojo/dojo.js',
-                        'widgets/tests/jasmineAMDErrorChecking.js',
-                        'widgets/tests/jsReporterSanitizer.js'
+                        'widgets/tests/jsReporterSanitizer.js',
+                        'widgets/tests/jasmineAMDErrorChecking.js'
                     ],
                     specs: [
                         'widgets/tests/spec/*.js',
