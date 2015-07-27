@@ -351,7 +351,7 @@ define([
         onLoad: function() {
             console.log('agrc.widgets.map.BaseMap::onLoad', arguments);
 
-            if (this.includeFullExtentButton) {
+            if (this.includeBackButton) {
                 this.navBar = new Navigation(this);
             }
 
