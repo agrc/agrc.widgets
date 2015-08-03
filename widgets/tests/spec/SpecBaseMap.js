@@ -4,6 +4,7 @@ require([
     'dojo/dom-construct',
     'dojo/aspect',
     'dojo/hash',
+    'dojo/query',
 
     'dijit/registry',
 
@@ -18,6 +19,7 @@ function (
     domConstruct,
     aspect,
     hash,
+    query,
 
     dijitRegistry,
 
@@ -97,7 +99,7 @@ function (
 
                     aspect.after(map, 'onLoad', function() {
                         setTimeout(function () {
-                            testButton = dijitRegistry.byId(map.id + '_full-extent-button');
+                            testButton = query('.glyphicon-globe', testDiv)[0];
                             done();
                         }, 1500);
                     });
