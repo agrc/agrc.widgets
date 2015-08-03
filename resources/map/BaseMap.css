@@ -10,23 +10,14 @@
     left: 28px !important;
     top: auto !important;
 }
-.mapContainer .button-icon {
-    background-repeat: no-repeat;
-    text-align: center;
-    height: 23px;
-    width: 15px;
+.mapContainer .button-container {
+	height: 30px;
 }
-.mapContainer .button-container .dijitButtonNode {
-	height: 15px !important;
+.mapContainer .nav-btn {
+	border: 1px solid #57585A;
+	font-size: 13px;
+	padding: 6px 8px
 }
-.tundra .mapContainer .button-icon {
-	height: 18px !important;
-}
-.tundra .button-container .dijitButtonContents {
-	margin-left: 1px;
-	margin-bottom: -2px;
-}
-
 /* agrc logo on map */
 .map .logo-med, .map .logo-sm {
     background-image: url('../images/agrc_logo.png') !important;

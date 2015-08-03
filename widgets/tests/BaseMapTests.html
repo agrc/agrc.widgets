@@ -2,7 +2,7 @@
 <html>
 <head>
     <title>TEST: BaseMap</title>
-    
+
     <!-- META -->
     <meta name="description" content="agrc/widgets/map/BaseMap Test" />
     <meta name="keywords" content="agrc.widgets.map.BaseMap, esri.map, basemap, map, tests, test, javascript" />
@@ -10,6 +10,7 @@
     <!-- CSS -->
     <link rel="stylesheet" href="../../bower_components/dijit/themes/claro/claro.css">
     <link rel="stylesheet" href="../../vendor/esri/css/esri.css">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <style type='text/css'>
         @import '../../resources/map/BaseMap.css';
         .basemap {
@@ -92,8 +93,7 @@
 
             window.backButtonBaseMap = new BaseMap('basemap-div-back', {
                 includeFullExtentButton: true,
-                includeBackButton: true,
-                sliderStyle: 'large'
+                includeBackButton: true
             });
 
             window.loaderBaseMap = new BaseMap('basemap-div-loader');

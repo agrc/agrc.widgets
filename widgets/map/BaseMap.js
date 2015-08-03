@@ -12,6 +12,7 @@ define([
 
     'dojo/aspect',
     'dojo/dom',
+    'dojo/on',
 
     'dijit/Destroyable',
     'dijit/form/Button',
@@ -25,7 +26,7 @@ define([
 
     'spin'
 
-], function(
+], function (
     array,
     declare,
     lang,
@@ -39,6 +40,7 @@ define([
 
     aspect,
     dom,
+    on,
 
     Destroyable,
     Button,
@@ -101,22 +103,29 @@ define([
         //      set in constructor
         _defaultExtent: null,
 
-        // _buttons: [private] Object
+        // buttons: [private] Object
         //      Holds data for each of the buttons
-        _buttons: {
+        buttons: {
             full: {
                 id: 'full-extent-button',
-                callback: function() {
-                    this.onFullExtentButtonClicked();
+                callback: function () {
+                    this.onButtonClicked('full');
                 },
-                title: 'Zoom to full extent'
+                icon: 'globe'
             },
             back: {
                 id: 'back-button',
-                callback: function() {
-                    this.onBackButtonClicked();
+                callback: function () {
+                    this.onButtonClicked('back');
                 },
-                title: 'Go back to previous extent'
+                icon: 'chevron-left'
+            },
+            forward: {
+                id: 'forward-button',
+                callback: function () {
+                    this.onButtonClicked('forward');
+                },
+                icon: 'chevron-right'
             }
         },
 
@@ -156,7 +165,7 @@ define([
         //      Default: false
         router: false,
 
-        constructor: function(mapDiv, options) {
+        constructor: function (mapDiv, options) {
             // summary:
             //      Constructor function for object. This overrides the esri.Map method of the same name
             // mapDiv: String or DomNode
@@ -209,25 +218,25 @@ define([
             // not sure if this is needed?
             domClass.add(mapDiv, 'mapContainer');
         },
-        setDefaultExtent: function() {
+        setDefaultExtent: function () {
             // summary:
             //      Sets the extent to the State of Utah
             console.log('agrc.widgets.map.BaseMap::setDefaultExtent', arguments);
 
             if (this._defaultExtent.center) {
-               this.setScale(this._defaultExtent.scale);
-               return this.centerAt(this._defaultExtent.center); 
+                this.setScale(this._defaultExtent.scale);
+                return this.centerAt(this._defaultExtent.center);
             }
             return this.setExtent(this._defaultExtent);
         },
-        showDefaultBaseMap: function() {
+        showDefaultBaseMap: function () {
             // summary:
             //      Adds the UtahBaseMap-Vector map service.
             console.log('agrc.widgets.map.BaseMap::showDefaultBaseMap', arguments);
 
             this.addAGRCBaseMap(this.defaultBaseMap);
         },
-        addLoaderToLayer: function(lyr) {
+        addLoaderToLayer: function (lyr) {
             // summary:
             //      Wires up the loader image to display when the passed layer is drawing.
             // lyr: esri.Layer
@@ -259,7 +268,7 @@ define([
                 aspect.after(lyr, 'onUpdateEnd', hideLoading)
             );
         },
-        showLoader: function() {
+        showLoader: function () {
             // summary:
             //      Displays the loader icon in the bottom, left-hand corner of the map
             console.log('agrc.widgets.map.BaseMap::showLoader', arguments);
@@ -292,14 +301,14 @@ define([
                 }
             }
         },
-        hideLoader: function() {
+        hideLoader: function () {
             // summary:
             //      Hides the loader icon.
             console.log('agrc.widgets.map.BaseMap::hideLoader', arguments);
 
             this.spinner.stop();
         },
-        addAGRCBaseMap: function(cacheName) {
+        addAGRCBaseMap: function (cacheName) {
             // summary:
             //      Add one of the AGRC basemaps to the map.
             // cacheName: String
@@ -314,66 +323,81 @@ define([
             });
             this.addLayer(lyr);
         },
-        _addButton: function(button, yOffset) {
+        addButton: function (button, args) {
             // summary:
-            //      Adds the a below the zoom slider.
-            // button: this._buttons
+            //      Adds a button to the map.
+            //      The default is to place it below the zoom slider.
+            // button: this.buttons
+            // args: { verticle: bool, yOffset: Number, placeAt: node }
             // tags:
-            //      private
-            console.log('agrc.widgets.map.BaseMap::_addButton', arguments);
+            //      public
+            console.log('agrc.widgets.map.BaseMap::addButton', arguments);
 
-            // calculate button's top and left based on zoom slider size and position
-            var mapSlider = dom.byId(this.id + '_zoom_slider');
-            var left = domStyle.get(mapSlider, 'left') - 7;
-            var sliderTop = domStyle.get(mapSlider, 'top');
-            var sliderHeight = domGeometry.getContentBox(mapSlider).h;
-            var top = sliderHeight + sliderTop + yOffset;
+            var container = args.placeAt;
 
-            // button container
-            var container = domConstruct.create('div', {
-                'class': 'button-container',
-                style: {
-                    top: top + 'px',
-                    left: left + 'px'
+            if (args.verticle) {
+                // calculate button's top and left based on zoom slider size and position
+                if (!container) {
+                    this.verticle = this.verticle || args.yOffset || 0;
+                    var slider = this._slider.domNode || this._slider;
+                    var left = domStyle.get(slider, 'left');
+                    var sliderTop = domStyle.get(slider, 'top');
+                    var sliderHeight = domGeometry.getContentBox(slider).h;
+                    var top = sliderHeight + sliderTop + this.verticle;
+
+                    // button container
+                    container = domConstruct.create('div', {
+                        'class': 'button-container',
+                        style: {
+                            top: top + 'px',
+                            left: left + 'px',
+                            marginTop: '5px'
+                        }
+                    }, this.container);
+
+                    this.verticle += 33;
                 }
-            }, this.container);
+            }
 
-            new Button({
-                id: this.id + '_' + button.id,
-                'class': 'button',
-                iconClass: 'button-icon ' + button.id + '-icon',
-                showLabel: false,
-                type: 'button',
-                onClick: lang.hitch(this, button.callback),
-                title: button.title
-            }, domConstruct.create('button')).placeAt(container);
-        },
-        onLoad: function() {
-            console.log('agrc.widgets.map.BaseMap::onLoad', arguments);
+            var template = '<button class="btn btn-default btn-icon nav-btn pull-left">' +
+                           '<span class="glyphicon glyphicon-{icon}"></span></button>';
+            var buttonNode = domConstruct.toDom(lang.replace(template, button));
 
-            if (this.includeBackButton) {
+            domConstruct.place(buttonNode, container);
+
+            on(buttonNode, 'click', lang.hitch(this, button.callback));
+
+            if ([this.buttons.back.id, this.buttons.forward.id].indexOf(button.id) > -1 && !this.navBar) {
                 this.navBar = new Navigation(this);
             }
 
+            return buttonNode;
+        },
+        onLoad: function () {
+            console.log('agrc.widgets.map.BaseMap::onLoad', arguments);
+
             if (this.includeFullExtentButton || this.includeBackButton) {
                 // have to add timeout to allow the table to be built
-                window.setTimeout(lang.hitch(this, function() {
+                window.setTimeout(lang.hitch(this, function () {
                     var btns = [];
                     if (this.includeFullExtentButton) {
-                        btns.push(this._buttons.full);
+                        btns.push(this.buttons.full);
                     }
                     if (this.includeBackButton) {
-                        btns.push(this._buttons.back);
+                        btns.push(this.buttons.back);
                     }
                     var offset = 0;
-                    array.forEach(btns, function(b) {
-                        this._addButton(b, offset);
+                    array.forEach(btns, function (b) {
+                        this.addButton(b, {
+                            verticle: true,
+                            yOffset: offset
+                        });
                         offset = offset + 26;
                     }, this);
                 }), 1000);
             }
         },
-        zoomToGeometry: function(geometry) {
+        zoomToGeometry: function (geometry) {
             // summary:
             //      Zooms the map to any type of geometry
             // geometry: esri.Geometry
@@ -386,19 +410,22 @@ define([
                 this.centerAndZoom(geometry, 10);
             }
         },
-        onFullExtentButtonClicked: function() {
+        onButtonClicked: function (which) {
             // summary:
             //      description
-            console.log('agrc.widgets.map.BaseMap::onFullExtentButtonClicked', arguments);
+            console.log('agrc.widgets.map.BaseMap::onButtonClicked', arguments);
 
-            return this.setDefaultExtent();
-        },
-        onBackButtonClicked: function() {
-            // summary:
-            //      description
-            console.log('agrc.widgets.map.BaseMap::onBackButtonClicked', arguments);
+            if (which === 'full') {
+                return this.setDefaultExtent();
+            }
 
-            this.navBar.zoomToPrevExtent();
+            if (which === 'back' && !this.navBar.isFirstExtent()) {
+                return this.navBar.zoomToPrevExtent();
+            }
+
+            if (which === 'forward' && !this.navBar.isLastExtent()) {
+                return this.navBar.zoomToNextExtent();
+            }
         },
         initRouter: function () {
             // summary:
@@ -429,7 +456,7 @@ define([
             // summary:
             //      sets the extent props in the url hash
             console.log('agrc.widgets.map.BaseMap::updateExtentHash', arguments);
-        
+
             var center = this.extent.getCenter();
             if (center.x && center.y) {
                 // mixin any existing url props to allow for other routers
