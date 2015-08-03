@@ -16,7 +16,17 @@
 .mapContainer .nav-btn {
 	border: 1px solid #57585A;
 	font-size: 13px;
-	padding: 6px 8px
+	padding: 6px 8px;
+	width: 32px
+}
+.mapContainer .nav-btn:focus {
+	outline: none !important;
+	background-color: white;
+	border-color: #57585A;
+	box-shadow: none
+}
+.mapContainer .nav-btn:active {
+    background-color: #d4d4d4;
 }
 /* agrc logo on map */
 .map .logo-med, .map .logo-sm {
