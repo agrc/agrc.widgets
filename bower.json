@@ -23,7 +23,8 @@
     "stubmodule": "~0.6",
     "dojo": "~1.10",
     "dijit": "~1.10",
-    "dojox": "~1.10"
+    "dojox": "~1.10",
+    "bootstrap": "~3.3.6"
   },
   "dependencies": {
     "spinjs": "~2.0",

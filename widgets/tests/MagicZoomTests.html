@@ -1,102 +1,108 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
 <html>
 <head>
-	<title>Magic Zoom Tests</title>
+    <title>Magic Zoom Tests</title>
 
-	<!-- META TAGS -->
-	<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+    <!-- META TAGS -->
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
-	<!-- CSS -->		
-	<link rel='stylesheet' href='http://js.arcgis.com/3.6/js/dojo/dijit/themes/claro/claro.css'>
-	<link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.6/js/esri/css/esri.css" />
-	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
-	<style type='text/css'>
-	@import '../../resources/locate/MagicZoom.css';
-	#map-div {
-		height: 400px;
-		width: 500px;
-		border: solid 1px gray;
-		position: relative;
-		top: 60px;
-		margin-bottom: 80px;
-	}
-	#search-div2 {
-		position: relative;
-		z-index: 27;
-	}
-	#search-div3 {
-		position: relative;
-		z-index: 26;
-	}
-	</style>
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="../../vendor/esri/css/esri.css" />
+    <link rel="stylesheet" href="../../bower_components/bootstrap/dist/css/bootstrap.css">
+    <link rel="stylesheet" href="../../../resources/locate/MagicZoom.css">
+    <style type='text/css'>
+    #map-div {
+        height: 400px;
+        width: 500px;
+        border: solid 1px gray;
+        position: relative;
+        top: 60px;
+        margin-bottom: 80px;
+    }
+    #search-div2 {
+        position: relative;
+        z-index: 27;
+    }
+    #search-div3 {
+        position: relative;
+        z-index: 26;
+    }
+    </style>
 
-	<!-- JAVASCRIPT -->
-	<script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-	<script src="//netdna.bootstrapcdn.com/bootstrap/3.0.0/js/bootstrap.min.js"></script>
-	<script type='text/javascript' src='http://js.arcgis.com/3.6'></script>
-	<script type="text/javascript">
-	var projectUrl = location.pathname.replace(/\/[^\/]+$/, "") + '/';
-	var widgetUnderTest;
+    <!-- JAVASCRIPT -->
+    <script type="text/javascript" src="../../bower_components/jquery/dist/jquery.min.js"></script>
+    <script type='text/javascript' src="../../bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type='text/javascript' src="../../bower_components/dojo/dojo.js"></script>
+    <script type="text/javascript">
+    var widgetUnderTest;
 
-	require({
-		packages: [{
-			name: 'agrc',
-			location: projectUrl + '../../'
-		}]
-	}, [
-	'agrc/widgets/locate/MagicZoom',
-	'agrc/widgets/map/BaseMap',
+    require({
+        packages: [{
+            name: 'agrc',
+            location: '../../../'
+        },{
+            name: 'spin',
+            location: '../../bower_components/spinjs',
+            main: 'spin'
+        },{
+            name: 'esri',
+            location: '../../vendor/esri',
+            main: 'esri'
+        }
+    ]
+    }, [
+    'agrc/widgets/locate/MagicZoom',
+    'agrc/widgets/map/BaseMap',
 
-	'dojo/domReady!'
-	],
-	function(Module, mapDependency) {
-		map = new mapDependency('map-div');
+    'dojo/domReady!'
+    ],
+    function(Module, mapDependency) {
+        map = new mapDependency('map-div');
 
-		widgetUnderTest = new Module({
-			mapServiceURL: 'http://mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Vector/MapServer',
-			searchLayerIndex: 1,
-			searchField: 'NAME',
-			map: map,
-			maxResultsToDisplay: 10,
-			placeHolder: 'placeholder txt'
-		}, 'search-div');
+        widgetUnderTest = new Module({
+            searchLayer: 'SGID10.Boundaries.Counties',
+            apiKey: 'AGRC-ApiExplorer',
+            searchField: 'NAME',
+            map: map,
+            maxResultsToDisplay: 10,
+            placeHolder: 'placeholder txt'
+        }, 'search-div');
+        widgetUnderTest.startup();
 
-		widgetUnderTest.startup();
+        var w2 = new Module({
+            searchLayer: 'SGID10.Boundaries.Counties',
+            apiKey: 'AGRC-ApiExplorer',
+            searchField: 'NAME',
+            map: map,
+            maxResultsToDisplay: 10
+        }, 'search-div2');
+        w2.startup();
 
-		var w2 = new Module({
-			mapServiceURL: 'http://mapserv.utah.gov/ArcGIS/rest/services/UtahBaseMap-Vector/MapServer',
-			searchLayerIndex: 1,
-			searchField: 'NAME',
-			map: map,
-			maxResultsToDisplay: 10
-		}, 'search-div2');
-		w2.startup();
+        var w3 = new Module({
+            searchLayer: 'SGID10.Transportation.Roads',
+            apiKey: 'AGRC-ApiExplorer',
+            searchField: 'FULLNAME',
+            map: map,
+            maxResultsToDisplay: 10,
+            contextField: 'ZIPLEFT'
+        }, 'search-div3');
+        w3.startup();
 
-		var w3 = new Module({
-			mapServiceURL: 'http://mapserv.utah.gov/arcgis/rest/services/BaseMaps/Vector/MapServer',
-			searchLayerIndex: 0,
-			searchField: 'FULLNAME',
-			map: map,
-			maxResultsToDisplay: 10,
-			contextField: 'ZIPLEFT'
-		}, 'search-div3');
-		w3.startup();
+        var w4 = new Module({
+            searchLayer: 'SGID10.Transportation.Roads',
+            apiKey: 'AGRC-ApiExplorer',
+            searchField: 'FULLNAME',
+            map: map,
+            maxResultsToDisplay: 10,
+            contextField: 'ZIPLEFT'
+        }, 'search-div-dropdown');
+        w4.startup();
 
-		var w4 = new Module({
-			mapServiceURL: 'http://mapserv.utah.gov/arcgis/rest/services/BaseMaps/Vector/MapServer',
-			searchLayerIndex: 0,
-			searchField: 'FULLNAME',
-			map: map,
-			maxResultsToDisplay: 10,
-			contextField: 'ZIPLEFT'
-		}, 'search-div-dropdown');
-		w4.startup();
-		
-	});
+    });
 </script>
 </head>
 <body class='claro'>
-	<div class="navbar navbar-inverse navbar-fixed-top" >
+    <div class="navbar navbar-inverse navbar-fixed-top" >
     <!-- Brand and toggle get grouped for better mobile display -->
     <div class="navbar-header">
       <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
@@ -113,20 +119,20 @@
           <a class="dropdown-toggle" href="#" data-toggle='dropdown'><span class="glyphicon glyphicon-globe"></span> Find Place <b class="caret"></b></a>
           <div class='dropdown-menu'>
             <form onsubmit='return false;'>
-            	<div id="search-div-dropdown"></div>
+                <div id="search-div-dropdown"></div>
             </form>
           </div>
-        </li> 
+        </li>
       </ul>
     </div>
   </div>
-	<div id='map-div'>
-		<div id='search-div'></div>
-	</div>
-	layout tests
-	<div id="search-div2"></div>
-	<br><br>
-	contextField
-	<div id="search-div3"></div>
+    <div id='map-div'>
+        <div id='search-div'></div>
+    </div>
+    layout tests
+    <div id="search-div2"></div>
+    <br><br>
+    contextField
+    <div id="search-div3"></div>
 </body>
 </html>
