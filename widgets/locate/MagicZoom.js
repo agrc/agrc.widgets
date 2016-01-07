@@ -103,6 +103,9 @@ define([
         //      esri.Map reference.
         map: null,
 
+        // apiKey: String
+        apiKey: '',
+
         // promptMessage: String
         //      The label that shows up in the promptMessage for the text box.
         promptMessage: '',
