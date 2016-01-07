@@ -26,8 +26,11 @@ define([
     'esri/symbols/SimpleLineSymbol',
     'esri/symbols/SimpleMarkerSymbol',
     'esri/geometry/Multipoint',
+    'esri/graphic',
 
     'spin',
+
+    'agrc/modules/WebAPI',
 
 
     'dojo/_base/sniff'
@@ -59,8 +62,11 @@ define([
     SimpleLineSymbol,
     SimpleMarkerSymbol,
     Multipoint,
+    Graphic,
 
-    Spinner
+    Spinner,
+
+    WebApi
 ) {
     return declare([_WidgetBase, _TemplatedMixin], {
         templateString: template,
@@ -105,10 +111,6 @@ define([
         //      The URL to the map service that you want to search.
         mapServiceURL: '',
 
-        // searchLayerIndex: Integer
-        //      The index of the layer within the map service to be searched.
-        searchLayerIndex: 0,
-
         // searchField: String
         //      The field name that is to be searched.
         searchField: '',
@@ -116,6 +118,9 @@ define([
         // zoomLevel: Integer
         //      The number of cache levels up from the bottom that you want to zoom to.
         zoomLevel: 5,
+
+        // searchLayer: String
+        searchLayer: 'SGID10.LOCATION.PlaceNamesGNIS2010',
 
         // maxResultsToDisplay: Integer
         //      The maximum number of results that will be displayed.
@@ -125,10 +130,6 @@ define([
         // placeHolder: String
         //     The placeholder text in the text box
         placeHolder: 'Map Search...',
-
-        // token: String
-        //      Allows the widget to work with secured services
-        token: null,
 
         // outFields: String[]
         //      The outFields parameter in the esri.tasks.Query.
@@ -173,12 +174,9 @@ define([
             this._setUpQueryTask();
             this._wireEvents();
             this._setUpGraphicsLayer();
-        },
-        showSpinner: function() {
-            // summary:
-            //      sets up and shows the spinner
-            console.log('agrc.widgets.locate.MagicZoom::showSpinner', arguments);
-
+            this.webApi = new WebApi({
+                apiKey: this.apiKey
+            });
             var opts = {
                 lines: 9, // The number of lines to draw
                 length: 4, // The length of each line
@@ -197,15 +195,18 @@ define([
                 top: 'auto', // Top position relative to parent in px
                 left: 'auto' // Left position relative to parent in px
             };
+            this.spinner = new Spinner(opts);
+        },
+        showSpinner: function() {
+            // summary:
+            //      sets up and shows the spinner
+            console.log('agrc.widgets.locate.MagicZoom::showSpinner', arguments);
+
             domStyle.set(this.searchIconSpan, 'display', 'none');
 
-            if (!this.spinner) {
-                this.spinner = new Spinner(opts).spin(this.spinnerDiv);
-            } else {
-                if (!this.spinner.el) {
-                    // only start if it's not already started
-                    this.spinner.spin(this.spinnerDiv);
-                }
+            if (!this.spinner.el) {
+                // only start if it's not already started
+                this.spinner.spin(this.spinnerDiv);
             }
         },
         hideSpinner: function() {
@@ -224,9 +225,6 @@ define([
             //      private
             console.log('agrc.widgets.locate.MagicZoom::_setUpQueryTask', arguments);
 
-            // create new query parameter
-            this.query = new Query();
-            this.query.returnGeometry = false;
             var outFields;
             if (this.outFields) {
                 outFields = this.outFields;
@@ -235,15 +233,8 @@ define([
             } else {
                 outFields = [this.searchField];
             }
-            this.query.outFields = outFields;
+            this.outFields = outFields;
 
-            // create new query task
-            var url = (this.token) ? this.mapServiceURL + '/' + this.searchLayerIndex + '/?token=' + this.token :
-                this.mapServiceURL + '/' + this.searchLayerIndex;
-            this.queryTask = new QueryTask(url);
-
-            // wire events
-            this.queryTask.on('error', lang.hitch(this, this._onQueryTaskError));
         },
         _setUpGraphicsLayer: function() {
             // summary:
@@ -430,23 +421,22 @@ define([
             // delay spinner a bit
             this._spinTimer = setTimeout(lang.hitch(this, this.showSpinner), 250);
 
-            // update query where clause
-            this.query.where = 'UPPER(' + this.searchField + ') LIKE UPPER(\'' + searchString + '%\')';
-
             // execute query / canceling any previous query
             if (this._deferred) {
                 this._deferred.cancel();
             }
-            this._deferred = this.queryTask.execute(this.query)
-                .then(lang.hitch(this,
-                    function(featureSet) {
+
+            this._deferred = this.webApi.search(this.searchLayer, this.outFields, {
+                predicate: 'UPPER(' + this.searchField + ') LIKE UPPER(\'' + searchString + '%\')',
+                spatialReference: this.wkid
+            }).then(lang.hitch(this, function(response) {
                         // clear table
                         this._deleteAllTableRows(this.matchesTable);
 
-                        this._processResults(featureSet.features);
+                        this._processResults(response);
                     }
-                ), lang.hitch(this,
-                    function(err) {
+                ), lang.hitch(this, function(err) {
+                        this._onQueryTaskError(err);
                         // clear table
                         this._deleteAllTableRows(this.matchesTable);
 
@@ -604,36 +594,62 @@ define([
             // clear prompt message
             this.hideMessage();
 
+            var predicate = '';
+
             // set textbox to full value
             if (!this.contextField) {
                 this.textBox.value = (has('ie') < 9) ? row.innerText : row.textContent;
-                this.query.where = this.searchField + ' = \'' + this.textBox.value + '\'';
+                predicate = this.searchField + ' = \'' + this.textBox.value + '\'';
             } else {
                 // dig deeper when context values are present
                 this.textBox.value = (has('ie') < 9) ? row.children[0].innerText : row.children[0].textContent;
                 var contextValue = row.children[1].innerHTML;
                 if (contextValue.length > 0) {
-                    this.query.where = this.searchField + ' = \'' + this.textBox.value +
+                    predicate = this.searchField + ' = \'' + this.textBox.value +
                         '\' AND ' + this.contextField + ' = \'' + contextValue + '\'';
                 } else {
-                    this.query.where = this.searchField + ' = \'' + this.textBox.value +
+                    predicate = this.searchField + ' = \'' + this.textBox.value +
                         '\' AND ' + this.contextField + ' IS NULL';
                 }
             }
 
-            this.query.returnGeometry = true;
-            this.queryTask.execute(this.query, lang.hitch(this, function(featureSet) {
-                // set switch to prevent graphic from being cleared
-                this._addingGraphic = true;
+            // execute query / canceling any previous query
+            if (this._deferred) {
+                this._deferred.cancel();
+            }
 
-                if (featureSet.features.length === 1 || featureSet.features[0].geometry.type === 'polygon') {
-                    this._zoom(featureSet.features[0]);
-                } else {
-                    this._zoomToMultipleFeatures(featureSet.features);
-                }
-                // set return geometry back to false
-                this.query.returnGeometry = false;
-            }));
+            this._deferred = this.webApi.search(this.searchLayer, this.outFields.concat('shape@'), {
+                predicate: predicate,
+                spatialReference: this.wkid
+            }).then(lang.hitch(this,
+                    function(response) {
+                        // set switch to prevent graphic from being cleared
+                        this._addingGraphic = true;
+
+                        response = array.map(response, function _convertGeometryToGraphic(geometry){
+                            return new Graphic(geometry);
+                        });
+
+                        if (response.length === 1 || response[0].geometry.type === 'polygon') {
+                            this._zoom(response[0]);
+                        } else {
+                            this._zoomToMultipleFeatures(response);
+                        }
+                    }
+                ), lang.hitch(this,
+                    function(err) {
+                        this._onQueryTaskError(err);
+                        // clear table
+                        this._deleteAllTableRows(this.matchesTable);
+
+                        // swallow errors from cancels
+                        if (err.message !== 'undefined') {
+                            throw new Error('agrc.widgets.locate.MagicZoom ArcGISServerError: ' + err.message);
+                        }
+
+                        this.hideSpinner();
+                    }
+                ));
         },
         showMessage: function(msg) {
             // summary:
