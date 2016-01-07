@@ -131,6 +131,18 @@ require([
 
                     expect(domStyle.get(widget.errorMsg, 'display')).toEqual('inline');
                 });
+
+                it('should use spatialReference ctor param first', function () {
+                    widget = new FindAddress({
+                        wkid: 3857
+                    }).placeAt(win.body());
+
+                    expect(widget.wkid).toEqual(3857);
+                });
+
+                it('should use default spatialReference value if not supplied', function () {
+                    expect(widget.wkid).toEqual(26912);
+                });
             });
 
             describe('With Map', function() {
@@ -241,6 +253,29 @@ require([
 
                     expect(widget.map.centerAndZoom).toHaveBeenCalledWith(point, 6345876.028756473);
                     expect(widget.map._graphic).not.toBeNull();
+                });
+
+                it('should use constructor spatialReference first', function () {
+                    widget = new FindAddress({
+                        map: map,
+                        graphicsLayer: map.graphicsLayer,
+                        wkid: 10
+                    }).placeAt(win.body());
+
+                    expect(widget.wkid).toEqual(10);
+                });
+
+                it('should use map spatialReference if no ctor param', function () {
+                    map.spatialReference = new SpatialReference({
+                        wkid: 3857
+                    });
+
+                    widget = new FindAddress({
+                        map: map,
+                        graphicsLayer: map.graphicsLayer
+                    }).placeAt(win.body());
+
+                    expect(widget.wkid).toEqual(3857);
                 });
             });
             describe('_validate', function() {

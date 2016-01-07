@@ -20,7 +20,8 @@ define([
     'esri/geometry/Point',
     'esri/geometry/scaleUtils',
     'esri/graphic',
-    'esri/request'
+    'esri/request',
+    'esri/SpatialReference'
 ], function(
     template,
 
@@ -43,7 +44,8 @@ define([
     Point,
     scaleUtils,
     Graphic,
-    esriRequest
+    esriRequest,
+    SpatialReference
     ) {
     // description:
     //      **Summary**: A simple form tied to the map allowing a user to quickly zoom to an address.
@@ -87,6 +89,7 @@ define([
         _graphic: null,
         zoomLevel: 12,
         apiKey: null,
+        wkid: null,
 
         // inline: Boolean (optional)
         //      Controls if form is inline or normal (default) layout
@@ -109,9 +112,15 @@ define([
 
             // default to use the map's graphics layer if none was passed in
             if (!this.graphicsLayer && !! this.map) {
-                this.connect(this.map, 'onLoad', function() {
+                // handle race condition
+                if (this.map.loaded) {
                     this.graphicsLayer = this.map.graphics;
-                });
+                }
+                else {
+                    this.connect(this.map, 'onLoad', function() {
+                        this.graphicsLayer = this.map.graphics;
+                    });
+                }
             }
 
             // create symbol if none was provided in options
@@ -119,6 +128,10 @@ define([
                 this.symbol = new SimpleMarkerSymbol();
                 this.symbol.setStyle(SimpleMarkerSymbol.STYLE_DIAMOND);
                 this.symbol.setColor(new Color([255, 0, 0, 0.5]));
+            }
+
+            if (!this.wkid) {
+                this.wkid = (this.map) ? this.map.spatialReference.wkid : 26912;
             }
         },
 
@@ -185,7 +198,8 @@ define([
             var url = '//api.mapserv.utah.gov/api/v1/Geocode/{geocode.street}/{geocode.zone}';
 
             var options = {
-                apiKey: this.apiKey
+                apiKey: this.apiKey,
+                spatialReference: this.wkid
             };
 
             url = lang.replace(url, {
@@ -267,7 +281,9 @@ define([
                     var point = new Point(
                         response.result.location.x,
                         response.result.location.y,
-                        this.map.spatialReference
+                        new SpatialReference({
+                            wkid:this.wkid
+                        })
                     );
 
                     if (this.map.getLevel() > -1) {
@@ -278,7 +294,7 @@ define([
                             scaleUtils.getScale(
                                 this.map.extent,
                                 this.map.width,
-                                this.map.spatialReference.wkid
+                                this.wkid
                             ) / this.zoomLevel
                         );
                     }
