@@ -192,12 +192,12 @@ define([
                 };
             } else {
                 this._defaultExtent = new Extent({
-                    xmax: 696328,
-                    xmin: 207131,
-                    ymax: 4785283,
-                    ymin: 3962431,
+                    xmax: -11762120.612131765,
+                    xmin: -13074391.513731329,
+                    ymax: 5225035.106177688,
+                    ymin: 4373832.359194187,
                     spatialReference: {
-                        wkid: 26912
+                        wkid: 3857
                     }
                 });
                 options.extent = this._defaultExtent;
@@ -227,7 +227,7 @@ define([
                 this.setScale(this._defaultExtent.scale);
                 return this.centerAt(this._defaultExtent.center);
             }
-            return this.setExtent(this._defaultExtent);
+            return this.setExtent(this._defaultExtent, true);
         },
         showDefaultBaseMap: function () {
             // summary:
