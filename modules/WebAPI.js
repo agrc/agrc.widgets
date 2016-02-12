@@ -57,7 +57,10 @@ define([
             // options.geometry: String (not fully implemented)
             //      The point geometry used for spatial queries. Points are denoted as
             //      'point:[x,y]'.
-            // options.spatialReference: String
+            // options.spatialReference: Number
+            //      The spatial reference of the input geographic coordinate pair.
+            //      Choose any of the wkid's from the Geographic Coordinate System wkid reference
+            //      or Projected Coordinate System wkid reference. 26912 is the default.
             // options.tolerance: Number (not implemented)
             // options.spatialRelation: String (default: 'intersect')
             // options.buffer: Number
