@@ -1,16 +1,15 @@
 define([
-    'dojo/_base/declare',
-    'dojo/_base/lang',
+    'dojo/Deferred',
     'dojo/request',
     'dojo/request/script',
-    'dojo/Deferred'
-
+    'dojo/_base/declare',
+    'dojo/_base/lang'
 ], function(
-    declare,
-    lang,
+    Deferred,
     xhr,
     script,
-    Deferred
+    declare,
+    lang
 ) {
     return declare(null, {
         // description:
@@ -38,7 +37,7 @@ define([
             // summary:
             //      description
             // params: {}
-            console.log('agrc/modules/WebAPI::constructor', arguments);
+            console.log('agrc/modules/WebAPI:constructor', arguments);
 
             lang.mixin(this, params);
         },
@@ -58,9 +57,9 @@ define([
             // options.geometry: String (not fully implemented)
             //      The point geometry used for spatial queries. Points are denoted as
             //      'point:[x,y]'.
-            // options.spatialReference: String (not implemented)
+            // options.spatialReference: String
             // options.tolerance: Number (not implemented)
-            // options.spatialRelation: String (default: 'intersect') (not fully implemented)
+            // options.spatialRelation: String (default: 'intersect')
             // options.buffer: Number
             //      A distance in meters to buffer the input geometry.
             //      2000 meters is the maximum buffer.
@@ -76,9 +75,8 @@ define([
             //      'camel': camel cases all attribute names
             //
             // returns: Promise
-            console.log('agrc/modules/WebAPI::search', arguments);
+            console.log('agrc/modules/WebAPI:search', arguments);
 
-            var def = new Deferred();
             var url = this.baseUrl + 'search/' + featureClass + '/' + encodeURIComponent(returnValues.join(','));
 
             if (!options) {
@@ -89,9 +87,33 @@ define([
                 options.attributeStyle = this.defaultAttributeStyle;
             }
 
-            this._buildRequest(url, options, def, 'Error with search request');
+            return this._buildRequest(url, options, 'Error with search request');
+        },
+        geocode: function (street, zone, options) {
+            // summary:
+            //      geocode service wrapper (http://api.mapserv.utah.gov/#geocoding)
+            // street: String
+            //      A Utah street address. eg: 326 east south temple st. Intersections are separated by and.
+            // zone: String
+            //      A Utah municipality name or 5 digit zip code.
+            // options.spatialReference: Number
+            //      The spatial reference of the input geographic coordinate pair.
+            //      Defaults to 26912.
+            // options.format: String (esrijson | geojson)
+            //      The format of the resulting address. esri json will easily parse into an esri.Graphic
+            //      for display on a map and geojson will easily parse into a feature for use in many open
+            //      source projects. If this value is omitted, normal json will be returned.
+            // returns: Promise
+            console.log('agrc/modules/WebAPI:geocode', arguments);
 
-            return def.promise;
+            var url = this.baseUrl + 'geocode/' + street + '/' + zone;
+
+            if (!options) {
+                options = {};
+            }
+            options.apiKey = this.apiKey;
+
+            return this._buildRequest(url, options, 'Error with geocode request');
         },
         reverseGeocode: function (x, y, options) {
             // summary:
@@ -106,11 +128,9 @@ define([
             // options.distance: Number
             //      Sets the distance in meters from the geographic coordinate to find a street address.
             //      Default is 5 meters.
-            // options.callback: String (not fully implemented)
-            //      The callback function to call for cross domain javascript calls (jsonp).
-            console.log('agrc/modules/WebAPI::reverseGeocode', arguments);
+            // returns: Promise
+            console.log('agrc/modules/WebAPI:reverseGeocode', arguments);
 
-            var def = new Deferred();
             var url = this.baseUrl + 'geocode/reverse/' + x + '/' + y;
 
             if (!options) {
@@ -118,16 +138,41 @@ define([
             }
             options.apiKey = this.apiKey;
 
-            this._buildRequest(url, options, def, 'Error with geocode request');
-
-            return def.promise;
+            return this._buildRequest(url, options, 'Error with reverse geocode request');
         },
-        _buildRequest: function (url, options, def, rejectMessage) {
+        getRouteMilepost: function (route, milepost, options) {
             // summary:
-            //      description
-            // params
-            console.log('agrc/modules/WebAPI::_buildRequest', arguments);
+            //      route milepost wrapper (http://api.mapserv.utah.gov/#geocoding)
+            // route: String
+            //      The Utah highway number. eg: 15.
+            // milepost: String
+            //      The highway milepost. eg: 309.001. Milepost precision is up to
+            //      1/1000 of a mile (approximately 5 feet).
+            // options.side: String (increasing | decreasing)
+            //      For divided highways only.. The side of the divided highway to match. Increasing
+            //      if you are on the positive side of the divided highway (The mileposts are
+            //      getting larger as you drive). Decreasing if you are on the negative side of a
+            //      divided highway (the mileposts are getting smaller as you drive). Default is Increasing.
+            // options.spatialReference: String
+            //      The spatial reference of the input geographic coordinate pair. Choose any of the wkid's
+            //      from the Geographic Coordinate System wkid reference or Projected Coordinate System
+            //      wkid reference. 26912 is the default.
+            // returns: Promise
+            console.log('agrc/modules/WebAPI:getRouteMilepost', arguments);
 
+            var url = this.baseUrl + 'geocode/milepost/' + route + '/' + milepost;
+
+            if (!options) {
+                options = {};
+            }
+            options.apiKey = this.apiKey;
+
+            return this._buildRequest(url, options, 'Error with route milepost request');
+        },
+        _buildRequest: function (url, options, rejectMessage) {
+            console.log('agrc/modules/WebAPI:_buildRequest', arguments);
+
+            var def = new Deferred();
             var params = {
                 query: options,
                 handleAs: 'json',
@@ -157,6 +202,8 @@ define([
                     def.reject(rejectMessage);
                 }
             });
+
+            return def.promise;
         },
         supportsCORS: function () {
             // summary:
