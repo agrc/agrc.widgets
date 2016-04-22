@@ -1,0 +1,62 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+    <title>OpacitySlider Widget Tests</title>
+
+    <!-- META TAGS -->
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="../../vendor/esri/css/esri.css" />
+    <link rel="stylesheet" type="text/css" href="../../bower_components/dijit/themes/claro/claro.css" />
+    <link rel="stylesheet" type="text/css" href="../../resources/layer/OpacitySlider.css" />
+
+    <!-- JAVASCRIPT -->
+    <script type='text/javascript' src="../../bower_components/dojo/dojo.js"></script>
+    <script type='text/javascript'>
+        var widgetUnderTest;
+
+        require({
+            packages: [{
+                name: 'agrc',
+                location: '../../'
+            }, {
+                name: 'esri',
+                location: '../../vendor/esri'
+            }, {
+                name: 'spin',
+                location: '../../bower_components/spinjs',
+                main: 'spin'
+            }]
+        }, [
+            'agrc/widgets/map/BaseMap',
+            'agrc/widgets/layer/OpacitySlider',
+
+            'esri/layers/ArcGISDynamicMapServiceLayer',
+
+            'dojo/domReady!'
+        ], function (
+            BaseMap,
+            OpacitySlider,
+
+            ArcGISDynamicMapServiceLayer
+        ) {
+            // init map
+            var bMap = new BaseMap('map-div');
+
+            // add layer
+            var l = new ArcGISDynamicMapServiceLayer('http://mapserv.utah.gov/arcgis/rest/services/Broadband/FixedCached/MapServer', {opacity: 0.5});
+            bMap.addLayer(l);
+
+            // init widget
+            new OpacitySlider({mapServiceLayer: l}, 'test-div');
+        });
+    </script>
+</head>
+<body class='claro' style='overflow: auto;'>
+    <div id='map-div' style='width: 400px; height: 450px;'></div>
+    <div style='width: 250px; border: 1px solid gray;'>
+        <div id='test-div'></div>
+    </div>
+</body>
+</html>
