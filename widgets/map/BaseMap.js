@@ -439,7 +439,7 @@ define([
                 center: new Point({
                     x: parseInt(urlObj.x, 10),
                     y: parseInt(urlObj.y, 10),
-                    spatialReference: {wkid: 26912}
+                    spatialReference: {wkid: 3857}
                 })
             };
             this.on('load', function () {
