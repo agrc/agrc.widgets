@@ -43,16 +43,17 @@ function (
             map = null;
         });
 
-        xdescribe('BaseMap - Default Options', function() {
-            beforeEach( function(done) {
-                map = new BaseMap(testDiv, {
-                    useDefaultBaseMap: false
-                });
+        describe('BaseMap - Default Options', function() {
+            beforeEach(function(done) {
+                map = new BaseMap(testDiv);
 
                 map.on('load', done);
             });
 
             it('should set the initial extent and spatial reference', function() {
+                map = new BaseMap(testDiv, {
+                    useDefaultBaseMap: false
+                });
                 var expectedExtent = new Extent({
                     xmax: -11762120.612131765,
                     xmin: -13074391.513731329,
@@ -63,7 +64,7 @@ function (
                     }
                 });
 
-                expect(map.spatialReference.wkid).toEqual(expectedExtent.spatialReference.wkid);
+                expect(map.extent.spatialReference.wkid).toEqual(expectedExtent.spatialReference.wkid);
                 expect(map.extent.contains(expectedExtent)).toBeTruthy();
             });
 
@@ -112,6 +113,7 @@ function (
                     expect(testButton).toBeDefined();
                 });
 
+                // waiting until default layers are moved to discover services
                 xit('should zoom back out to the full extent when the button is pressed', function(done) {
                     var fullExtent;
 
