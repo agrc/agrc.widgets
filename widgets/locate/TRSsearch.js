@@ -90,7 +90,7 @@ define([
                 'PairsWith?predicate=TorRNAME=\'{0}\'&apikey={1}',
             section: '//api.mapserv.utah.gov/api/v1/search/SGID10.CADASTRE.PLSS_Sec_Lookup/' +
                 'PairsWith?predicate=TRNAME=\'{0}\'&apikey={1}',
-            envelope: '//api.mapserv.utah.gov/api/v1/search/{0}/shape@?predicate={1}&apikey={2}'
+            envelope: '//api.mapserv.utah.gov/api/v1/search/{0}/shape@?predicate={1}&apikey={2}&spatialReference={3}'
         },
 
         fields: {
@@ -495,7 +495,7 @@ define([
                 layer = this.featureClasses.township;
             }
 
-            var url = lang.replace(this.urls.envelope, [layer, this._buildPredicateForQuery(), this.apiKey]);
+            var url = lang.replace(this.urls.envelope, [layer, this._buildPredicateForQuery(), this.apiKey, this.map.spatialReference.wkid]);
 
             this.inflight = script.get(url, {
                 jsonp: 'callback'
