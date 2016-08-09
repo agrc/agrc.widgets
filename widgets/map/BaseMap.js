@@ -397,17 +397,18 @@ define([
                 }), 1000);
             }
         },
-        zoomToGeometry: function (geometry) {
+        zoomToGeometry: function (geometry, level) {
             // summary:
             //      Zooms the map to any type of geometry
             // geometry: esri.Geometry
+            // level?: number representing the scale level to zoom to points
             console.log('agrc.widgets.map.BaseMap::zoomToGeometry', arguments);
 
             if (geometry.type === 'polygon' || geometry.type === 'polyline' || geometry.type === 'multipoint') {
                 this.setExtent(geometry.getExtent(), true);
             } else {
                 // point
-                this.centerAndZoom(geometry, 10);
+                this.centerAndZoom(geometry, level || 10);
             }
         },
         onButtonClicked: function (which) {
