@@ -4,47 +4,48 @@ require([
     'dojo/_base/window',
 
     'dojo/dom-construct'
-], function(
+], function (
     TrsSearch,
     win,
 
     domConstruct
 ) {
 
-    var widget, select;
+    var widget;
+    var select;
 
-    afterEach(function() {
+    afterEach(function () {
         if (widget) {
             widget.destroy();
             widget = null;
         }
     });
 
-    describe('agrc/widgets/locate/TrsSearch', function() {
-        describe('Sanity', function() {
-            beforeEach(function() {
+    describe('agrc/widgets/locate/TrsSearch', function () {
+        describe('Sanity', function () {
+            beforeEach(function () {
                 widget = new TrsSearch(null, domConstruct.create('div', null, win.body()));
             });
 
-            it('should create a widget', function() {
+            it('should create a widget', function () {
                 expect(widget).toEqual(jasmine.any(TrsSearch));
             });
         });
-        describe('Init', function() {
-            beforeEach(function() {
+        describe('Init', function () {
+            beforeEach(function () {
                 widget = new TrsSearch(null, domConstruct.create('div', null, win.body()));
             });
 
-            it('should initialize to the salt lake meridian', function() {
+            it('should initialize to the salt lake meridian', function () {
                 expect(widget.get('meridian')).toEqual('SL');
             });
         });
-        describe('Meridian', function() {
-            beforeEach(function() {
+        describe('Meridian', function () {
+            beforeEach(function () {
                 widget = new TrsSearch(null, domConstruct.create('div', null, win.body()));
             });
 
-            it('should reflect the ub meridian when the corresponding button is clicked', function() {
+            it('should reflect the ub meridian when the corresponding button is clicked', function () {
                 var evt = {
                     target: domConstruct.toDom('<button data-meridian="UB"/>')
                 };
@@ -53,12 +54,12 @@ require([
                 expect(widget.get('meridian')).toEqual('UB');
             });
         });
-        describe('Townships', function() {
-            beforeEach(function() {
+        describe('Townships', function () {
+            beforeEach(function () {
                 widget = new TrsSearch(null, domConstruct.create('div', null, win.body()));
             });
 
-            it('should return default townships in order', function() {
+            it('should return default townships in order', function () {
                 var store = widget._cacheTownships(
                     [{
                         id: 1,
@@ -81,7 +82,7 @@ require([
                 expect(items[1].text).toEqual('19N');
             });
 
-            it('should change the dropdown values when the meridian changes', function() {
+            it('should change the dropdown values when the meridian changes', function () {
                 spyOn(widget, '_setMeridian').and.callThrough();
                 widget._cacheTownships(
                     [{
@@ -106,20 +107,20 @@ require([
                 expect(widget.townshipNode.children.length).toEqual(2);
             });
 
-            it('should do nothing if the meridian is the same', function() {
+            it('should do nothing if the meridian is the same', function () {
                 spyOn(widget, 'onMeridianChange');
                 widget.set('meridian', 'SL');
 
                 expect(widget.onMeridianChange).not.toHaveBeenCalled();
             });
         });
-        describe('Range', function() {
-            beforeEach(function() {
+        describe('Range', function () {
+            beforeEach(function () {
                 widget = new TrsSearch(null, domConstruct.create('div', null, win.body()));
             });
 
             //silly apy key wont work on :8000
-            xit('should update the ranges drop down when the township is changed', function() {
+            xit('should update the ranges drop down when the township is changed', function () {
                 var evt = {
                     target: {
                         value: '1S'
@@ -135,14 +136,14 @@ require([
                 expect(widget.rangeNode.children.length).toEqual(40);
             });
         });
-        describe('Sections', function() {
-            it('should default to showing sections', function() {
+        describe('Sections', function () {
+            it('should default to showing sections', function () {
                 widget = new TrsSearch({}, domConstruct.create('div', null, win.body()));
 
                 expect(widget.sectionNode.parentNode.children.length).toBeGreaterThan(0);
             });
 
-            it('should delete section node if hidden', function() {
+            it('should delete section node if hidden', function () {
                 widget = new TrsSearch({
                     hideSection: true
                 }, domConstruct.create('div', null, win.body()));
@@ -150,8 +151,8 @@ require([
                 expect(widget.sectionNode.parentNode).toEqual(null);
             });
         });
-        describe('Select Change events', function() {
-            xit('should reset section value if range changes', function() {
+        describe('Select Change events', function () {
+            xit('should reset section value if range changes', function () {
                 widget = new TrsSearch({}, domConstruct.create('div', null, win.body()));
                 widget.meridian = 'SL';
                 widget.township = '4N';
@@ -167,7 +168,7 @@ require([
                 expect(widget.get('section')).toEqual('');
             });
 
-            it('should set the hidden value when the values change', function() {
+            it('should set the hidden value when the values change', function () {
                 widget = new TrsSearch({}, domConstruct.create('div', null, win.body()));
                 widget.meridian = 'SL';
                 widget.township = '0S';
@@ -177,20 +178,20 @@ require([
                 expect(widget.hiddenNode.value).toEqual('26T0SR0WSec0');
             });
         });
-        describe('Helper functions', function() {
-            beforeEach(function() {
+        describe('Helper functions', function () {
+            beforeEach(function () {
                 widget = new TrsSearch(null, domConstruct.create('div', null, win.body()));
             });
-            describe('_buildSelect', function() {
-                beforeEach(function() {
+            describe('_buildSelect', function () {
+                beforeEach(function () {
                     select = domConstruct.create('select', null, win.body(), 'first');
                 });
 
-                afterEach(function() {
+                afterEach(function () {
                     domConstruct.destroy(select);
                 });
 
-                it('should add select options', function() {
+                it('should add select options', function () {
                     widget._buildSelect(select, [{
                         text: 'hi'
                     }, {
@@ -200,7 +201,7 @@ require([
                     expect(select.children.length).toEqual(3);
                 });
 
-                it('should clear old entries', function() {
+                it('should clear old entries', function () {
                     widget._buildSelect(select, [{
                         text: 'hi'
                     }, {
@@ -217,8 +218,8 @@ require([
                     expect(select.children.length).toEqual(2);
                 });
             });
-            describe('_formatResponse', function() {
-                it('turns the response object into something build select can deal with', function() {
+            describe('_formatResponse', function () {
+                it('turns the response object into something build select can deal with', function () {
                     var response = {
                         'result': [{
                             'attributes': {
@@ -237,8 +238,8 @@ require([
                     expect(items[1].text).toEqual('2W');
                 });
             });
-            describe('_buildTrsLabel', function() {
-                it('builds a partial label', function() {
+            describe('_buildTrsLabel', function () {
+                it('builds a partial label', function () {
                     widget.meridian = '';
                     widget.township = '';
                     widget.range = '';
@@ -257,8 +258,8 @@ require([
                     expect(widget._buildTrsLabel('township')).toEqual('SLT1N');
                 });
             });
-            describe('_buildPredicateForQuery', function() {
-                it('builds a query for township range and section', function() {
+            describe('_buildPredicateForQuery', function () {
+                it('builds a query for township range and section', function () {
                     widget.meridian = '';
                     widget.township = '';
                     widget.range = '';
@@ -279,8 +280,8 @@ require([
                         .toEqual('BASEMERIDIAN=\'26\' AND LABEL=\'T19S R10W\' AND SECTION=\'01\'');
                 });
             });
-            describe('formattedTrsString', function() {
-                it('builds a query for township range and section', function() {
+            describe('formattedTrsString', function () {
+                it('builds a query for township range and section', function () {
                     widget.meridian = '';
                     widget.township = '';
                     widget.range = '';
@@ -300,8 +301,8 @@ require([
                     expect(widget.formattedTrsString()).toEqual('26T19SR10WSec1');
                 });
             });
-            describe('_sortFunction', function() {
-                it('_sort should sort the items from north to south or from west to east', function() {
+            describe('_sortFunction', function () {
+                it('_sort should sort the items from north to south or from west to east', function () {
                     var testArray = [{
                         text: '1N'
                     }, {
@@ -349,7 +350,7 @@ require([
                     expect(testArray).toEqual(expectedArray);
                 });
 
-                it('_sort should sort the section numbers correctly', function() {
+                it('_sort should sort the section numbers correctly', function () {
                     var testArray = [{
                         text: '8'
                     }, {

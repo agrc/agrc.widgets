@@ -23,7 +23,7 @@ define([
 
 
     'dojo/Stateful'
-], function(
+], function (
     template,
 
     declare,
@@ -91,7 +91,7 @@ define([
         //      the map to zoom
         map: null,
 
-        postCreate: function() {
+        postCreate: function () {
             // summary:
             //    Overrides method of same name in dijit._Widget.
             console.log('agrc.widgets.locate.ZoomToCoords::postCreate', arguments);
@@ -107,7 +107,7 @@ define([
                     dms: this.dmsNode,
                     dd: this.ddNode
                 },
-                hideAllBut: function(showMe) {
+                hideAllBut: function (showMe) {
                     for (var prop in this.panels) {
                         if (this.panels.hasOwnProperty(prop)) {
                             if (showMe && prop === showMe) {
@@ -129,7 +129,7 @@ define([
 
             this._setupConnections();
         },
-        zoom: function() {
+        zoom: function () {
             // summary:
             //      zooms the map to the point created by _getPoint
             //  summary:
@@ -169,7 +169,7 @@ define([
 
             this._geometryService.project([point], this.map.spatialReference);
         },
-        _setupConnections: function() {
+        _setupConnections: function () {
             // summary:
             //      place to wire events and such
             //
@@ -178,7 +178,7 @@ define([
             this.own(
                 on(this.domNode, 'input:change', lang.hitch(this, '_validate')),
                 on(this.domNode, 'input:input', lang.hitch(this, '_validate')),
-                on(this.formNode, 'submit', function(evt) {
+                on(this.formNode, 'submit', function (evt) {
                     events.stop(evt);
                 }),
                 on(this._geometryService,
@@ -191,7 +191,7 @@ define([
             this.watch('valid', lang.hitch(this, '_enableZoom'));
             aspect.after(this, '_updateView', lang.hitch(this, '_validate'));
         },
-        _updateView: function(evt) {
+        _updateView: function (evt) {
             // summary:
             //      handles the click event of the coordinate system buttons
             // evt
@@ -199,30 +199,30 @@ define([
 
             this._panelController.hideAllBut(evt.target.value);
         },
-        _getPoint: function() {
+        _getPoint: function () {
             // summary:
             //      creates a point from the user input
             console.log('agrc.widgets.locate.ZoomToCoords::_getPoint', arguments);
 
-            var getValue = function(input, match) {
-                var value = array.filter(input, function(node) {
+            var getValue = function (input, match) {
+                var value = array.filter(input, function (node) {
                     return node.name === match;
                 })[0].value;
 
                 return number.parse(value);
             };
 
-            var inputs = query('[data-required="true"]', this._panelController.visible),
-                sr = new SpatialReference({
-                    wkid: 4326
-                }),
-                point = null,
-                x = null,
-                y = null,
-                xm = null,
-                ym = null,
-                xs = null,
-                ys = null;
+            var inputs = query('[data-required="true"]', this._panelController.visible);
+            var sr = new SpatialReference({
+                wkid: 4326
+            });
+            var point = null;
+            var x = null;
+            var y = null;
+            var xm = null;
+            var ym = null;
+            var xs = null;
+            var ys = null;
 
             switch (this._panelController.visible) {
                 case this.utmNode:
@@ -267,22 +267,22 @@ define([
 
             return point;
         },
-        _validate: function() {
+        _validate: function () {
             // summary:
             //      validates the inputs from the node
             console.log('agrc.widgets.locate.ZoomToCoords::_validate', arguments);
 
-            var valid = false,
-                inputs = query('[data-required="true"]', this._panelController.visible);
+            var valid = false;
+            var inputs = query('[data-required="true"]', this._panelController.visible);
 
             //reset validation
-            inputs.forEach(function(node) {
+            inputs.forEach(function (node) {
                 domClass.remove(node.parentElement, 'has-error');
                 domClass.remove(node.parentElement, 'has-success');
             });
 
             //filter inputs to get bad ones
-            var problems = array.filter(inputs, function(node) {
+            var problems = array.filter(inputs, function (node) {
                 if (!node.value ||
                     lang.trim(node.value) === '' || !number.parse(node.value)) {
                     domClass.add(node.parentElement, 'has-error');
@@ -299,7 +299,7 @@ define([
 
             return valid;
         },
-        _enableZoom: function(prop, old, value) {
+        _enableZoom: function (prop, old, value) {
             // summary:
             //      if validate returns true, enable the zoom button
             // valid
@@ -315,7 +315,7 @@ define([
             domClass.remove(this.zoomNode, 'disabled');
             domAttr.remove(this.zoomNode, 'disabled');
         },
-        _projectionComplete: function(response) {
+        _projectionComplete: function (response) {
             // summary:
             //      callback function to the geometryservice project method
             // response: [esri.Geometry]
@@ -342,7 +342,7 @@ define([
                 point: point
             });
         },
-        _displayError: function(value) {
+        _displayError: function (value) {
             // summary:
             //      handles errors
             console.log('agrc.widgets.locate.ZoomToCoords::_displayError', arguments);

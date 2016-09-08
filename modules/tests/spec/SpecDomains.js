@@ -1,18 +1,20 @@
 require([
     'agrc/modules/Domains',
-    'dojo/dom-construct',
-    'dojo/Deferred',
-    'dojo/request',
-    'stubmodule'
-],
 
-function (
+    'dojo/Deferred',
+    'dojo/dom-construct',
+    'dojo/text!modules/tests/data/featureServiceResponse.json',
+
+    'stubmodule'
+], function (
     Domains,
-    domConstruct,
+
     Deferred,
-    request,
+    domConstruct,
+    featureServiceResponseTxt,
+
     stubModule
-    ) {
+) {
     describe('agrc/modules/Domains', function () {
         var select;
         var fakeUrl = 'blah';
@@ -51,19 +53,13 @@ function (
             });
             describe('successful', function () {
                 var getDef;
-                var popDef;
                 var codedValues;
-                beforeEach(function (done) {
+                beforeEach(function () {
                     getDef = new Deferred();
                     spyOn(Domains, 'getCodedValues').and.returnValue(getDef);
-                    popDef = Domains.populateSelectWithDomainValues(select, fakeUrl, fieldName);
-                    request('modules/tests/data/featureServiceResponse.json').then(
-                        function (response) {
-                            codedValues = JSON.parse(response).fields[3].domain.codedValues;
-                            getDef.resolve(codedValues);
-                            done();
-                        }
-                    );
+                    Domains.populateSelectWithDomainValues(select, fakeUrl, fieldName);
+                    codedValues = JSON.parse(featureServiceResponseTxt).fields[3].domain.codedValues;
+                    getDef.resolve(codedValues);
                 });
                 it('creates the correct number of options', function () {
                     expect(select.children.length).toEqual(10);
@@ -75,11 +71,11 @@ function (
                     expect(option.innerHTML).toEqual('Coldwater river');
                 });
                 it('caches the domain values for future requests', function () {
-                    expect(AGRC['agrc/modules/Domains_codedValues'][fakeUrl + '_' + fieldName])
+                    expect(window.AGRC['agrc/modules/Domains_codedValues'][fakeUrl + '_' + fieldName])
                         .toEqual(codedValues);
                 });
                 it('doesnt call getCodedValues if there is an existing cache', function () {
-                    AGRC['agrc/modules/Domains_codedValues'][fakeUrl + '_' + fieldName] =
+                    window.AGRC['agrc/modules/Domains_codedValues'][fakeUrl + '_' + fieldName] =
                         [{code: 'blah', name: 'blah'}];
 
                     Domains.populateSelectWithDomainValues(select, fakeUrl, fieldName);
@@ -119,13 +115,9 @@ function (
                 expect(response).toEqual(StubbedDomains._errMsgs.getCodedValues);
             });
             it('resolves the deferred with the appropriate array of values', function (done) {
-                var requestDef;
                 var jsonData;
-                requestDef = request('modules/tests/data/featureServiceResponse.json');
-                requestDef.then(function (response) {
-                    jsonData = JSON.parse(response);
-                    xhrDef.resolve(response);
-                });
+                jsonData = JSON.parse(featureServiceResponseTxt);
+                xhrDef.resolve(featureServiceResponseTxt);
                 xhrDef.then(function () {
                     expect(response).toEqual(jsonData.fields[3].domain.codedValues);
                     done();

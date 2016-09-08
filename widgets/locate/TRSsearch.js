@@ -21,7 +21,7 @@ define([
     'esri/graphic',
 
     './data/townships'
-], function(
+], function (
     template,
 
     declare,
@@ -154,12 +154,12 @@ define([
         //      defaults to 'trs'
         formName: 'trs',
 
-        constructor: function() {
+        constructor: function () {
             // summary:
             //      description
             console.log('agrc.widgets.locate.TrsSeearch::constructor', arguments);
         },
-        postCreate: function() {
+        postCreate: function () {
             // summary:
             //    Overrides method of same name in dijit._Widget.
             // tags:
@@ -179,7 +179,7 @@ define([
 
             this.setupConnections();
         },
-        setupConnections: function() {
+        setupConnections: function () {
             // summary:
             //      wire events, and such
             //
@@ -189,7 +189,7 @@ define([
             this.connect(this.rangeNode, 'onchange', lang.hitch(this, '_onRangeChange'));
             this.connect(this.sectionNode, 'onchange', lang.hitch(this, '_onSectionChange'));
         },
-        _cacheTownships: function(data) {
+        _cacheTownships: function (data) {
             // summary:
             //      creates the memory store of township items
             // townships: townships array
@@ -201,7 +201,7 @@ define([
 
             return this._townshipStore;
         },
-        _getTownshipsForMeridian: function(store, meridian) {
+        _getTownshipsForMeridian: function (store, meridian) {
             // summary:
             //      gets the townships specific to that meridian
             // store: dojo/store implementation
@@ -214,14 +214,14 @@ define([
                 sort: this._sortFunction
             });
         },
-        _sortFunction: function(one, two) {
+        _sortFunction: function (one, two) {
             // summary:
             //      sorts trs items including direction
             // a,b an object with a text property
             // console.log('agrc.widgets.locate.TrsSearch::_sortFunction', arguments);
 
-            var a = one.text,
-                b = two.text;
+            var a = one.text;
+            var b = two.text;
 
             var aDir = a.charAt(a.length - 1);
             var bDir = b.charAt(b.length - 1);
@@ -240,7 +240,7 @@ define([
                 return parseInt(a, 10) - parseInt(b, 10);
             }
         },
-        _getOptionsFor: function(prop, urlTemplate, targetNode, evt) {
+        _getOptionsFor: function (prop, urlTemplate, targetNode, evt) {
             // summary:
             //      queries teh api and gets the available ranges
             // townships
@@ -263,15 +263,15 @@ define([
             var self = this;
 
             this.inflight.then(
-                function(response) {
+                function (response) {
                     var items = self._formatResponse(response);
                     self._buildSelect(targetNode, items);
                 },
-                function(e) {
+                function (e) {
                     alert('error function', e);
                 });
         },
-        _formatResponse: function(response) {
+        _formatResponse: function (response) {
             // summary:
             //      response comes back as one string. needs to be ETL'd
             // response
@@ -288,7 +288,7 @@ define([
 
             var itemString = response.result[0].attributes.pairswith;
             var items = itemString.split('|');
-            items = array.map(items, function(item) {
+            items = array.map(items, function (item) {
                 return {
                     text: item.replace('R', '')
                 };
@@ -298,7 +298,7 @@ define([
 
             return items;
         },
-        _buildSelect: function(node, options) {
+        _buildSelect: function (node, options) {
             // summary:
             //      adds options to a select dom node
             // node: select dom node
@@ -307,7 +307,7 @@ define([
 
             query('option', node).forEach(domConstruct.destroy);
 
-            array.forEach(options, function(item) {
+            array.forEach(options, function (item) {
                 var args = {
                     innerHTML: item.text
                 };
@@ -322,7 +322,7 @@ define([
             );
             domConstruct.place(placeholder, node, 'first');
         },
-        _resetLinkedSelects: function(parentNode) {
+        _resetLinkedSelects: function (parentNode) {
             // summary:
             //      resets the selects below the parent node
             // parentNode
@@ -341,8 +341,8 @@ define([
                     nodes: [],
                     props: ['section']
                 }
-            },
-                container = null;
+            };
+            var container = null;
 
             if (parentNode === this.townshipNode) {
                 container = selectTree.township;
@@ -360,23 +360,23 @@ define([
                 return;
             }
 
-            array.forEach(container.nodes, function(node) {
+            array.forEach(container.nodes, function (node) {
                 query('option', node).forEach(domConstruct.destroy);
             });
 
-            array.forEach(container.props, function(prop) {
+            array.forEach(container.props, function (prop) {
                 this._set(prop, '');
                 console.log('setting ' + prop + ' to empty');
             }, this);
         },
-        meridianId: function() {
+        meridianId: function () {
             // summary:
             //      Returns the number of the selected meridian
             console.log('agrc.widgets.locate.TrsSearch::meridianId', arguments);
 
             return (this.get('meridian') === 'SL') ? 26 : 30;
         },
-        formattedTrsString: function() {
+        formattedTrsString: function () {
             // summary:
             //      Formats a string from the current widget values to match
             //      this pattern: '26T1NR3WSec30'
@@ -397,7 +397,7 @@ define([
                 [this.meridianId(), this.get('township'), this.get('range'), this.get('section')]
             );
         },
-        _buildTrsLabel: function(prop) {
+        _buildTrsLabel: function (prop) {
             // summary:
             //      builds the TRS label from all the parts
             // prop: string - the depth to build the label
@@ -423,7 +423,7 @@ define([
 
             return label;
         },
-        _buildPredicateForQuery: function() {
+        _buildPredicateForQuery: function () {
             // summary:
             //      Formats the widget values for the get envelope web service request.
             // returns: String
@@ -453,7 +453,7 @@ define([
 
             return meridian + townshipRange;
         },
-        _getAllValues: function() {
+        _getAllValues: function () {
             // summary:
             //      Gets all of the current values for the form.
             // Returns: {meridian: String, township: String, range: String, section: String}
@@ -466,7 +466,7 @@ define([
                 section: this.get('section')
             };
         },
-        zoom: function() {
+        zoom: function () {
             // summary:
             //      Zooms to the selected section or range.
             console.log('agrc.widgets.locate.TrsSearch::zoom', arguments);
@@ -495,31 +495,32 @@ define([
                 layer = this.featureClasses.township;
             }
 
-            var url = lang.replace(this.urls.envelope, [layer, this._buildPredicateForQuery(), this.apiKey, this.map.spatialReference.wkid]);
+            var url = lang.replace(this.urls.envelope,
+                                   [layer, this._buildPredicateForQuery(), this.apiKey, this.map.spatialReference.wkid]);
 
             this.inflight = script.get(url, {
                 jsonp: 'callback'
             });
 
-            this.inflight.then(function(response) {
-                    console.log(response);
-                    var geometry = response.result[0];
-                    var graphic = new Graphic(geometry);
-                    graphic.geometry.spatialReference = self.map.spatialReference;
+            this.inflight.then(function (response) {
+                console.log(response);
+                var geometry = response.result[0];
+                var graphic = new Graphic(geometry);
+                graphic.geometry.spatialReference = self.map.spatialReference;
 
-                    console.log(graphic);
+                console.log(graphic);
 
-                    self.map.setExtent(graphic.geometry.getExtent(), true);
-                    console.log('setting extent');
-                    showBusy(false);
-                },
-                function() {
-                    showBusy(false);
-                });
+                self.map.setExtent(graphic.geometry.getExtent(), true);
+                console.log('setting extent');
+                showBusy(false);
+            },
+            function () {
+                showBusy(false);
+            });
         },
 
         // setter methods - see _WidgetBase:set
-        _setMeridian: function(meridian) {
+        _setMeridian: function (meridian) {
             // summary:
             //      sets the available values in the township dropdown based on the meridian
             // meridian: String
@@ -544,7 +545,7 @@ define([
 
             this._buildSelect(this.townshipNode, townshipsInMeridian);
         },
-        _setMeridianAttr: function(newValue) {
+        _setMeridianAttr: function (newValue) {
             console.log('agrc.widgets.locate.TrsSearch::_setMeridianAttr', arguments);
 
             if (newValue === this.meridian) {
@@ -557,7 +558,7 @@ define([
             this.onMeridianChange(this.get('meridian'));
             this._onValueChange(this._getAllValues());
         },
-        _setTownshipAttr: function(newValue) {
+        _setTownshipAttr: function (newValue) {
             console.log('agrc.widgets.locate.TrsSearch::_setTownshipAttr', arguments);
 
             if (newValue === this.meridian) {
@@ -569,7 +570,7 @@ define([
             this.onTownshipChange(this.get('township'));
             this._onValueChange(this._getAllValues());
         },
-        _setRangeAttr: function(newValue) {
+        _setRangeAttr: function (newValue) {
             console.log('agrc.widgets.locate.TrsSearch::_setRangeAttr', arguments);
 
             if (newValue === this.range) {
@@ -581,7 +582,7 @@ define([
             this.onRangeChange(this.get('range'));
             this._onValueChange(this._getAllValues());
         },
-        _setSectionAttr: function(newValue) {
+        _setSectionAttr: function (newValue) {
             console.log('agrc.widgets.locate.TrsSearch::_setSectionAttr', arguments);
 
             if (newValue === this.section) {
@@ -595,7 +596,7 @@ define([
         },
 
         // events
-        _onMeridianChange: function(evt) {
+        _onMeridianChange: function (evt) {
             // summary:
             //      handles the click event of the meridian buttons
             // evt
@@ -603,7 +604,7 @@ define([
 
             this.set('meridian', domAttr.get(evt.target, 'data-meridian'));
         },
-        _onTownshipChange: function(evt) {
+        _onTownshipChange: function (evt) {
             // summary:
             //      Fires when the user selects a new township value
             // evt: Event
@@ -615,7 +616,7 @@ define([
 
             this._getOptionsFor('township', this.urls.range, this.rangeNode);
         },
-        _onRangeChange: function(evt) {
+        _onRangeChange: function (evt) {
             // summary:
             //      Fires when the user changes the range value in the drop down
             // evt: Event
@@ -627,7 +628,7 @@ define([
             this.set('range', evt.target.value);
             this._getOptionsFor('range', this.urls.section, this.sectionNode);
         },
-        _onSectionChange: function(evt) {
+        _onSectionChange: function (evt) {
             // summary:
             //      Fires when the user changes the range value in the drop down
             // evt: Event
@@ -638,7 +639,7 @@ define([
 
             this.set('section', evt.target.value);
         },
-        _onValueChange: function(data) {
+        _onValueChange: function (data) {
             // summary:
             //      sets the hidden value with the data and calls public method
             // data
@@ -648,32 +649,32 @@ define([
             this.onValueChange(data);
         },
 
-        onMeridianChange: function(/*newValue*/) {
+        onMeridianChange: function (/*newValue*/) {
             // summary:
             //      Fires whenever the meridian changes.
             // newValue: String
             //      The new value.
             console.log('agrc.widgets.locate.TrsSearch::onMeridianChange', arguments);
         },
-        onTownshipChange: function(/*newValue*/) {
+        onTownshipChange: function (/*newValue*/) {
             // summary:
             //      Fires whenever the township changes.
             // newValue: String
             //      The new value.
         },
-        onRangeChange: function(/*newValue*/) {
+        onRangeChange: function (/*newValue*/) {
             // summary:
             //      Fires whenever the range changes.
             // newValue: String
             //      The new value.
         },
-        onSectionChange: function(/*newValue*/) {
+        onSectionChange: function (/*newValue*/) {
             // summary:
             //      Fires whenever the section changes.
             // newValue: String
             //      The new value.
         },
-        onValueChange: function(/*newValue*/) {
+        onValueChange: function (/*newValue*/) {
             // summary:
             //      Fires whenever any value (meridian, township, range, or section)
             //      changes.

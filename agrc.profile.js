@@ -1,7 +1,7 @@
-/* jshint unused:false */
-var profile = (function() {
+/*eslint-disable no-unused-vars, no-undef */
+var profile = (function () {
     var testResourceRe = /.*\/tests\//;
-    var copyOnly = function(filename, mid) {
+    var copyOnly = function (filename, mid) {
         var list = {
             'agrc/agrc.profile': true,
             'agrc/package.json': true
@@ -23,18 +23,19 @@ var profile = (function() {
 
     return {
         resourceTags: {
-            test: function(filename, mid) {
+            test: function (filename, mid) {
                 return testResourceRe.test(mid);
             },
-            copyOnly: function(filename, mid) {
+            copyOnly: function (filename, mid) {
                 return copyOnly(filename, mid);
             },
-            amd: function(filename, mid) {
+            amd: function (filename, mid) {
                 return (/\.js$/).test(filename) && !(mid in nonAMDs);
             },
-            ignore: function(filename, mid) {
+            ignore: function (filename, mid) {
                 return mid in ignores || /.*\/node_modules\//.test(mid);
             }
         }
     };
-})();
+}());
+/*eslint-enable no-unused-vars, no-undef */

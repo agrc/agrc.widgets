@@ -1,4 +1,4 @@
-define([], function() {
+define([], function () {
     /*!
     Math.uuid.js (v1.4)
     http://www.broofa.com
@@ -37,10 +37,10 @@ define([], function() {
 
     var GUID = {};
 
-    GUID.uuid = function(len, radix) {
-        var chars = CHARS,
-            uuid = [],
-            i;
+    GUID.uuid = function (len, radix) {
+        var chars = CHARS;
+        var uuid = [];
+        var i;
         radix = radix || chars.length;
 
         if (len) {

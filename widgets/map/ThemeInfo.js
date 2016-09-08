@@ -1,7 +1,7 @@
 define([
     'dojo/_base/declare',
     'dojo/_base/lang'
-], function(
+], function (
     declare,
     lang
 ) {
@@ -13,7 +13,7 @@ define([
         //      </p>
         //      <p>
         //      **Description**:
-        //      Contains a label for the unique name of the base map theme and the 
+        //      Contains a label for the unique name of the base map theme and the
         //      layers of type esri.layers.layer that are contained in that theme.
         //      </p>
         //      <p>
@@ -32,16 +32,16 @@ define([
         // |    var dynamic = new esri.layers.ArcGISDynamicMapServiceLayer("http://../MapServer", {
         // |        opacity: 0.50
         // |    });
-        // |    
+        // |
         // |    var tiled = new esri.layers.ArcGISTiledMapServiceLayer("http://../MapServer");
-        // |    
+        // |
         // |    selector = new agrc.widgets.map.BaseMapSelector({ map: map, id: "tundra", position: "BL" });
-        // |    
+        // |
         // |    var themeInfo = new agrc.widgets.map.ThemeInfo({
         // |        label: 'testCustomTheme',
         // |        layers: [dynamic, tiled]
         // |    });
-        // |    
+        // |
         // |    selector.addTheme(themeInfo);
 
         // label: [public] String
@@ -52,7 +52,7 @@ define([
         //      array of esri.layers.Layer ordered from bottom up
         layers: null,
 
-        constructor: function(args) {
+        constructor: function (args) {
             // summary:
             //      Constructor function for object
             // description:
