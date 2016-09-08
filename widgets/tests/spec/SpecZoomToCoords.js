@@ -8,7 +8,7 @@ require([
     'dojo/dom-class',
 
     'dojo/query'
-], function(
+], function (
     WidgetUnderTest,
 
     win,
@@ -22,40 +22,40 @@ require([
 
     var widget;
 
-    afterEach(function() {
+    afterEach(function () {
         if (widget) {
             widget.destroy();
             widget = null;
         }
     });
 
-    describe('agrc/widgets/locate/ZoomToCoords', function() {
-        describe('Sanity', function() {
-            beforeEach(function() {
+    describe('agrc/widgets/locate/ZoomToCoords', function () {
+        describe('Sanity', function () {
+            beforeEach(function () {
                 widget = new WidgetUnderTest({
                     map: {
-                        centerAndZoom: function() {
+                        centerAndZoom: function () {
 
                         }
                     }
                 }, domConstruct.create('div', null, win.body()));
             });
 
-            it('should create a ZoomToCoords', function() {
+            it('should create a ZoomToCoords', function () {
                 expect(widget).toEqual(jasmine.any(WidgetUnderTest));
             });
         });
-        describe('_updateView', function() {
-            beforeEach(function() {
+        describe('_updateView', function () {
+            beforeEach(function () {
                 widget = new WidgetUnderTest({
                     map: {
-                        centerAndZoom: function() {
+                        centerAndZoom: function () {
 
                         }
                     }
                 }, domConstruct.create('div', null, win.body()));
             });
-            it('should hide everything except utm on load', function() {
+            it('should hide everything except utm on load', function () {
                 var nodes = query('.show', widget.domNode);
 
                 expect(nodes.length).toEqual(1);
@@ -65,7 +65,7 @@ require([
                 expect(node).toBe(widget._panelController.visible);
                 expect(node).toBe(widget.utmNode);
             });
-            it('should hide everything except what is chosen', function() {
+            it('should hide everything except what is chosen', function () {
                 var evt = {
                     target: {
                         value: 'dd'
@@ -84,20 +84,20 @@ require([
                 expect(node).toBe(widget.ddNode);
             });
         });
-        describe('_validate', function() {
-            beforeEach(function() {
+        describe('_validate', function () {
+            beforeEach(function () {
                 widget = new WidgetUnderTest({
                     map: {
-                        centerAndZoom: function() {
+                        centerAndZoom: function () {
 
                         }
                     }
                 }, domConstruct.create('div', null, win.body()));
             });
-            it('returns false if inputs are empty', function() {
+            it('returns false if inputs are empty', function () {
                 expect(widget._validate()).toEqual(false);
             });
-            it('returns false if inputs contain any non numbers', function() {
+            it('returns false if inputs contain any non numbers', function () {
                 var nodes = query('input[type="text"]', widget.utmNode);
 
                 nodes[0].value = 'not a number 1';
@@ -107,7 +107,7 @@ require([
 
                 expect(widget._validate()).toEqual(false);
             });
-            it('returns true if inputs are all numbers', function() {
+            it('returns true if inputs are all numbers', function () {
                 var nodes = query('input[type="text"]', widget.utmNode);
 
                 nodes[0].value = '15.00';
@@ -119,18 +119,18 @@ require([
             });
         });
         describe('zoom', function () {
-            beforeEach(function() {
+            beforeEach(function () {
                 widget = new WidgetUnderTest({
                     map: {
-                        centerAndZoom: function() {},
+                        centerAndZoom: function () {},
                         spatialReference: {}
                     }
                 }, domConstruct.create('div', null, win.body()));
             });
             it('does not call projection service if wkids match', function () {
-                spyOn(widget, '_getPoint').and.callFake(function(){
+                spyOn(widget, '_getPoint').and.callFake(function () {
                     return {
-                        spatialReference:{
+                        spatialReference: {
                             wkid: 0
                         }
                     };
@@ -144,9 +144,9 @@ require([
                 expect(widget._geometryService.project).not.toHaveBeenCalled();
             });
             it('reprojects point if wkids do not match', function () {
-                spyOn(widget, '_getPoint').and.callFake(function(){
+                spyOn(widget, '_getPoint').and.callFake(function () {
                     return {
-                        spatialReference:{
+                        spatialReference: {
                             wkid: 1
                         }
                     };

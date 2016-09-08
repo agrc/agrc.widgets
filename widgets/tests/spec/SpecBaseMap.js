@@ -30,27 +30,27 @@ function (
     describe('agrc/widgets/map/BaseMap', function () {
         var map;
         var testDiv;
-        beforeEach(function(){
+        beforeEach(function () {
             testDiv = domConstruct.create('div', {
                 width: '300px',
                 height: '300px'
             }, win.body());
         });
 
-        afterEach( function() {
+        afterEach(function () {
             map.destroy();
             domConstruct.destroy(testDiv);
             map = null;
         });
 
-        describe('BaseMap - Default Options', function() {
-            beforeEach(function(done) {
+        describe('BaseMap - Default Options', function () {
+            beforeEach(function (done) {
                 map = new BaseMap(testDiv);
 
                 map.on('load', done);
             });
 
-            it('should set the initial extent and spatial reference', function() {
+            it('should set the initial extent and spatial reference', function () {
                 map = new BaseMap(testDiv, {
                     useDefaultBaseMap: false
                 });
@@ -68,7 +68,7 @@ function (
                 expect(map.extent.contains(expectedExtent)).toBeTruthy();
             });
 
-            it('should add the Vector Cache map service', function() {
+            it('should add the Vector Cache map service', function () {
                 // TODO: switch to discover service
                 expect(map.layerIds.length).toEqual(1);
 
@@ -80,8 +80,8 @@ function (
             });
         });
 
-        describe('BaseMap - Non-default Options', function() {
-            it('should mixin options', function() {
+        describe('BaseMap - Non-default Options', function () {
+            it('should mixin options', function () {
                 var params = {
                     useDefaultExtent: false,
                     defaultBaseMap: 'UtahBaseMap-Terrain'
@@ -93,15 +93,15 @@ function (
                 expect(map.defaultBaseMap).toEqual('UtahBaseMap-Terrain');
             });
 
-            describe('Full Extent Button', function() {
+            describe('Full Extent Button', function () {
                 var testButton;
 
-                beforeEach( function(done) {
+                beforeEach(function (done) {
                     map = new BaseMap(testDiv, {
                         includeFullExtentButton: true
                     });
 
-                    aspect.after(map, 'onLoad', function() {
+                    aspect.after(map, 'onLoad', function () {
                         setTimeout(function () {
                             testButton = query('.glyphicon-globe', testDiv)[0];
                             done();
@@ -109,12 +109,12 @@ function (
                     });
                 });
 
-                it('should add the full extent button when specified in the options', function() {
+                it('should add the full extent button when specified in the options', function () {
                     expect(testButton).toBeDefined();
                 });
 
                 // waiting until default layers are moved to discover services
-                xit('should zoom back out to the full extent when the button is pressed', function(done) {
+                xit('should zoom back out to the full extent when the button is pressed', function (done) {
                     var fullExtent;
 
                     fullExtent = lang.clone(map.extent);

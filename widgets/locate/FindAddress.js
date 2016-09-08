@@ -22,7 +22,7 @@ define([
     'esri/graphic',
     'esri/request',
     'esri/SpatialReference'
-], function(
+], function (
     template,
 
     declare,
@@ -95,13 +95,13 @@ define([
         //      Controls if form is inline or normal (default) layout
         inline: null,
 
-        constructor: function() {
+        constructor: function () {
             // summary:
             //      first function to fire after page loads
             console.info('agrc.widgets.locate.FindAddress::constructor', arguments);
         },
 
-        postMixInProperties: function() {
+        postMixInProperties: function () {
             // summary:
             //      postMixin properties like symbol and graphics layer
             // description:
@@ -115,9 +115,8 @@ define([
                 // handle race condition
                 if (this.map.loaded) {
                     this.graphicsLayer = this.map.graphics;
-                }
-                else {
-                    this.connect(this.map, 'onLoad', function() {
+                } else {
+                    this.connect(this.map, 'onLoad', function () {
                         this.graphicsLayer = this.map.graphics;
                     });
                 }
@@ -135,10 +134,10 @@ define([
             }
         },
 
-        postCreate: function() {
+        postCreate: function () {
             console.info('agrc.widgets.locate.FindAddress::postCreate', arguments);
 
-            this.formGeocode.onsubmit = function() {
+            this.formGeocode.onsubmit = function () {
                 return false;
             };
 
@@ -148,7 +147,7 @@ define([
 
             on(this.btnGeocode, 'click', lang.hitch(this, 'geocodeAddress'));
         },
-        geocodeAddress: function() {
+        geocodeAddress: function () {
             // summary:
             //      Geocodes the address if the text boxes validate.
             console.info('agrc.widgets.locate.FindAddress::geocodeAddress', arguments);
@@ -184,7 +183,7 @@ define([
             return false;
         },
 
-        _invokeWebService: function(geocode) {
+        _invokeWebService: function (geocode) {
             // summary:
             //      calls the web service
             // description:
@@ -213,7 +212,7 @@ define([
             });
         },
 
-        _validate: function() {
+        _validate: function () {
             // summary:
             //      validates the widget
             // description:
@@ -229,16 +228,12 @@ define([
             // hide error messages
             query('.form-group', this.domNode).removeClass('has-error');
 
-            return array.every([
-                    this.txtAddress,
-                    this.txtZone
-                ],
-                function(tb) {
-                    return that._isValid(tb);
-                });
+            return array.every([this.txtAddress, this.txtZone], function (tb) {
+                return that._isValid(tb);
+            });
         },
 
-        _isValid: function(textBox) {
+        _isValid: function (textBox) {
             // summary:
             //      validates that there are values in the textbox
             // textBox: TextBox Element
@@ -253,19 +248,19 @@ define([
             return valid;
         },
 
-        _geocoding: function() {
+        _geocoding: function () {
 
         },
 
-        _done: function() {
+        _done: function () {
 
         },
 
-        onFind: function() {
+        onFind: function () {
 
         },
 
-        _onFind: function(response) {
+        _onFind: function (response) {
             // summary:
             //      handles a successful geocode
             // description:
@@ -282,7 +277,7 @@ define([
                         response.result.location.x,
                         response.result.location.y,
                         new SpatialReference({
-                            wkid:this.wkid
+                            wkid: this.wkid
                         })
                     );
 
@@ -311,7 +306,7 @@ define([
             }
         },
 
-        _onError: function(err) {
+        _onError: function (err) {
             // summary:
             //      handles script io geocoding error
             // description:

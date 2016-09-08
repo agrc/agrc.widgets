@@ -4,7 +4,7 @@ define([
     'dojo/request/script',
     'dojo/_base/declare',
     'dojo/_base/lang'
-], function(
+], function (
     Deferred,
     xhr,
     script,

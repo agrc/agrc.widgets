@@ -19,13 +19,12 @@ function (
             if (params !== null) {
                 var myDate = new Date(params);
                 return myDate.getMonth() + 1 + '/' + myDate.getDate() + '/' + myDate.getFullYear();
-            }
-            else {
+            } else {
                 return null;
             }
         },
 
-        formatPhoneNumber: function(value) {
+        formatPhoneNumber: function (value) {
             console.log('agrc/modules/Formatting:formatPhoneNumber', arguments);
 
             //first remove all spaces, and special characters
@@ -38,46 +37,48 @@ function (
             phoneNum = agrcString.replaceAll(phoneNum, '.', '');
             phoneNum = agrcString.replaceAll(phoneNum, '/', '');
             phoneNum = agrcString.replaceAll(phoneNum, '\\', '');
-            if(phoneNum.length === 10) {
+            if (phoneNum.length === 10) {
                 return '(' + phoneNum.substr(0, 3) + ') ' + phoneNum.substr(3, 3) + '-' + phoneNum.substr(6, 4);
             }
             return value;
         },
 
-        USD: function(value) {
+        USD: function (value) {
             console.log('agrc/modules/Formatting:USD', arguments);
 
             //returns formatted dollar amounts for all values
-            var options = { pattern: '¤##0.00;-¤##0.00' }, parse;
+            var options = { pattern: '¤##0.00;-¤##0.00' };
+            var parse;
             parse = number.parse(value);
 
-            if(isNaN(parse)) {
+            if (isNaN(parse)) {
                 parse = 0;
             }
 
             return number.format(parse, currency._mixInDefaults(options));
         },
 
-        USDEmptyIfZero: function(value) {
-            ///Returns formatted USD amount unless value is NaN or 0 (falsey) 
+        USDEmptyIfZero: function (value) {
+            ///Returns formatted USD amount unless value is NaN or 0 (falsey)
             ///if value is 0 since ints default to 0 if empty
             ///value is the $ to format
             ///used so databinding isn't updated on submit since nothing has changed
             console.log('agrc/modules/Formatting:USDEmptyIfZero', arguments);
 
-            var options = {}, parse;
+            var options = {};
+            var parse;
             console.info('USDEmptyIfZero', arguments);
 
             parse = number.parse(value);
 
-            if(isNaN(parse) || !parse) {
+            if (isNaN(parse) || !parse) {
                 return value;
             }
 
             return number.format(parse, currency._mixInDefaults(options));
         },
 
-        round: function(value, numDecimals) {
+        round: function (value, numDecimals) {
             // summary:
             //      Round a number to the specified number of decimal places.
             // value: Number
@@ -92,7 +93,7 @@ function (
             return result;
         },
 
-        addCommas: function(value) {
+        addCommas: function (value) {
             // summary:
             //      Adds thousands commas and returns the number as a string.
             // value: Number
@@ -101,12 +102,12 @@ function (
             console.log('agrc/modules/Formatting:addCommas', arguments);
 
             value += ''; // converts to string
-            var x = value.split('.'),
-            x1 = x[0],
-            x2 = x.length > 1 ? '.' + x[1] : '',
-            rgx = /(\d+)(\d{3})/;
+            var x = value.split('.');
+            var x1 = x[0];
+            var x2 = x.length > 1 ? '.' + x[1] : '';
+            var rgx = /(\d+)(\d{3})/;
 
-            while(rgx.test(x1)) {
+            while (rgx.test(x1)) {
                 x1 = x1.replace(rgx, '$1' + ',' + '$2');
             }
 
@@ -118,7 +119,7 @@ function (
             //      Title-cases the string
             // str: String
             console.log('agrc/modules/Formatting:titlize', arguments);
-        
+
             return str.toLowerCase().replace(/\b(\w)/g, function (firstLetter) {
                 return firstLetter.toUpperCase();
             });
