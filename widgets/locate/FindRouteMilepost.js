@@ -40,7 +40,7 @@ define([
         _WidgetBase,
         _TemplatedMixin,
         _WidgetsInTemplateMixin,
-        
+
         GraphicsLayer,
         SimpleMarkerSymbol,
         Graphic,
@@ -104,6 +104,10 @@ define([
                     this.symbol = new SimpleMarkerSymbol();
                     this.symbol.setStyle(SimpleMarkerSymbol.STYLE_DIAMOND);
                     this.symbol.setColor(new Color([255, 0, 0, 0.5]));
+                }
+
+                if (!this.wkid) {
+                    this.wkid = (this.map) ? this.map.spatialReference.wkid : 26912;
                 }
             },
             postCreate: function() {
@@ -172,12 +176,14 @@ define([
                 console.log('agrc.widgets.locate.FindRouteMilepost::_invokeWebService', arguments);
                 var that = this;
 
-                var url = '//api.mapserv.utah.gov/api/v1/geocode/milepost/${route}/${milepost}?apiKey=${key}';
+                var url = '//api.mapserv.utah.gov/api/v1/geocode/milepost/${route}/${milepost}?' +
+                    'apiKey=${key}&spatialReference=${sr}';
                 var params = {
                     url: string.substitute(url, {
                         milepost: this.milepostTxt.value,
                         route: this.routeTxt.value,
-                        key: this.apiKey
+                        key: this.apiKey,
+                        sr: this.wkid
                     }),
                     handleAs: 'json',
                     timeout: this.xhrTimeout,
@@ -208,8 +214,6 @@ define([
 
                 // TODO: check for server error after upgrading to new web api
                 var location = result.result.location;
-                location.UTM_X = location.x;
-                location.UTM_Y = location.y;
                 this.onFind(location);
 
                 if (this.map) {
