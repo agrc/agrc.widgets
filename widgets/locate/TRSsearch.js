@@ -478,6 +478,11 @@ define([
             var self = this;
 
             function showBusy(busy) {
+                // ability to use without agrc.map.BaseMap
+                if (!self.map.showLoader) {
+                    return;
+                }
+
                 if (busy) {
                     self.map.showLoader();
                 } else {
