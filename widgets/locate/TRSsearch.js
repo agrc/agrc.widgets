@@ -482,7 +482,7 @@ define([
                 if (!self.map.showLoader) {
                     return;
                 }
-                
+
                 if (busy) {
                     self.map.showLoader();
                 } else {
