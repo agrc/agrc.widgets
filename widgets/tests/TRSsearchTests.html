@@ -8,7 +8,7 @@
 
     <!-- CSS -->
     <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/3.17/esri/css/esri.css" />
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
     <link rel="stylesheet" href="../../bower_components/layer-selector/resources/LayerSelector.css">
     <style type='text/css'>
     #map-div {
@@ -91,20 +91,20 @@
 
         var w2 = new Module({
             map: webMercatorMap,
-            apiKey: 'AGRC-B5D62BD2151902'
+            apiKey: '<api key>'
         }, 'search-div2');
         w2.startup();
 
         var w3 = new Module({
             map: map,
-            apiKey: 'AGRC-B5D62BD2151902'
+            apiKey: '<api key>'
         }, 'search-div3');
         w3.startup();
 
         var w4 = new Module({
             map: map,
             hideSection: true,
-            apiKey: 'AGRC-B5D62BD2151902'
+            apiKey: '<api key>'
         }, 'search-div-dropdown');
         w4.startup();
 
