@@ -34,7 +34,7 @@ define([
 
 
     'dojo/_base/sniff'
-], function(
+], function (
     template,
 
     declare,
@@ -167,7 +167,7 @@ define([
         //      Set to true if you want the graphics to persist after map navigation.
         preserveGraphics: false,
 
-        postCreate: function() {
+        postCreate: function () {
             // summary:
             //      Overrides method of same name in dijit._Widget.
             // tags:
@@ -200,7 +200,7 @@ define([
             };
             this.spinner = new Spinner(opts);
         },
-        showSpinner: function() {
+        showSpinner: function () {
             // summary:
             //      sets up and shows the spinner
             console.log('agrc.widgets.locate.MagicZoom::showSpinner', arguments);
@@ -212,7 +212,7 @@ define([
                 this.spinner.spin(this.spinnerDiv);
             }
         },
-        hideSpinner: function() {
+        hideSpinner: function () {
             // summary:
             //      hides the spinner and shows the search icon again
             console.log('agrc.widgets.locate.MagicZoom::hideSpinner', arguments);
@@ -221,7 +221,7 @@ define([
             this.spinner.stop();
             domStyle.set(this.searchIconSpan, 'display', 'inline');
         },
-        _setUpQueryTask: function() {
+        _setUpQueryTask: function () {
             // summary:
             //      Sets up the esri QueryTask.
             // tags:
@@ -239,7 +239,7 @@ define([
             this.outFields = outFields;
 
         },
-        _setUpGraphicsLayer: function() {
+        _setUpGraphicsLayer: function () {
             // summary:
             //      Sets up the graphics layer and associated symbols.
             // tags:
@@ -247,7 +247,7 @@ define([
             console.log('agrc.widgets.locate.MagicZoom::_setUpGraphicsLayer', arguments);
 
             var afterMapLoaded = lang.hitch(this,
-                function() {
+                function () {
                     if (!this.graphicsLayer) {
                         this.graphicsLayer = new GraphicsLayer();
                         this.map.addLayer(this.graphicsLayer);
@@ -256,7 +256,7 @@ define([
                     if (!this.preserveGraphics) {
                         // wire clear graphics event
                         this.map.on('extent-change', lang.hitch(this,
-                            function() {
+                            function () {
                                 if (this._addingGraphic === false) {
                                     this.graphicsLayer.clear();
                                 }
@@ -297,7 +297,7 @@ define([
                     .setSize(10);
             }
         },
-        _wireEvents: function() {
+        _wireEvents: function () {
             // summary:
             //      Wires events.
             // tags:
@@ -306,19 +306,19 @@ define([
 
             this.own(
                 on(this.textBox, 'keyup', lang.hitch(this, this._onTextBoxKeyUp)),
-                on(this.textBox, 'blur', lang.hitch(this, function() {
+                on(this.textBox, 'blur', lang.hitch(this, function () {
                     // don't hide table if the cursor is over it
                     if (!this._isOverTable) {
                         // hide table
                         this._toggleTable(false);
                     }
                 })),
-                on(this.textBox, 'focus', lang.hitch(this, function() {
+                on(this.textBox, 'focus', lang.hitch(this, function () {
                     if (this.textBox.value.length > 0) {
                         this._startSearchTimer();
                     }
                 })),
-                on(this.matchesTable, mouse.enter, lang.hitch(this, function() {
+                on(this.matchesTable, mouse.enter, lang.hitch(this, function () {
                     // set switch
                     this._isOverTable = true;
 
@@ -328,7 +328,7 @@ define([
                     // reset current selection
                     this._currentIndex = 0;
                 })),
-                on(this.matchesTable, mouse.leave, lang.hitch(this, function() {
+                on(this.matchesTable, mouse.leave, lang.hitch(this, function () {
                     // set switch
                     this._isOverTable = false;
 
@@ -337,7 +337,7 @@ define([
                 }))
             );
         },
-        _onTextBoxKeyUp: function(evt) {
+        _onTextBoxKeyUp: function (evt) {
             // summary:
             //      Handles the text box onKeyUp evt.
             // tags:
@@ -360,7 +360,7 @@ define([
                 this._startSearchTimer();
             }
         },
-        _startSearchTimer: function() {
+        _startSearchTimer: function () {
             // summary:
             //      Sets a timer before searching so that the search function
             //      isn't called too many times.
@@ -370,11 +370,11 @@ define([
             console.log('agrc.widgets.locate.MagicZoom::_startSearchTimer', arguments);
 
             clearTimeout(this._timer);
-            this._timer = setTimeout(lang.hitch(this, function() {
+            this._timer = setTimeout(lang.hitch(this, function () {
                 this._search(this.textBox.value);
             }), 250);
         },
-        _moveSelection: function(increment) {
+        _moveSelection: function (increment) {
             // summary:
             //      Moves the selected row in the results table based upon
             //      the arrow keys being pressed.
@@ -406,7 +406,7 @@ define([
             // add selected class using new index
             domClass.add(this.matchesList.children[this._currentIndex], 'highlighted-row');
         },
-        _search: function(searchString) {
+        _search: function (searchString) {
             // summary:
             //      Performs a search with the QueryTask using the passed in string.
             // searchString: String
@@ -432,27 +432,25 @@ define([
             this._deferred = this.webApi.search(this.searchLayer, this.outFields, {
                 predicate: 'UPPER(' + this.searchField + ') LIKE UPPER(\'' + searchString + '%\')',
                 spatialReference: this.wkid
-            }).then(lang.hitch(this, function(response) {
-                        // clear table
-                        this._deleteAllTableRows(this.matchesTable);
+            }).then(lang.hitch(this, function (response) {
+                // clear table
+                this._deleteAllTableRows(this.matchesTable);
 
-                        this._processResults(response);
-                    }
-                ), lang.hitch(this, function(err) {
-                        this._onQueryTaskError(err);
-                        // clear table
-                        this._deleteAllTableRows(this.matchesTable);
+                this._processResults(response);
+            }), lang.hitch(this, function (err) {
+                this._onQueryTaskError(err);
+                // clear table
+                this._deleteAllTableRows(this.matchesTable);
 
-                        // swallow errors from cancels
-                        if (err.message !== 'undefined') {
-                            throw new Error('agrc.widgets.locate.MagicZoom ArcGISServerError: ' + err.message);
-                        }
+                // swallow errors from cancels
+                if (err.message !== 'undefined') {
+                    throw new Error('agrc.widgets.locate.MagicZoom ArcGISServerError: ' + err.message);
+                }
 
-                        this.hideSpinner();
-                    }
-                ));
+                this.hideSpinner();
+            }));
         },
-        _processResults: function(features) {
+        _processResults: function (features) {
             // summary:
             //      Processes the features returned from the query task.
             // features: Object[]
@@ -488,7 +486,7 @@ define([
 
             this.hideSpinner();
         },
-        _removeDuplicateResults: function(features) {
+        _removeDuplicateResults: function (features) {
             // summary:
             //      Removes duplicates from the set of features.
             // features: Object[]
@@ -500,8 +498,8 @@ define([
             console.log('agrc.widgets.locate.MagicZoom::_removeDuplicateResults', arguments);
 
             var list = [];
-            array.forEach(features, function(f) {
-                if (array.some(list, function(existingF) {
+            array.forEach(features, function (f) {
+                if (array.some(list, function (existingF) {
                     if (existingF.attributes[this.searchField] === f.attributes[this.searchField]) {
                         if (this.contextField) {
                             if (existingF.attributes[this.contextField] === f.attributes[this.contextField]) {
@@ -519,7 +517,7 @@ define([
 
             return list;
         },
-        _populateTable: function(features) {
+        _populateTable: function (features) {
             // summary:
             //      Populates the autocomplete table.
             // features: Object[]
@@ -529,7 +527,7 @@ define([
             console.log('agrc.widgets.locate.MagicZoom::_populateTable', arguments);
 
             // loop through all features
-            array.forEach(features, function(feat) {
+            array.forEach(features, function (feat) {
                 // insert new empty row
                 var row = domConstruct.create('li', {
                     'class': 'match'
@@ -550,8 +548,7 @@ define([
                         'class': 'cnty-cell'
                     }, row);
                     cntyDiv.innerHTML = feat.attributes[this.contextField] || '';
-                    var clearDiv;
-                    clearDiv = domConstruct.create('div', {
+                    domConstruct.create('div', {
                         style: 'clear: both;'
                     }, row);
                 }
@@ -566,7 +563,7 @@ define([
             // show table
             this._toggleTable(true);
         },
-        _onRowClick: function(event) {
+        _onRowClick: function (event) {
             // summary:
             //      Handles when someone clicks on the a row in the autocomplete
             //      table.
@@ -578,7 +575,7 @@ define([
 
             this._setMatch(event.currentTarget);
         },
-        _setMatch: function(row) {
+        _setMatch: function (row) {
             // summary:
             //      Sets the passed in row as a match in the text box and
             //      zooms to the feature.
@@ -625,11 +622,11 @@ define([
                 predicate: predicate,
                 spatialReference: this.wkid
             }).then(lang.hitch(this,
-                    function(response) {
+                    function (response) {
                         // set switch to prevent graphic from being cleared
                         this._addingGraphic = true;
 
-                        response = array.map(response, function _convertGeometryToGraphic(geometry){
+                        response = array.map(response, function _convertGeometryToGraphic(geometry) {
                             return new Graphic(geometry);
                         });
 
@@ -640,7 +637,7 @@ define([
                         }
                     }
                 ), lang.hitch(this,
-                    function(err) {
+                    function (err) {
                         this._onQueryTaskError(err);
                         // clear table
                         this._deleteAllTableRows(this.matchesTable);
@@ -654,7 +651,7 @@ define([
                     }
                 ));
         },
-        showMessage: function(msg) {
+        showMessage: function (msg) {
             // summary:
             //      shows a messages at the top of the matches list
             // msg: String
@@ -664,14 +661,14 @@ define([
             domStyle.set(this.msg, 'display', 'block');
             this._toggleTable(true);
         },
-        hideMessage: function() {
+        hideMessage: function () {
             // summary:
             //      hids the message at the top of the matches list
             console.log('agrc.widgets.locate.MagicZoom::hideMessage', arguments);
 
             domStyle.set(this.msg, 'display', 'none');
         },
-        _zoom: function(graphic) {
+        _zoom: function (graphic) {
             // summary:
             //      Zooms to the passed in graphic.
             // graphic: esri.Graphic
@@ -707,12 +704,12 @@ define([
 
             this.onZoomed(graphic);
         },
-        onZoomed: function(/*graphic*/ ) {
+        onZoomed: function (/*graphic*/) {
             // summary:
             //      Fires after the map has been zoomed to the graphic.
             console.log('agrc.widgets.locate.MagicZoom::onZoomed', arguments);
         },
-        _deleteAllTableRows: function(table) {
+        _deleteAllTableRows: function (table) {
             // summary:
             //      Deletes all of the rows in the table.
             // table: Object
@@ -730,7 +727,7 @@ define([
             // reset current index
             this._currentIndex = 0;
         },
-        _toggleTable: function(show) {
+        _toggleTable: function (show) {
             // summary:
             //      Toggles the visibility of the autocomplete table.
             // show: Boolean
@@ -742,7 +739,7 @@ define([
             var displayValue = (show) ? 'block' : 'none';
             domStyle.set(this.matchesTable, 'display', displayValue);
         },
-        _sortArray: function(list) {
+        _sortArray: function (list) {
             // summary:
             //      Sorts the array by both the searchField and contextField
             //      if there is a contextField specied. If no context field is
@@ -772,7 +769,7 @@ define([
             // sort features
             return list.sort(sortFeatures);
         },
-        _zoomToMultipleFeatures: function(features) {
+        _zoomToMultipleFeatures: function (features) {
             // summary:
             //      Creates a multi point from features and zooms to that.
             // features: Object[]
@@ -786,7 +783,7 @@ define([
 
             function makeMultipoint() {
                 var multiPoint = new Multipoint(that.map.spatialReference);
-                array.forEach(features, function(f) {
+                array.forEach(features, function (f) {
                     // add to mulipoint
                     multiPoint.addPoint(f.geometry);
 
@@ -801,7 +798,7 @@ define([
 
             function unionExtents() {
                 var extent;
-                array.forEach(features, function(f) {
+                array.forEach(features, function (f) {
                     if (!extent) {
                         extent = f.geometry.getExtent();
                     } else {
@@ -820,12 +817,12 @@ define([
 
             this.map.setExtent(extent, true);
 
-            array.forEach(graphics, function(g) {
+            array.forEach(graphics, function (g) {
                 that.graphicsLayer.add(g);
             });
             console.log('this.graphicsLayer.graphics', this.graphicsLayer.graphics);
         },
-        destroyRecursive: function() {
+        destroyRecursive: function () {
             // summary:
             //     Overridden from dijit._Widget. Removes graphics layer from map.
             console.log('agrc.widgets.locate.MagicZoom::detroyRecursive', arguments);

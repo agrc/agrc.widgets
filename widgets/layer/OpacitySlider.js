@@ -44,7 +44,7 @@ define([
             //        Overrides method of same name in dijit._Widget.
             console.log('agrc.widgets.layer.OpacitySlider:postCreate', arguments);
 
-            if (this.displayLegend){
+            if (this.displayLegend) {
                 domStyle.set(this.legend, 'display', 'block');
             }
 
@@ -58,7 +58,7 @@ define([
             this.inherited(arguments);
         },
 
-        _wireEvents: function(){
+        _wireEvents: function () {
             // summary:
             //        Wire events.
             console.log('agrc.widgets.layer.OpacitySlider:_wireEvents', arguments);
@@ -66,7 +66,7 @@ define([
             this.slider.on('change', lang.hitch(this, '_onSliderChange'));
         },
 
-        _onSliderChange: function(newValue){
+        _onSliderChange: function (newValue) {
             // summary:
             //        Handles when the slider's value is changed.
             //        Update the map service opacity and legend opacity
@@ -77,7 +77,7 @@ define([
             this._updateLegendOpacity();
         },
 
-        _updateLegendOpacity: function(){
+        _updateLegendOpacity: function () {
             // summary:
             //        Updates the legend box opacity to match the mapServiceLayer's opacity
     //        console.log(this.declaredClass + '::' + arguments.callee.nom, arguments);

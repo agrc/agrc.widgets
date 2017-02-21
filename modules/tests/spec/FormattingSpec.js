@@ -6,18 +6,18 @@ require([
 function (
     Formatting
     ) {
-    describe('Formatting Module', function(){
-        describe('round', function(){
-            it('should round 4 decimal places down to 2', function(){
+    describe('Formatting Module', function () {
+        describe('round', function () {
+            it('should round 4 decimal places down to 2', function () {
                 expect(Formatting.round(4.1234, 2)).toEqual(4.12);
             });
-            
-            it('should round 1 decimal places up to 2', function(){
+
+            it('should round 1 decimal places up to 2', function () {
                 expect(Formatting.round(4.1, 2)).toEqual(4.10);
             });
         });
-        describe('addCommas', function(){
-            it('should add commas', function(){
+        describe('addCommas', function () {
+            it('should add commas', function () {
                 expect(Formatting.addCommas(1000)).toEqual('1,000');
                 expect(Formatting.addCommas(1000000)).toEqual('1,000,000');
                 expect(Formatting.addCommas(1234.123)).toEqual('1,234.123');

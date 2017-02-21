@@ -5,18 +5,18 @@ require([
 
     'stubmodule'
 
-], function(
+], function (
     Deferred,
 
     ClassUnderTest,
 
     stubmodule
 ) {
-    describe('modules/WebAPI', function() {
+    describe('modules/WebAPI', function () {
         var testObject;
         var apiKey = 'someKey';
 
-        afterEach(function() {
+        afterEach(function () {
             if (testObject) {
                 if (testObject.destroy) {
                     testObject.destroy();
@@ -26,12 +26,12 @@ require([
             }
         });
 
-        beforeEach(function() {
+        beforeEach(function () {
             testObject = new ClassUnderTest({apiKey: apiKey});
         });
 
-        describe('Sanity', function() {
-            it('should create a WebAPI', function() {
+        describe('Sanity', function () {
+            it('should create a WebAPI', function () {
                 expect(testObject).toEqual(jasmine.any(ClassUnderTest));
             });
         });

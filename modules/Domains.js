@@ -108,7 +108,8 @@ define([
             request(featureServiceUrl, {query: {f: 'json'}}).then(
                 function (response) {
                     def.resolve(getValues(response));
-                }, function (error) {
+                },
+                function (error) {
                     console.error(error);
                     def.reject(that._errMsgs.getCodedValues);
                 }

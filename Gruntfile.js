@@ -1,5 +1,4 @@
-/* jshint camelcase:false */
-module.exports = function(grunt) {
+module.exports = function (grunt) {
     var osx = 'OS X 10.10';
     var windows = 'Windows 8.1';
     var browsers = [{
@@ -119,22 +118,21 @@ module.exports = function(grunt) {
                 }
             }
         },
-        jshint: {
-            files: [
-                'widgets/**/*.js',
-                'modules/**/*.js',
-                'resources/**/*.js',
-                'Gruntfile.js',
-                'agrc.profile.js'
-            ],
+        eslint: {
             options: {
-                jshintrc: '.jshintrc',
-                ignores: [
-                    'bower_components/**',
-                    'resources/libs/**'
+                configFile: '.eslintrc'
+            },
+            main: {
+                src: [
+                    'widgets/**/*.js',
+                    'modules/**/*.js',
+                    'resources/**/*.js',
+                    'Gruntfile.js',
+                    'agrc.profile.js'
                 ]
             }
         },
+        pkg: grunt.file.readJSON('package.json'),
         'saucelabs-jasmine': {
             all: {
                 options: sauceConfig
@@ -151,7 +149,7 @@ module.exports = function(grunt) {
             tasks: [
                 'jasmine:main:build',
                 'amdcheck',
-                'jshint'
+                'eslint'
             ],
             options: {
                 livereload: true
@@ -170,7 +168,7 @@ module.exports = function(grunt) {
     grunt.registerTask('default', [
         'if-missing:esri_slurp:dev',
         'amdcheck',
-        'jshint',
+        'eslint',
         'connect',
         'jasmine:main:build',
         'watch'
@@ -184,7 +182,7 @@ module.exports = function(grunt) {
 
     grunt.registerTask('travis', [
         'if-missing:esri_slurp:travis',
-        'jshint',
+        'eslint',
         'sauce'
     ]);
 };

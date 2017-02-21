@@ -12,7 +12,7 @@ define([
 
     'agrc/widgets/map/ThemeInfo',
     'agrc/widgets/map/resources/defaultThemeInfos'
-], function(
+], function (
     declare,
     array,
 
@@ -70,11 +70,11 @@ define([
         //      Holds the default themes. Contains all agrc basemap services.
         data: null,
 
-        constructor: function() {
+        constructor: function () {
             // summary:
             //      Constructor function for object
             // args: Object?
-            //      The parameters that you want to pass into the object. 
+            //      The parameters that you want to pass into the object.
             //      Includes: map: agrc.widgets.map.BaseMap || esri.Map || anything that inherits from esri.Map
             //      The esri.Map object for switching the base map on, defaultThemeLabel and themeInfos
             console.info('agrc.widgets.map._BaseMapSelector::constructor', arguments);
@@ -84,7 +84,7 @@ define([
             this.data = [];
         },
 
-        postMixInProperties: function() {
+        postMixInProperties: function () {
             // summary:
             //
             // description:
@@ -104,7 +104,7 @@ define([
             }
         },
 
-        postCreate: function() {
+        postCreate: function () {
             // summary:
             //      Sets up the widget
             // description:
@@ -118,11 +118,11 @@ define([
             }
         },
 
-        loadDefaultThemes: function(data) {
+        loadDefaultThemes: function (data) {
             // summary:
             //      Takes the data in the data property and calls addTheme on them.
             // description:
-            //      Parses the data object into theme info's and sets up the current theme.  
+            //      Parses the data object into theme info's and sets up the current theme.
             //      Also adds the first theme to the map.
             // example:
             // |    data = [{
@@ -142,10 +142,10 @@ define([
 
             // load default themes
             if (data) {
-                array.forEach(data, function(basemap) {
+                array.forEach(data, function (basemap) {
                     // create new themeInfo from basemap
                     var layersArray = [];
-                    array.forEach(basemap.layers, function(layer) {
+                    array.forEach(basemap.layers, function (layer) {
                         layersArray.push(new ArcGISTiledMapServiceLayer(layer.url, {
                             id: basemap.label,
                             opacity: layer.opacity
@@ -165,7 +165,7 @@ define([
             this.changeTheme(this.currentTheme.label);
         },
 
-        changeTheme: function(newThemeLabel) {
+        changeTheme: function (newThemeLabel) {
             // summary:
             //      Swaps themes
             // description:
@@ -182,7 +182,7 @@ define([
             }
 
             // remove old theme layers from map
-            array.forEach(this.currentTheme.layers, function(esriLayer) {
+            array.forEach(this.currentTheme.layers, function (esriLayer) {
                 if (esriLayer) {
                     this.map.removeLayer(esriLayer);
                 }
@@ -195,7 +195,7 @@ define([
             this.currentTheme = newTheme.themeInfo;
 
             // add layers to map
-            array.forEach(newTheme.themeInfo.layers, function(layer) {
+            array.forEach(newTheme.themeInfo.layers, function (layer) {
                 this.map.addLayer(layer, 0);
             }, this);
 
@@ -204,7 +204,7 @@ define([
             return newTheme;
         },
 
-        addTheme: function(newThemeInfo) {
+        addTheme: function (newThemeInfo) {
             // summary:
             //      Adds a new theme info to the array
             // description:
@@ -218,7 +218,7 @@ define([
             this.themeInfos.push(newThemeInfo);
         },
 
-        _getTheme: function(label) {
+        _getTheme: function (label) {
             // summary:
             //      Gets the themeinfo with the current label test
             // description:
@@ -233,7 +233,7 @@ define([
             console.info('agrc.widgets.map._BaseMapSelector::_getTheme', arguments);
             var themeArgs;
 
-            array.some(this.themeInfos, function(theme, index) {
+            array.some(this.themeInfos, function (theme, index) {
                 if (theme.label === label) {
                     themeArgs = {
                         'themeInfo': theme,

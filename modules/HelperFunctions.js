@@ -1,11 +1,11 @@
 define([
     'dojo/query'
 
-], function(
+], function (
     query
     ) {
     return {
-        getSelectedRadioValue: function(btnGroupName) {
+        getSelectedRadioValue: function (btnGroupName) {
             // summary:
             //      Gets the value of the selected radio button in the group.
             // btnGroupName: String
@@ -46,7 +46,7 @@ define([
             }
         },
 
-        loadCss: function(href) {
+        loadCss: function (href) {
             // summary:
             //      Loads a css file into the current document's head.
             // href: String
@@ -62,7 +62,7 @@ define([
             head.appendChild(link);
         },
 
-        loadJavaScript: function(src) {
+        loadJavaScript: function (src) {
             // summary:
             //      Loads a JavaScript file into the current document's head.
             // src: String

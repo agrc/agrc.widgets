@@ -7,28 +7,28 @@ define([
 
     'dojo/dom-construct',
     'dojo/dom-class',
-    
+
     'dojo/data/ItemFileReadStore',
-    
+
     'dijit/InlineEditBox',
     'dijit/form/ComboBox',
-    
+
     'agrc/widgets/map/_BaseMapSelector'
-], function(
+], function (
     template,
 
     declare,
     array,
     lang,
-    
+
     domConstruct,
     domClass,
-    
+
     ItemFileReadStore,
 
     InlineEditBox,
     ComboBox,
-    
+
     _BaseMapSelector
 ) {
     return declare([_BaseMapSelector], {
@@ -40,9 +40,9 @@ define([
         //      <p>
         //      <p>
         //      **Description**:
-        //      A widget that when clicked on will shuffle through agrc.widgets.map.ThemeInfos.  
+        //      A widget that when clicked on will shuffle through agrc.widgets.map.ThemeInfos.
         //      There is also a drop down box for selecting specific ThemeInfos
-        //      This widget positions itself inside the esri.Map control and can be placed in any 
+        //      This widget positions itself inside the esri.Map control and can be placed in any
         //      corner and has 2 themes.  The themese are controlled by the id property: tundra or claro.
         //      </p>
         //      <p>
@@ -52,7 +52,7 @@ define([
         //      <p>
         //          **Exceptions**:
         //      </p>
-        //      <ul><li>agrc.widgets.map.BaseMapSelector NullReferenceException: map.  
+        //      <ul><li>agrc.widgets.map.BaseMapSelector NullReferenceException: map.
         //      Pass the map in the constructor.</li></ul>
         //      <p>
         //      **Required Files**:
@@ -110,18 +110,18 @@ define([
         //      store for combobox
         _themeInfoStore: {},
 
-        constructor: function() {
+        constructor: function () {
             // summary:
             //      Constructor function for object.
             // args: Object?
-            //      The parameters that you want to pass into the object. 
+            //      The parameters that you want to pass into the object.
             //      Includes: map: agrc.widgets.map.BaseMap || esri.Map || anything that inherits from esri.Map
             //      The esri.Map object for switching the base map on, id,
             //      position.
             console.info('agrc.widgets.map.BaseMapSelector::constructor', arguments);
         },
 
-        postCreate: function() {
+        postCreate: function () {
             // summary:
             //      Sets up the widget
             // description:
@@ -142,7 +142,7 @@ define([
 
             this._themeInfoClones = [];
 
-            array.forEach(this.themeInfos, function(theme) {
+            array.forEach(this.themeInfos, function (theme) {
                 this._themeInfoClones.push({
                     label: JSON.parse(JSON.stringify(theme.label))
                 });
@@ -172,7 +172,7 @@ define([
             domClass.add(this.container, this.position);
         },
 
-        initDefaultThemes: function() {
+        initDefaultThemes: function () {
             // summary:
             //      Sets the widget up to look right for the default theme
             // description:
@@ -186,7 +186,7 @@ define([
             domClass.add(this.mapIcon, this.currentTheme.label);
         },
 
-        addTheme: function(newThemeInfo) {
+        addTheme: function (newThemeInfo) {
             // summary:
             //      Adds a new theme to the selector
             // description:
@@ -206,7 +206,7 @@ define([
             }
         },
 
-        changeTheme: function(newThemeLabel) {
+        changeTheme: function (newThemeLabel) {
             // summary:
             //      Swaps the theme for a new one
             // description:
@@ -233,7 +233,7 @@ define([
             return newTheme;
         },
 
-        shuffle: function(args) {
+        shuffle: function (args) {
             // summary:
             //      Click event handler for shuffling through themes
             // description:

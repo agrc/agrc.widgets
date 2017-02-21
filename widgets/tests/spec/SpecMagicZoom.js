@@ -30,7 +30,7 @@ require([
             if (widget) {
                 destroy(widget);
             }
-        });       
+        });
 
         describe('constructor', function () {
             it('creates a valid widget', function () {
