@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>TRSsearch Tests</title>
+
+    <!-- META TAGS -->
+    <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
+
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="https://js.arcgis.com/3.17/esri/css/esri.css" />
+    <link href="../../bower_components/bootstrap/dist/css/bootstrap.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../bower_components/layer-selector/resources/LayerSelector.css">
+    <style type='text/css'>
+    #map-div {
+        position: relative;
+        top: 60px;
+        margin-bottom: 80px;
+    }
+    .map {
+        height: 400px;
+        width: 500px;
+        border: solid 1px gray;
+    }
+    #search-div2 {
+        position: relative;
+        z-index: 27;
+    }
+    #search-div3 {
+        position: relative;
+        z-index: 26;
+    }
+    #search-div-dropdown {
+        width: 200px;
+        margin: 10px;
+    }
+    </style>
+
+    <!-- JAVASCRIPT -->
+    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+    <script src="//netdna.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+    <script type='text/javascript' src='http://js.arcgis.com/3.17'></script>
+    <script type="text/javascript">
+    var projectUrl = location.pathname.replace(/\/[^\/]+$/, "") + '/';
+    var widgetUnderTest;
+
+    require({
+        packages: [{
+            name: 'agrc',
+            location: projectUrl + '../../'
+        }, {
+            name: 'spin',
+            location: projectUrl + '../../bower_components/spinjs/',
+            main: 'spin'
+        }, {
+            name: 'layer-selector',
+            location: projectUrl + '../../bower_components/layer-selector/',
+            main: 'LayerSelector'
+        }]
+    }, [
+        'agrc/widgets/locate/TRSsearch',
+        'agrc/widgets/map/BaseMap',
+
+        'dojo/text!../../secrets.json',
+
+        'esri/geometry/Extent',
+
+        'layer-selector',
+
+        'dojo/domReady!'
+    ], function(Module, BaseMap, secretsJSON, Extent, LayerSelector) {
+        var secrets = JSON.parse(secretsJSON);
+        map = new BaseMap('map-div');
+        webMercatorMap = new BaseMap('map-div-web-mercator', {
+            useDefaultBaseMap: false,
+            extent: new Extent({
+                xmax: -11762120.612131765,
+                xmin: -13074391.513731329,
+                ymax: 5225035.106177688,
+                ymin: 4373832.359194187,
+                spatialReference: {
+                    wkid: 3857
+                }
+            })
+        });
+
+        new LayerSelector({
+            map: webMercatorMap,
+            quadWord: secrets.quad_word,
+            baseLayers: ['Hybrid', 'Lite', 'Terrain', 'Topo', 'Color IR']
+        });
+
+        var w2 = new Module({
+            map: webMercatorMap,
+            apiKey: 'AGRC-ApiExplorer'
+        }, 'search-div2');
+        w2.startup();
+
+        var w3 = new Module({
+            map: map,
+            apiKey: 'AGRC-ApiExplorer'
+        }, 'search-div3');
+        w3.startup();
+
+        var w4 = new Module({
+            map: map,
+            hideSection: true,
+            apiKey: 'AGRC-ApiExplorer'
+        }, 'search-div-dropdown');
+        w4.startup();
+
+    });
+</script>
+</head>
+<body class='claro'>
+    <div class="navbar navbar-inverse navbar-fixed-top" >
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-main-collapse">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">TRS</a>
+    </div>
+    <div class="collapse navbar-collapse navbar-main-collapse">
+      <ul class="nav navbar-nav">
+        <li class="dropdown">
+          <a class="dropdown-toggle" href="#" data-toggle='dropdown'><span class="glyphicon glyphicon-globe"></span> Find Place <b class="caret"></b></a>
+          <div class='dropdown-menu'>
+            <form onsubmit='return false;'>
+                <div id="search-div-dropdown"></div>
+            </form>
+          </div>
+        </li>
+      </ul>
+    </div>
+  </div>
+    <div id='map-div' class='map'></div>
+
+    web mercator map
+    <div id="map-div-web-mercator" class='map'></div>
+
+    <div id='search-div'></div>
+    layout tests
+    <div id="search-div2"></div>
+    <br><br>
+    contextField
+    <div id="search-div3"></div>
+</body>
+</html>

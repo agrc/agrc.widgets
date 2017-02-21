@@ -501,7 +501,10 @@ define([
             }
 
             var url = lang.replace(this.urls.envelope,
-                                   [layer, this._buildPredicateForQuery(), this.apiKey, this.map.spatialReference.wkid]);
+                                   [layer,
+                                    this._buildPredicateForQuery(),
+                                    this.apiKey,
+                                    this.map.spatialReference.wkid]);
 
             this.inflight = script.get(url, {
                 jsonp: 'callback'

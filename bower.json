@@ -24,11 +24,17 @@
     "dojo": "~1.10",
     "dijit": "~1.10",
     "dojox": "~1.10",
-    "bootstrap": "~3.3.6"
+    "bootstrap": "~3.3.6",
+    "layer-selector": "agrc-layer-selector#~0.4.0"
   },
   "dependencies": {
     "spinjs": "~2.0",
     "jasmine-jsreporter": "~0.1.2",
     "jasmine-favicon-reporter": "*"
+  },
+  "resolutions": {
+    "dojo": "~1.10",
+    "dijit": "~1.10",
+    "dojox": "~1.10"
   }
 }
