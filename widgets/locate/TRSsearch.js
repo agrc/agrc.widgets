@@ -501,10 +501,10 @@ define([
             }
 
             var url = lang.replace(this.urls.envelope,
-                                   [layer,
-                                    this._buildPredicateForQuery(),
-                                    this.apiKey,
-                                    this.map.spatialReference.wkid]);
+                [layer,
+                    this._buildPredicateForQuery(),
+                    this.apiKey,
+                    this.map.spatialReference.wkid]);
 
             this.inflight = script.get(url, {
                 jsonp: 'callback'
@@ -521,6 +521,8 @@ define([
                 self.map.setExtent(graphic.geometry.getExtent(), true);
                 console.log('setting extent');
                 showBusy(false);
+
+                self._onZoom(graphic);
             },
             function () {
                 showBusy(false);
@@ -656,6 +658,11 @@ define([
             this.hiddenNode.value = this.formattedTrsString();
             this.onValueChange(data);
         },
+        _onZoom: function (graphic) {
+            console.log('agrc.widgets.location.TrsSearch::_onZoom', arguments);
+
+            this.onZoom(graphic);
+        },
 
         onMeridianChange: function (/*newValue*/) {
             // summary:
@@ -688,6 +695,11 @@ define([
             //      changes.
             // newValues: {meridian: String, township: String, range: String, section: String}
             //      An object with the updated values.
+        },
+        onZoom: function (/*graphic*/) {
+            // summary:
+            //      Fires whenever a successful zoom operation happens
+            // newValues: the esri geometry object
         }
     });
 });
