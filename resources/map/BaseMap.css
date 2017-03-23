@@ -30,20 +30,10 @@
 }
 /* agrc logo on map */
 .map .logo-med, .map .logo-sm {
-    background-image: url('../images/agrc_logo.png') !important;
-    background-image: -webkit-linear-gradient(transparent, transparent),
-    url("../images/agrc_logo.svg") !important;
-    background-image: -o-linear-gradient(transparent, transparent),
-    url("../images/agrc_logo.svg") !important;
-    background-image: linear-gradient(transparent, transparent),
-    url("../images/agrc_logo.svg") !important;/*your logo */
-    border:0;
-    bottom: 5px;
+    background-image: linear-gradient(transparent, transparent), url("../images/agrc_logo.svg") !important;
     cursor: pointer;
-    height: 23px !important; /* size of your image */
-    position: absolute;
-    right: 5px;
-    width: 60px !important;/* size of your image */
+    height: 23px !important;
+    width: 60px !important;
     z-index: 49;
 }
 
