@@ -272,7 +272,7 @@ define([
             var initialResolution = earthCircumference / tilesize;
 
             var dpi = 96;
-            var maxLevel = 20;
+            var maxLevel = 19;
             var squared = 2;
             var lods = [];
             for (var level = 0; level <= maxLevel; level++) {
