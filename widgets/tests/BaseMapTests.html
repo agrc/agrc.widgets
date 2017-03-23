@@ -44,29 +44,37 @@
         },
         [
             'agrc/widgets/map/BaseMap',
-            'agrc/widgets/map/BaseMapSelector',
+
+            'dojo/text!../../secrets.json',
 
             'esri/layers/ArcGISDynamicMapServiceLayer',
+            'esri/layers/ArcGISImageServiceLayer',
             'esri/geometry/Extent',
             'esri/geometry/Point',
             'esri/SpatialReference',
             'dojo/domReady!'
-        ],
-
-        function (
+        ], function (
             BaseMap,
-            BaseMapSelector,
+
+            secretsTxt,
 
             ArcGISDynamicMapServiceLayer,
+            ArcGISImageServiceLayer,
             Extent,
             Point,
             SpatialReference
-            ) {
+        ) {
+            var secrets = JSON.parse(secretsTxt);
+
             // take all defaults
-            baseMap = new BaseMap('basemap-div');
+            baseMap = new BaseMap('basemap-div', {
+                quadWord: secrets.quad_word
+            });
 
             // add overlay layer
-            var overlayBaseMap = new BaseMap('basemap-div-overlay');
+            var overlayBaseMap = new BaseMap('basemap-div-overlay', {
+                quadWord: secrets.quad_word
+            });
             var lyr = new ArcGISDynamicMapServiceLayer('http://mapserv.utah.gov/ArcGIS/rest/services/' +
                 'Broadband/ProviderCoverage/MapServer', {
                 opacity: 0.75
@@ -75,64 +83,46 @@
             overlayBaseMap.addLoaderToLayer(lyr);
 
             // custom start extent and base map
-            var startExtent = new Extent(430481, 4495027, 432392, 4497415,
-                new SpatialReference({
-                    wkid: 26912
-                }));
+            var startExtent = new Extent(430481, 4495027, 432392, 4497415, new SpatialReference(26912));
             var options = {
-                'useDefaultExtent': false,
-                'defaultBaseMap': 'Terrain',
-                'extent': startExtent
+                useDefaultExtent: false,
+                useDefaultBaseMap: false,
+                extent: startExtent,
+                quadWord: secrets.quad_word
             };
             window.extentBaseMap = new BaseMap('basemap-div-extent', options);
 
-            window.fullExtentBaseMap = new BaseMap('basemap-div-full-extent', {
-                includeFullExtentButton: true,
-                sliderStyle: 'large'
-            });
+            var imageLayer = new ArcGISImageServiceLayer('http://mapserv.utah.gov/arcgis/rest/services/AerialPhotography_Color/HRO2006_Color1Foot/ImageServer');
+
+            window.extentBaseMap.addLayer(imageLayer);
+            window.extentBaseMap.addLoaderToLayer(imageLayer);
 
             window.backButtonBaseMap = new BaseMap('basemap-div-back', {
                 includeFullExtentButton: true,
-                includeBackButton: true
+                includeBackButton: true,
+                quadWord: secrets.quad_word
             });
 
-            window.loaderBaseMap = new BaseMap('basemap-div-loader');
+            window.loaderBaseMap = new BaseMap('basemap-div-loader', {quadWord: secrets.quad_word});
             window.loaderBaseMap.showLoader();
 
-            window.loaderBaseMapAerials = new BaseMap('basemap-div-loader-aerials', {
-                'defaultBaseMap': 'Hybrid',
-                'useDefaultExtent': false,
-                'extent': new Extent({
-                        'xmin': 435525.2820766177,
-                        'ymin': 4503112.014830209,
-                        'xmax': 450812.6877336324,
-                        'ymax': 4522221.271901477,
-                        'spatialReference': {
-                            'wkid': 26912
-                        }
-                })
-            });
-            window.loaderBaseMapAerials.showLoader();
+            window.loaderBaseMapAerials = new BaseMap('basemap-div-loader-aerials', options);
+            var imageLayer2 = new ArcGISImageServiceLayer('http://mapserv.utah.gov/arcgis/rest/services/AerialPhotography_Color/HRO2006_Color1Foot/ImageServer');
+            window.loaderBaseMapAerials.addLayer(imageLayer2);
+            window.loaderBaseMapAerials.addLoaderToLayer(imageLayer2);
+            setTimeout(function () {
+                window.loaderBaseMapAerials.showLoader();
+            }, 1500);
 
-            window.router = new BaseMap('basemap-div-router', {router: true});
-
-            window.routerWithSelector = new BaseMap('basemap-div-router2', {
+            window.router = new BaseMap('basemap-div-router', {
                 router: true,
-                useDefaultBaseMap: false,
-                showAttribution: false
+                quadWord: secrets.quad_word
             });
-            var bms = new BaseMapSelector({
-                map: window.routerWithSelector,
-                id: 'claro',
-                position: 'TR'
-            });
-            bms.startup();
 
             new BaseMap('basemap-div-router3', {
-                center: new Point([425132, 4512466], {
-                    wkid: 26912
-                }),
-                scale: 144447.638572,
+                center: new Point([-12432335, 4885473], SpatialReference(3857)),
+                scale: 577791,
+                quadWord: secrets.quad_word,
                 router: true
             });
         });
@@ -151,10 +141,7 @@
     Don't use default base map and custom extent.
     <div id='basemap-div-extent' class='basemap'></div>
     <br>
-    Full Extent Button
-    <div id='basemap-div-full-extent' class='claro basemap'></div>
-    <br>
-    Back Button
+    Back & Full Extent Buttons
     <div id='basemap-div-back' class='claro basemap'></div>
     <br>
     Loader
@@ -165,9 +152,6 @@
     <br>
     Router to persist extent via URL
     <div id="basemap-div-router" class='basemap'></div>
-    <br>
-    Router with base map selector
-    <div id="basemap-div-router2" class='basemap'></div>
     <br>
     Router with initial scale and center passed
     <div id="basemap-div-router3" class="basemap"></div>

@@ -1,55 +1,54 @@
 define([
-    'dojo/_base/array',
-    'dojo/_base/declare',
-    'dojo/_base/lang',
+    'dijit/Destroyable',
+    'dijit/form/Button',
 
+    'dojo/aspect',
+    'dojo/dom',
     'dojo/dom-class',
     'dojo/dom-construct',
     'dojo/dom-geometry',
     'dojo/dom-style',
     'dojo/hash',
     'dojo/io-query',
-
-    'dojo/aspect',
-    'dojo/dom',
     'dojo/on',
-
-    'dijit/Destroyable',
-    'dijit/form/Button',
+    'dojo/_base/array',
+    'dojo/_base/declare',
+    'dojo/_base/lang',
 
     'esri/config',
     'esri/geometry/Extent',
     'esri/geometry/Point',
-    'esri/layers/ArcGISTiledMapServiceLayer',
+    'esri/layers/TileInfo',
+    'esri/layers/WebTiledLayer',
     'esri/map',
+    'esri/SpatialReference',
     'esri/toolbars/navigation',
 
     'spin'
-
 ], function (
-    array,
-    declare,
-    lang,
+    Destroyable,
+    Button,
 
+    aspect,
+    dom,
     domClass,
     domConstruct,
     domGeometry,
     domStyle,
     hash,
     ioQuery,
-
-    aspect,
-    dom,
     on,
-
-    Destroyable,
-    Button,
+    array,
+    declare,
+    lang,
 
     esriConfig,
     Extent,
     Point,
-    ArcGISTiledMapServiceLayer,
+    TileInfo,
+    WebTiledLayer,
     esriMap,
+    SpatialReference,
     Navigation,
 
     Spinner
@@ -141,14 +140,9 @@ define([
         // Parameters to constructor
 
         // useDefaultBaseMap: Boolean
-        //      If true, the map will automatically load the Vector map service
+        //      If true, the map will automatically load the Lite base map
         //      Default: true
         useDefaultBaseMap: true,
-
-        // defaultBaseMap: String
-        //      The name of the AGRC base map cache that you want to add. (ie. Vector)
-        //      Default: 'Vector'
-        defaultBaseMap: 'Vector',
 
         // includeFullExtentButton: Boolean
         //      Controls the visibility of the full extent button below the zoom slider.
@@ -217,6 +211,24 @@ define([
 
             // not sure if this is needed?
             domClass.add(mapDiv, 'mapContainer');
+
+            if (this.includeFullExtentButton || this.includeBackButton) {
+                var btns = [];
+                if (this.includeFullExtentButton) {
+                    btns.push(this.buttons.full);
+                }
+                if (this.includeBackButton) {
+                    btns.push(this.buttons.back);
+                }
+                var offset = 0;
+                array.forEach(btns, function (b) {
+                    this.addButton(b, {
+                        verticle: true,
+                        yOffset: offset
+                    });
+                    offset = offset + 26;
+                }, this);
+            }
         },
         setDefaultExtent: function () {
             // summary:
@@ -234,7 +246,57 @@ define([
             //      Adds the UtahBaseMap-Vector map service.
             console.log('agrc.widgets.map.BaseMap::showDefaultBaseMap', arguments);
 
-            this.addAGRCBaseMap(this.defaultBaseMap);
+            if (!this.quadWord) {
+                throw 'You must provide a discover.agrc.utah.gov quadWord to load the default base map!';
+            }
+
+            // build basemap url
+            var url = window.location.protocol +
+                '//discover.agrc.utah.gov/login/path/' + this.quadWord +
+                '/tiles/lite_basemap/${level}/${col}/${row}';
+            var lyr = new WebTiledLayer(url, {
+                tileInfo: this._getTileInfo(),
+                copyright: 'AGRC'
+            });
+            this.addLayer(lyr);
+        },
+        _getTileInfo: function () {
+            // summary:
+            //      returns the tile info for a discover base map service
+            // returns: TileInfo
+            console.log('app/widgets/map/BaseMap::_getTileInfo', arguments);
+
+            var tilesize = 256;
+            var earthCircumference = 40075016.685568;
+            var inchesPerMeter = 39.37;
+            var initialResolution = earthCircumference / tilesize;
+
+            var dpi = 96;
+            var maxLevel = 19;
+            var squared = 2;
+            var lods = [];
+            for (var level = 0; level <= maxLevel; level++) {
+                var resolution = initialResolution / Math.pow(squared, level);
+                var scale = resolution * dpi * inchesPerMeter;
+                lods.push({
+                    level: level,
+                    scale: scale,
+                    resolution: resolution
+                });
+            }
+
+            return new TileInfo({
+                dpi: dpi,
+                rows: 256,
+                cols: 256,
+                width: 256,
+                origin: {
+                    x: -20037508.342787,
+                    y: 20037508.342787
+                },
+                spatialReference: new SpatialReference(3857),
+                lods: lods
+            });
         },
         addLoaderToLayer: function (lyr) {
             // summary:
@@ -308,21 +370,6 @@ define([
 
             this.spinner.stop();
         },
-        addAGRCBaseMap: function (cacheName) {
-            // summary:
-            //      Add one of the AGRC basemaps to the map.
-            // cacheName: String
-            //      The name of the base map that you want to add. (ie. Vector)
-            console.log('agrc.widgets.map.BaseMap::addAGRCBaseMap', arguments);
-
-            // build basemap url
-            var url = window.location.protocol +
-                '//basemaps.utah.gov/ArcGIS/rest/services/BaseMaps/' + cacheName + '/MapServer';
-            var lyr = new ArcGISTiledMapServiceLayer(url, {
-                id: cacheName
-            });
-            this.addLayer(lyr);
-        },
         addButton: function (button, args) {
             // summary:
             //      Adds a button to the map.
@@ -372,30 +419,6 @@ define([
             }
 
             return buttonNode;
-        },
-        onLoad: function () {
-            console.log('agrc.widgets.map.BaseMap::onLoad', arguments);
-
-            if (this.includeFullExtentButton || this.includeBackButton) {
-                // have to add timeout to allow the table to be built
-                window.setTimeout(lang.hitch(this, function () {
-                    var btns = [];
-                    if (this.includeFullExtentButton) {
-                        btns.push(this.buttons.full);
-                    }
-                    if (this.includeBackButton) {
-                        btns.push(this.buttons.back);
-                    }
-                    var offset = 0;
-                    array.forEach(btns, function (b) {
-                        this.addButton(b, {
-                            verticle: true,
-                            yOffset: offset
-                        });
-                        offset = offset + 26;
-                    }, this);
-                }), 1000);
-            }
         },
         zoomToGeometry: function (geometry, level) {
             // summary:

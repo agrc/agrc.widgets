@@ -1,32 +1,28 @@
 require([
-    'dojo/_base/lang',
-    'dojo/_base/window',
-    'dojo/dom-construct',
-    'dojo/aspect',
-    'dojo/hash',
-    'dojo/query',
+    'agrc/widgets/map/BaseMap',
 
     'dijit/registry',
 
-    'agrc/widgets/map/BaseMap',
+    'dojo/aspect',
+    'dojo/dom-construct',
+    'dojo/hash',
+    'dojo/query',
+    'dojo/_base/lang',
 
     'esri/geometry/Extent'
-],
-
-function (
-    lang,
-    win,
-    domConstruct,
-    aspect,
-    hash,
-    query,
+], function (
+    BaseMap,
 
     dijitRegistry,
 
-    BaseMap,
+    aspect,
+    domConstruct,
+    hash,
+    query,
+    lang,
 
     Extent
-    ) {
+) {
     describe('agrc/widgets/map/BaseMap', function () {
         var map;
         var testDiv;
@@ -34,7 +30,7 @@ function (
             testDiv = domConstruct.create('div', {
                 width: '300px',
                 height: '300px'
-            }, win.body());
+            }, document.body);
         });
 
         afterEach(function () {
@@ -44,10 +40,10 @@ function (
         });
 
         describe('BaseMap - Default Options', function () {
-            beforeEach(function (done) {
-                map = new BaseMap(testDiv);
-
-                map.on('load', done);
+            beforeEach(function () {
+                map = new BaseMap(testDiv, {
+                    quadWord: 'test'
+                });
             });
 
             it('should set the initial extent and spatial reference', function () {
@@ -69,14 +65,11 @@ function (
             });
 
             it('should add the Vector Cache map service', function () {
-                // TODO: switch to discover service
                 expect(map.layerIds.length).toEqual(1);
 
                 var lyrId = map.layerIds[0];
                 var lyr = map.getLayer(lyrId);
-                expect(lyr.url).toEqual(
-                    window.location.protocol +
-                    '//basemaps.utah.gov/ArcGIS/rest/services/BaseMaps/Vector/MapServer');
+                expect(lyr.url).toMatch(/discover\.agrc\.utah\.gov/);
             });
         });
 
@@ -84,37 +77,31 @@ function (
             it('should mixin options', function () {
                 var params = {
                     useDefaultExtent: false,
-                    defaultBaseMap: 'UtahBaseMap-Terrain'
+                    quadWord: 'test'
                 };
 
                 map = new BaseMap(testDiv, params);
 
                 expect(map.useDefaultExtent).toBeFalsy();
-                expect(map.defaultBaseMap).toEqual('UtahBaseMap-Terrain');
             });
 
             describe('Full Extent Button', function () {
                 var testButton;
 
-                beforeEach(function (done) {
+                beforeEach(function () {
                     map = new BaseMap(testDiv, {
-                        includeFullExtentButton: true
+                        includeFullExtentButton: true,
+                        quadWord: 'test'
                     });
 
-                    aspect.after(map, 'onLoad', function () {
-                        setTimeout(function () {
-                            testButton = query('.glyphicon-globe', testDiv)[0];
-                            done();
-                        }, 1500);
-                    });
+                    testButton = query('.glyphicon-globe', testDiv)[0];
                 });
 
                 it('should add the full extent button when specified in the options', function () {
                     expect(testButton).toBeDefined();
                 });
 
-                // waiting until default layers are moved to discover services
-                xit('should zoom back out to the full extent when the button is pressed', function (done) {
+                it('should zoom back out to the full extent when the button is pressed', function (done) {
                     var fullExtent;
 
                     fullExtent = lang.clone(map.extent);
@@ -134,7 +121,10 @@ function (
             var expectedHash = 'x=1&y=' + y + '&scale=3';
 
             beforeEach(function () {
-                map = new BaseMap(testDiv, {router: true});
+                map = new BaseMap(testDiv, {
+                    router: true,
+                    quadWord: 'test'
+                });
 
                 spyOn(map.extent, 'getCenter').and.returnValue({x: x, y: y});
                 spyOn(map, 'getScale').and.returnValue(scale);

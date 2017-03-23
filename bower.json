@@ -25,7 +25,7 @@
     "dijit": "~1.10",
     "dojox": "~1.10",
     "bootstrap": "~3.3.6",
-    "layer-selector": "agrc-layer-selector#~0.4.0"
+    "layer-selector": "agrc-layer-selector#~1.1"
   },
   "dependencies": {
     "spinjs": "~2.0",
