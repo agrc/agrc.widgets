@@ -353,6 +353,13 @@ define([
             domClass.add(this.errorNode, ['alert', 'alert-danger', 'text-center']);
 
             this.errorNode.innerHTML = value;
+        },
+        forcePositive: function (event) {
+            // summary:
+            //      forces the input to be positive
+            console.log('agrc.widgets.locate.ZoomToCoords:forcePositive', arguments);
+
+            event.target.value = Math.abs(event.target.value);
         }
     });
 });

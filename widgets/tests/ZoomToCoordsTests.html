@@ -6,12 +6,12 @@
     <!-- META TAGS -->
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
-    <!-- CSS -->        
+    <!-- CSS -->
     <link rel='stylesheet' href='http://js.arcgis.com/3.8/js/dojo/dijit/themes/claro/claro.css'>
     <link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.8/js/esri/css/esri.css" />
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
     <style type='text/css'>
-    
+
     </style>
 
     <!-- JAVASCRIPT -->
@@ -25,6 +25,10 @@
         packages: [{
             name: 'agrc',
             location: projectUrl + '../../'
+        }, {
+            name: 'spin',
+            location: projectUrl + '../../bower_components/spinjs',
+            main: 'spin'
         }]
     }, [
         'agrc/widgets/locate/ZoomToCoords',
@@ -32,7 +36,9 @@
 
         'dojo/domReady!'
     ], function(Module, Dependency) {
-        var dependency = new Dependency('map-div');
+        var dependency = new Dependency('map-div', {
+            quadWord: 'dragon-visitor-honey-perfume'
+        });
         widgetUnderTest = new Module({
             map: dependency
         }, 'node');

@@ -13,7 +13,8 @@
         <label>Longitude</label>
         <div class="input-group">
          <span class="input-group-addon">-</span>
-         <input type="text" name="x" data-required="true" class="form-control">
+         <input type="text" name="x" data-required="true" class="form-control"
+           data-dojo-attach-event='change:forcePositive'>
        </div>
      </div>
      <div class="form-group">
@@ -36,7 +37,8 @@
       <label>Longitude</label>
       <div class="input-group">
         <span class="input-group-addon">-</span>
-        <input type="text" data-required="true" name="x" class="form-control" placeholder="Degrees">
+        <input type="text" data-required="true" name="x" class="form-control" placeholder="Degrees"
+          data-dojo-attach-event='change:forcePositive'>
         <span class="input-group-addon">º</span>
         <input type="text" data-required="true" name="xm" class="form-control" placeholder="Minutes">
         <span class="input-group-addon">'</span>
@@ -57,7 +59,8 @@
     <div class="form-group">
       <div class="input-group">
        <span class="input-group-addon">-</span>
-       <input type="text" data-required="true" name="x" class="form-control" placeholder="Degrees">
+       <input type="text" data-required="true" name="x" class="form-control" placeholder="Degrees"
+         data-dojo-attach-event='change:forcePositive'>
        <span class="input-group-addon">º</span>
        <input type="text" data-required="true" name="xm" class="form-control" placeholder="Minutes">
        <span class="input-group-addon">'</span>
