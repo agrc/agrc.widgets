@@ -359,7 +359,9 @@ define([
             //      forces the input to be positive
             console.log('agrc.widgets.locate.ZoomToCoords:forcePositive', arguments);
 
-            event.target.value = Math.abs(event.target.value);
+            if (parseFloat(event.target.value) === parseFloat(event.target.value)) {
+                event.target.value = Math.abs(event.target.value);
+            }
         }
     });
 });
