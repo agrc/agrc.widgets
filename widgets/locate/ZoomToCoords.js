@@ -209,7 +209,7 @@ define([
                     return node.name === match;
                 })[0].value;
 
-                return number.parse(value);
+                return number.parse(lang.trim(value));
             };
 
             var inputs = query('[data-required="true"]', this._panelController.visible);
@@ -283,8 +283,9 @@ define([
 
             //filter inputs to get bad ones
             var problems = array.filter(inputs, function (node) {
-                if (!node.value ||
-                    lang.trim(node.value) === '' || !number.parse(node.value)) {
+                var value = lang.trim(node.value);
+                if (!value ||
+                    lang.trim(value) === '' || isNaN(number.parse(value))) {
                     domClass.add(node.parentElement, 'has-error');
                     return true;
                 } else {
