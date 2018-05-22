@@ -113,8 +113,6 @@ define([
             } else {
                 request(featureServiceUrl, {query: {f: 'json'}}).then(
                     function (response) {
-                        localStorage.setItem(featureServiceUrl, response);
-
                         def.resolve(parseValues(response));
                     },
                     function (error) {
