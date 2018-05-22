@@ -1,18 +1,16 @@
 // TODO:
 //      fallback to local storage if no network connection
-//      do not submit more than one request to the server at a time
 define([
-    'dojo/dom-construct',
     'dojo/Deferred',
+    'dojo/dom-construct',
     'dojo/request',
     'dojo/_base/array'
-
 ], function (
-    domConstruct,
     Deferred,
+    domConstruct,
     request,
     array
-    ) {
+) {
     return {
         // _errMsgs: {}
         //      Error messages
@@ -20,6 +18,10 @@ define([
             getCodedValues:
                 'There was an error getting the coded values from the Feature Service. Please check your url'
         },
+
+        // responses: Object
+        //      holds handles for pending requests and eventually caches the response data
+        responses: {},
 
         populateSelectWithDomainValues: function (select, featureServiceUrl, fieldName) {
             // summary:
@@ -78,11 +80,11 @@ define([
         },
         getCodedValues: function (featureServiceUrl, fieldName) {
             // summary:
-            //      returns an array of the coded values for the feature service
+            //      returns a Promise that resolves to an array of the coded values for the feature service
             // featureServiceUrl: String
             //      The url to the feature service (i.e. /arcgis/rest/services/ServiceName/FeatureServer/1)
             // fieldName: String
-            // returns: dojo/Deferred
+            // returns: Promise
             console.log(this.declaredClass + '::getCodedValues', arguments);
 
             var def = new Deferred();
@@ -90,7 +92,7 @@ define([
             var data;
             var fieldData;
 
-            function getValues(jsonTxt) {
+            function parseValues(jsonTxt) {
                 data = JSON.parse(jsonTxt);
 
                 array.some(data.fields, function (field) {
@@ -105,17 +107,24 @@ define([
                 return fieldData.domain.codedValues;
             }
 
-            request(featureServiceUrl, {query: {f: 'json'}}).then(
-                function (response) {
-                    def.resolve(getValues(response));
-                },
-                function (error) {
-                    console.error(error);
-                    def.reject(that._errMsgs.getCodedValues);
-                }
-            );
+            if (this.responses[featureServiceUrl]) {
 
-            return def;
+                return this.responses[featureServiceUrl];
+            } else {
+                request(featureServiceUrl, {query: {f: 'json'}}).then(
+                    function (response) {
+                        localStorage.setItem(featureServiceUrl, response);
+
+                        def.resolve(parseValues(response));
+                    },
+                    function (error) {
+                        console.error(error);
+                        def.reject(that._errMsgs.getCodedValues);
+                    }
+                );
+
+                return this.responses[featureServiceUrl] = def.promise;
+            }
         }
     };
 });
