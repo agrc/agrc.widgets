@@ -2,6 +2,7 @@ require([
     'agrc/modules/Domains',
 
     'dojo/Deferred',
+    'dojo/promise/Promise',
     'dojo/dom-construct',
     'dojo/text!modules/tests/data/featureServiceResponse.json',
 
@@ -10,6 +11,7 @@ require([
     Domains,
 
     Deferred,
+    Promise,
     domConstruct,
     featureServiceResponseTxt,
 
@@ -107,7 +109,7 @@ require([
                 });
             });
             it('returns a dojo/Deferred object', function () {
-                expect(Domains.getCodedValues(fakeUrl)).toEqual(jasmine.any(Deferred));
+                expect(Domains.getCodedValues(fakeUrl)).toEqual(jasmine.any(Promise));
             });
             it('rejects the deferred with an error message if the xhr errors', function () {
                 xhrDef.reject(StubbedDomains._errMsgs.getCodedValues);
