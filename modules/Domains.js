@@ -35,6 +35,8 @@ define([
 
             var def = new Deferred();
 
+            domConstruct.empty(select);
+
             this.getCodedValues(featureServiceUrl, fieldName).then(function (values) {
                 this.buildOptions(values, select);
                 def.resolve(values);
@@ -71,7 +73,7 @@ define([
             var data;
             var fieldData;
 
-            return this.makeRequest(featureServiceUrl).then((jsonTxt) => {
+            return this.makeRequest(featureServiceUrl).then(function (jsonTxt) {
                 data = JSON.parse(jsonTxt);
 
                 array.some(data.fields, function (field) {
@@ -106,8 +108,8 @@ define([
                     },
                     function (error) {
                         console.error(error);
-                        def.reject(that._errMsgs.getCodedValues);
-                    }
+                        def.reject(this._errMsgs.getCodedValues);
+                    }.bind(this)
                 );
 
                 return this.responses[featureServiceUrl] = def.promise;

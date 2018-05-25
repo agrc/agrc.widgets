@@ -51,7 +51,7 @@ require([
             it('returns a Deferred', function () {
                 var returned = Domains.populateSelectWithDomainValues(select, fakeUrl, fieldName);
 
-                expect(returned).toEqual(jasmine.any(Deferred));
+                expect(returned).toEqual(jasmine.any(Promise));
             });
             describe('successful', function () {
                 var getDef;
@@ -71,18 +71,6 @@ require([
 
                     expect(option.value).toEqual('cr');
                     expect(option.innerHTML).toEqual('Coldwater river');
-                });
-                it('caches the domain values for future requests', function () {
-                    expect(window.AGRC['agrc/modules/Domains_codedValues'][fakeUrl + '_' + fieldName])
-                        .toEqual(codedValues);
-                });
-                it('doesnt call getCodedValues if there is an existing cache', function () {
-                    window.AGRC['agrc/modules/Domains_codedValues'][fakeUrl + '_' + fieldName] =
-                        [{code: 'blah', name: 'blah'}];
-
-                    Domains.populateSelectWithDomainValues(select, fakeUrl, fieldName);
-
-                    expect(Domains.getCodedValues.calls.count()).toBe(1);
                 });
             });
         });
