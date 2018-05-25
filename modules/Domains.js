@@ -34,34 +34,15 @@ define([
             console.log(this.declaredClass + '::populateSelectWithDomainValues', arguments);
 
             var def = new Deferred();
-            var namespace = 'agrc/modules/Domains_codedValues';
-            var prop = featureServiceUrl + '_' + fieldName;
-            var that = this;
 
-            if (!window.AGRC) {
-                window.AGRC = {};
-            }
-            if (!window.AGRC[namespace]) {
-                window.AGRC[namespace] = {};
-            }
+            this.getCodedValues(featureServiceUrl, fieldName).then(function (values) {
+                this.buildOptions(values, select);
+                def.resolve(values);
+            }.bind(this), function (error) {
+                def.reject(error);
+            });
 
-            domConstruct.empty(select);
-
-            if (window.AGRC[namespace][prop]) {
-                this.buildOptions(window.AGRC[namespace][prop], select);
-                def.resolve(window.AGRC[namespace][prop]);
-            } else {
-                this.getCodedValues(featureServiceUrl, fieldName).then(function (values) {
-                    window.AGRC[namespace][prop] = values;
-
-                    that.buildOptions(values, select);
-                    def.resolve(values);
-                }, function (error) {
-                    def.reject(error);
-                });
-            }
-
-            return def;
+            return def.promise;
         },
         buildOptions: function (values, select) {
             // summary:
@@ -87,12 +68,10 @@ define([
             // returns: Promise
             console.log(this.declaredClass + '::getCodedValues', arguments);
 
-            var def = new Deferred();
-            var that = this;
             var data;
             var fieldData;
 
-            function parseValues(jsonTxt) {
+            return this.makeRequest(featureServiceUrl).then((jsonTxt) => {
                 data = JSON.parse(jsonTxt);
 
                 array.some(data.fields, function (field) {
@@ -105,15 +84,25 @@ define([
                 });
 
                 return fieldData.domain.codedValues;
-            }
+            });
+        },
+        makeRequest: function (featureServiceUrl) {
+            // summary:
+            //      makes a request to the server for the feature service info
+            // featureServiceUrl: String
+            console.log('agrc/modules/Domains:makeRequest', arguments);
+
+            var def = new Deferred();
 
             if (this.responses[featureServiceUrl]) {
-
+                // response is a promise
                 return this.responses[featureServiceUrl];
             } else {
+                // this is the first time that this request has been attempted
+                // actually make the request
                 request(featureServiceUrl, {query: {f: 'json'}}).then(
                     function (response) {
-                        def.resolve(parseValues(response));
+                        def.resolve(response);
                     },
                     function (error) {
                         console.error(error);
