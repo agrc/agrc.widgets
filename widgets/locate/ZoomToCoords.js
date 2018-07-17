@@ -360,7 +360,7 @@ define([
             //      forces the input to be positive
             console.log('agrc.widgets.locate.ZoomToCoords:forcePositive', arguments);
 
-            if (parseFloat(event.target.value) === parseFloat(event.target.value)) {
+            if (!event.target.value.endsWith('.') && parseFloat(event.target.value) === parseFloat(event.target.value)) {
                 event.target.value = Math.abs(event.target.value);
             }
         }

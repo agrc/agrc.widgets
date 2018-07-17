@@ -44,6 +44,30 @@ require([
             it('should create a ZoomToCoords', function () {
                 expect(widget).toEqual(jasmine.any(WidgetUnderTest));
             });
+            describe('forcePositive', function () {
+                it('can handle numbers with a trailing "."', function () {
+                    var event = {
+                        target: {
+                            value: '1.'
+                        }
+                    };
+
+                    widget.forcePositive(event);
+
+                    expect(event.target.value).toBe('1.');
+                });
+                it('can handle numbers with a trailing "."', function () {
+                    var event = {
+                        target: {
+                            value: '-1.2'
+                        }
+                    };
+
+                    widget.forcePositive(event);
+
+                    expect(event.target.value).toBe(1.2);
+                });
+            });
         });
         describe('_updateView', function () {
             beforeEach(function () {
