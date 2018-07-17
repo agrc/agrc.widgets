@@ -7,30 +7,36 @@
     <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1">
 
     <!-- CSS -->
-    <link rel='stylesheet' href='http://js.arcgis.com/3.8/js/dojo/dijit/themes/claro/claro.css'>
-    <link rel="stylesheet" type="text/css" href="http://js.arcgis.com/3.8/js/esri/css/esri.css" />
-    <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../../bower_components/dijit/themes/claro/claro.css">
+    <link rel="stylesheet" href="../../vendor/esri/css/esri.css">
+    <link href="//netdna.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
     <style type='text/css'>
-
+        @import '../../resources/locate/ZoomToCoords.css';
+        body {
+            padding: 50px;
+        }
     </style>
 
     <!-- JAVASCRIPT -->
-    <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-    <script type='text/javascript' src='http://js.arcgis.com/3.8'></script>
+    <script type="text/javascript" src="../../bower_components/dojo/dojo.js"></script>
     <script type="text/javascript">
-    var projectUrl = location.pathname.replace(/\/[^\/]+$/, "") + '/';
-    var widgetUnderTest;
+        var projectUrl = location.pathname.replace(/\/[^\/]+$/, '') + '/';
+        var baseMap;
 
-    require({
-        packages: [{
-            name: 'agrc',
-            location: projectUrl + '../../'
-        }, {
-            name: 'spin',
-            location: projectUrl + '../../bower_components/spinjs',
-            main: 'spin'
-        }]
-    }, [
+        require({
+            packages: [{
+                name: 'agrc',
+                location: projectUrl + '../..'
+            },{
+                name: 'spin',
+                location: projectUrl + '../../bower_components/spinjs',
+                main: 'spin'
+            },{
+                name: 'esri',
+                location: projectUrl + '../../vendor/esri'
+            }]
+        },
+    [
         'agrc/widgets/locate/ZoomToCoords',
         'agrc/widgets/map/BaseMap',
 
