@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "4.2"
+  - "lts/*"
 before_install:
   - npm install -g grunt-cli
   - npm install -g bower
@@ -10,11 +10,9 @@ notifications:
   email:
     on_success: change
     on_failure: change
-env:
-  global:
-    - secure: b1NNwXyOoF6zODgdWMFyde4PTsEUqLm0wQ6SV+5ftfzmm/1DE30NpAafdrxIxet6wywTTHNruoCmVZFT7VrtAnuT+Nx3NMZydDX+oi8ND+KQB4lX0qn3Jb3moPl8J0nk+NE5nHVyaT4wyRcXRnKg4EbwLiJgE2MKXCVnbIjn/8A=
-    - secure: PlbxUCapkOJ6LYSMYJ0ZVrxi1lcZYfegKmFGiVxGF23jy9BJcu+EDTgIFpjZwPd/IzgeDax+ZlCJ9MHsMTKL8E0pNR6vsHBFpZF/IW8m6bFic0RCnmdMVTaE4/tQnecimjvuuahv+wmHZ7oG8KvsdTe1Q7+RkNrulkB4aT9Y6bs=
-sudo: false
+sudo: required
 cache:
-  directories:
-    - node_modules
+    directories:
+        - node_modules
+addons:
+    chrome: stable
