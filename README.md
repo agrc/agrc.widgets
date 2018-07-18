@@ -1,6 +1,5 @@
 [![Build Status](https://travis-ci.org/agrc/agrc.widgets.svg?branch=master)](https://travis-ci.org/agrc/agrc.widgets)
-[![Sauce Test Status](https://saucelabs.com/browser-matrix/agrc-widgets.svg)](https://saucelabs.com/u/agrc-widgets)
-# AGRC Dojo Widgets 
+# AGRC Dojo Widgets
 ### Getting Started
 
 1. Clone the repo
@@ -18,21 +17,21 @@ require({
 }, [
   'esri/map',
   'esri/layers/ArcGISTiledMapServiceLayer',
-  
+
   'agrc/widgets/locate/FindAddress'
 ], function (
-Map, 
+Map,
 Tiled,
 
 FindAddress
 ) {
   var serviceUrl = 'http://mapserv.utah.gov/arcgis/rest/services/BaseMaps/Terrain/MapServer';
   var map = new Map('map-div');
-  
+
   var tiledService = new Tiled(serviceUrl);
-  
+
   map.addLayer(tiledService);
-  
+
   var findAddress = new FindAddress({
     map: map,
     apiKey: 'get your key at http://developer.mapserv.utah.gov'
