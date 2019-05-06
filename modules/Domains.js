@@ -102,7 +102,12 @@ define([
             } else {
                 // this is the first time that this request has been attempted
                 // actually make the request
-                request(featureServiceUrl, {query: {f: 'json'}}).then(
+                request(featureServiceUrl, {
+                    query: {f: 'json'},
+                    headers: {
+                        'X-Requested-With': null
+                    }
+                }).then(
                     function (response) {
                         def.resolve(response);
                     },
