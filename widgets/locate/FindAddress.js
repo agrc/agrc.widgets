@@ -194,7 +194,7 @@ define([
             //     Deferred
             console.info('agrc.widgets.locate.FindAddress::_invokeWebService', arguments);
 
-            var url = '//api.mapserv.utah.gov/api/v1/Geocode/{geocode.street}/{geocode.zone}';
+            var url = 'https://api.mapserv.utah.gov/api/v1/Geocode/{geocode.street}/{geocode.zone}';
 
             var options = {
                 apiKey: this.apiKey,
@@ -207,8 +207,7 @@ define([
 
             return esriRequest({
                 url: url,
-                content: options,
-                callbackParamName: 'callback'
+                content: options
             });
         },
 
