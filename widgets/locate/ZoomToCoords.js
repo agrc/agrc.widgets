@@ -237,14 +237,14 @@ define([
 
                     break;
                 case this.ddNode:
-                    x = getValue(inputs, 'x');
+                    x = Math.abs(getValue(inputs, 'x'));
                     y = getValue(inputs, 'y');
 
                     point = new Point(-x, y, sr);
 
                     break;
                 case this.dmNode:
-                    x = getValue(inputs, 'x');
+                    x = Math.abs(getValue(inputs, 'x'));
                     y = getValue(inputs, 'y');
                     xm = getValue(inputs, 'xm') / 60;
                     ym = getValue(inputs, 'ym') / 60;
@@ -253,7 +253,7 @@ define([
 
                     break;
                 case this.dmsNode:
-                    x = getValue(inputs, 'x');
+                    x = Math.abs(getValue(inputs, 'x'));
                     y = getValue(inputs, 'y');
                     xm = getValue(inputs, 'xm') / 60;
                     ym = getValue(inputs, 'ym') / 60;
