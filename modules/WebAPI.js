@@ -16,7 +16,7 @@ define([
         //      A convenience class for using [AGRC's web api](http://api.mapserv.utah.gov).
 
         // baseUrl: String
-        baseUrl: '//api.mapserv.utah.gov/api/v1/',
+        baseUrl: 'https://api.mapserv.utah.gov/api/v1/',
 
         // defaultAttributeStyle: String
         defaultAttributeStyle: 'identical',
