@@ -256,7 +256,7 @@ define([
                 '/tiles/lite_basemap/${level}/${col}/${row}';
             var lyr = new WebTiledLayer(url, {
                 tileInfo: this._getTileInfo(),
-                copyright: 'AGRC'
+                copyright: 'UGRC'
             });
             this.addLayer(lyr);
         },
