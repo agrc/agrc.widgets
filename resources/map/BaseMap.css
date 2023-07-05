@@ -32,7 +32,7 @@
 .map .logo-med, .map .logo-sm {
     background-image: linear-gradient(transparent, transparent), url("../images/agrc_logo.svg") !important;
     cursor: pointer;
-    height: 50px !important;
+    height: 30px !important;
     width: 23px !important;
     z-index: 49;
 }
