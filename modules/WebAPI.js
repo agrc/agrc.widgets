@@ -19,7 +19,7 @@ define([
         baseUrl: 'https://api.mapserv.utah.gov/api/v1/',
 
         // defaultAttributeStyle: String
-        defaultAttributeStyle: 'identical',
+        defaultAttributeStyle: 'input',
 
         // xhrProvider: dojo/request/* provider
         //      The current provider as determined by the search function
@@ -68,14 +68,13 @@ define([
             //      2000 meters is the maximum buffer.
             // options.pageSize: Number (not implemented)
             // options.skip: Number (not implemented)
-            // options.attributeStyle: String (defaults to 'identical')
+            // options.attributeStyle: String (defaults to 'input')
             //      Controls the casing of the attributes that are returned.
             //      Options:
             //
-            //      'identical': as is in data.
+            //      'input': as it is passed in
             //      'upper': upper cases all attribute names.
             //      'lower': lowercases all attribute names.
-            //      'camel': camel cases all attribute names
             //
             // returns: Promise
             console.log('agrc/modules/WebAPI:search', arguments);
